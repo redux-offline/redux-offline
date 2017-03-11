@@ -1,0 +1,19 @@
+{
+  "name": "redux-offline",
+  "version": "0.0.0",
+  "description": "Redux Offline-First Architecture",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jevakallio/redux-offline.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jevakallio/redux-offline/issues"
+  },
+  "homepage": "https://github.com/jevakallio/redux-offline#readme"
+}
