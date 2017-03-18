@@ -43,7 +43,7 @@ function offlineUpdater(
   action: ControlAction | OfflineAction | ResultAction
 ): AppState {
   // Initial state
-  if (!state || !get(state)) {
+  if (!get(state || {})) {
     return update(state || {}, initialState);
   }
 

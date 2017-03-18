@@ -4,6 +4,12 @@
 import type { Config, Retry, Outbox, OfflineAction } from './types';
 
 //@TODO nuke
+
+const defaultSettings = {
+  persist: true,
+  rehydrate: true
+};
+
 const defaultStrategies = {
   batching(outbox: Outbox): Outbox {
     if (outbox.length > 0) {
@@ -22,8 +28,7 @@ const defaultStrategies = {
 
 export const applyDefaults = (config: $Shape<Config>): Config => {
   return {
-    persist: true,
-    rehydrate: true,
+    ...defaultSettings,
     ...config,
     strategy: { ...defaultStrategies, ...config.strategy }
   };

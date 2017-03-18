@@ -1,12 +1,12 @@
 // @flow
 /*global $Shape*/
 import type { Config } from './types';
-import { createStore, compose } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { applyMiddleware, createStore, compose } from 'redux';
+import { autoRehydrate } from 'redux-persist';
 import { createOfflineMiddleware } from './middleware';
-import { addEffects } from './effects';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
+import { persist } from './persist';
 
 // @TODO: Take createStore as config?
 
@@ -18,6 +18,7 @@ export const createOfflineStore = (
   enhancer,
   userConfig: $Shape<Config> = {}
 ) => {
+  console.log('user config', userConfig);
   const config = applyDefaults(userConfig);
 
   console.log('Creating offline store', config);
@@ -26,22 +27,19 @@ export const createOfflineStore = (
   // reducer that handles offline state updating
   const offlineReducer = enhanceReducer(reducer);
 
+  const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
+
   // create autoRehydrate enhancer if required
   const offlineEnhancer = config.persist && config.rehydrate
-    ? compose(enhancer, autoRehydrate())
-    : enhancer;
+    ? compose(offlineMiddleware, enhancer, autoRehydrate())
+    : compose(offlineMiddleware, enhancer);
 
   // create store
   const store = createStore(offlineReducer, preloadedState, offlineEnhancer);
 
   // launch store persistor
   if (config.persist) {
-    persistor = persistStore(store);
-  }
-
-  // add effects handler
-  if (config.effects) {
-    addEffects(store, config);
+    persistor = persist(store);
   }
 
   return store;
