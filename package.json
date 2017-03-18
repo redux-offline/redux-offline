@@ -1,8 +1,8 @@
 {
   "name": "redux-offline",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Redux Offline-First Architecture",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/jevakallio/redux-offline/issues"
   },
-  "homepage": "https://github.com/jevakallio/redux-offline#readme"
+  "homepage": "https://github.com/jevakallio/redux-offline#readme",
+  "devDependencies": {
+    "redux": "^3.6.0",
+    "redux-logger": "^2.8.2"
+  }
 }
