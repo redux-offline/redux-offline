@@ -36,6 +36,7 @@ module.exports = {
     'func-style': 'off',
     'generator-star-spacing': 'off',
     'max-len': ['error', 100, { ignoreUrls: true }],
+    'max-params': 'off',
     'comma-dangle': ['error', 'never'],
     'arrow-parens': ['error', 'as-needed'],
     eqeqeq: ['error', 'smart'],

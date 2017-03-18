@@ -3,37 +3,54 @@
 export type ResultAction = {
   type: string,
   payload: ?{},
-  meta: ?{}
+  meta: {
+    success: boolean,
+    completed: boolean
+  }
 };
 
-export type Message = {
+export type OfflineMetadata = {
   effect: {},
   commit: ResultAction,
   rollback: ResultAction
 };
 
-export type Receipt = {|
-  message: Message,
+export type Receipt = {
+  message: OfflineMetadata,
   success: boolean,
   result: {}
-|};
-
-export type Outbox = Array<Message>;
-
-export type OfflineState = {|
-  online: boolean,
-  outbox: Outbox,
-  receipts: Array<Receipt>
-|};
+};
 
 export type OfflineAction = {
   type: string,
   payload?: {},
   meta: {
-    offline: Message
+    transaction?: number,
+    offline: OfflineMetadata
   }
 };
 
-export type State = {
+export type Outbox = Array<OfflineAction>;
+
+export type OfflineState = {
+  lastTransaction: number,
+  online: boolean,
+  outbox: Outbox,
+  receipts: Array<Receipt>
+};
+
+export type AppState = {
   offline: OfflineState
+};
+
+export type Retry = {
+  delay: number
+};
+
+export type Config = {
+  strategy: {
+    network: () => Promise<*>,
+    retry: (action: OfflineAction, retries: number) => ?Retry,
+    batching: (outbox: Outbox) => Outbox
+  }
 };
