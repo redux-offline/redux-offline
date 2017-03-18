@@ -16,10 +16,6 @@ const update = (state: AppState, fragment: $Shape<OfflineState>): AppState => {
   return { ...state, offline: { ...state.offline, ...fragment } };
 };
 
-const equals = (a: OfflineAction, b: OfflineAction): boolean => {
-  return a.meta.transaction === b.meta.transaction;
-};
-
 const enqueue = (state: AppState, action: OfflineAction): AppState => {
   const transaction = get(state).lastTransaction + 1;
   const stamped = { ...action, meta: { ...action.meta, transaction } };
@@ -47,8 +43,8 @@ function offlineUpdater(
   action: ControlAction | OfflineAction | ResultAction
 ): AppState {
   // Initial state
-  if (action.type === '@@redux/INIT') {
-    return update(state, initialState);
+  if (!state || !get(state)) {
+    return update(state || {}, initialState);
   }
 
   // Update online/offline status

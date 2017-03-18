@@ -32,13 +32,16 @@
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
+    "eslint": "^3.17.1",
     "eslint-config-formidable": "^2.0.1",
     "eslint-plugin-babel": "^4.1.1",
     "eslint-plugin-filenames": "^1.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint": "^3.17.1",
     "flow-bin": "^0.42.0",
-    "redux-logger": "^2.8.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "redux-logger": "^2.8.2"
+  },
+  "dependencies": {
+    "redux-persist": "^4.5.0"
   }
 }

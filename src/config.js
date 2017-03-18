@@ -22,6 +22,9 @@ const defaultStrategies = {
 
 export const applyDefaults = (config: $Shape<Config>): Config => {
   return {
+    persist: true,
+    rehydrate: true,
+    ...config,
     strategy: { ...defaultStrategies, ...config.strategy }
   };
 };

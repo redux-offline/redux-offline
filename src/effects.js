@@ -1,21 +1,18 @@
 // @flow
-/*global $Shape*/
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
-
-import { applyDefaults } from './config';
 
 const scheduleRetry = (delay = 0) => {
   return { type: 'Offline/SCHEDULE_RETRY', payload: { delay } };
 };
 
-const completeRetry = action => {
-  return { type: 'Offline/COMPLETE_RETRY', payload: action };
-};
-
-const delay = (timeout = 0) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-};
+// const completeRetry = action => {
+//   return { type: 'Offline/COMPLETE_RETRY', payload: action };
+// };
+//
+// const delay = (timeout = 0) => {
+//   return new Promise(resolve => setTimeout(resolve, timeout));
+// };
 
 const complete = (action: ResultAction, success: boolean, payload: {}): ResultAction => {
   return { ...action, payload, meta: { ...action.meta, success, completed: true } };
@@ -40,13 +37,8 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     });
 };
 
-export const createOfflineMiddleware = (userConfig: $Shape<Config> = {}): any => {
-  const config = applyDefaults(userConfig);
-
-  return store => next => action => {
-    // allow other middleware to do their things
-    const result = next(action);
-
+export const addEffects = (store: any, config: Config): void => {
+  store.subscribe(() => {
     // find any actions to send, if any
     const state: AppState = store.getState();
     const actions = take(state, config);
@@ -58,11 +50,10 @@ export const createOfflineMiddleware = (userConfig: $Shape<Config> = {}): any =>
       send(actions[0], store.dispatch, config);
     }
 
-    if (action.type === 'Offline/SCHEDULE_RETRY') {
-      //retryToken = retryToken++;
-      delay(action.payload.delay).then(() => store.dispatch(completeRetry(action)));
-    }
-
-    return result;
-  };
+    // @TODO: retry
+    // if (action.type === 'Offline/SCHEDULE_RETRY') {
+    //   //retryToken = retryToken++;
+    //   delay(action.payload.delay).then(() => store.dispatch(completeRetry(action)));
+    // }
+  });
 };
