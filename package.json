@@ -2,9 +2,14 @@
   "name": "redux-offline",
   "version": "0.1.0",
   "description": "Redux Offline-First Architecture",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src --out-dir lib",
+    "flow:start": "flow server",
+    "flow:stop": "flow stop",
+    "flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm run build -- --watch"
   },
   "repository": {
     "type": "git",
@@ -17,7 +22,23 @@
   },
   "homepage": "https://github.com/jevakallio/redux-offline#readme",
   "devDependencies": {
-    "redux": "^3.6.0",
-    "redux-logger": "^2.8.2"
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.8",
+    "babel-plugin-flow-react-proptypes": "^0.18.1",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-flow-strip-types": "^6.18.0",
+    "babel-plugin-transform-object-rest-spread": "^6.19.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "eslint-config-formidable": "^2.0.1",
+    "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-filenames": "^1.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint": "^3.17.1",
+    "flow-bin": "^0.42.0",
+    "redux-logger": "^2.8.2",
+    "redux": "^3.6.0"
   }
 }
