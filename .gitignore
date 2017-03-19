@@ -38,3 +38,5 @@ jspm_packages
 
 # Temporarily
 lib/
+
+.DS_Store
