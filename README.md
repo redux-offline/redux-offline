@@ -1,7 +1,6 @@
-# redux-offline
-Redux Offline-First Architecture
+<img alt="redux-offline" src="docs/logo.png" width="300"></img>
 
-*Coming soon.*
+Redux Offline-First Architecture
 
 ## Features
 
