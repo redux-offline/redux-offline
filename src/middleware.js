@@ -19,16 +19,16 @@ const complete = (action: ResultAction, success: boolean, payload: {}): ResultAc
 };
 
 const take = (state: AppState, config: Config): Outbox => {
-  return config.strategy.batching(state.offline.outbox);
+  return config.strategies.batch(state.offline.outbox);
 };
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
-  return config.strategy
-    .network(metadata.effect, action)
+  return config.strategies
+    .send(metadata.effect, action)
     .then(result => dispatch(complete(metadata.commit, true, result)))
     .catch(error => {
-      const retry = config.strategy.retry(action, retries);
+      const retry = config.strategies.retry(action, retries);
       if (retry) {
         return dispatch(scheduleRetry(retry.delay));
       } else {
@@ -37,7 +37,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     });
 };
 
-export const createOfflineMiddleware = config => store => next => action => {
+export const createOfflineMiddleware = (config: Config) => store => next => action => {
   // allow other middleware to do their things
   const result = next(action);
 

@@ -6,7 +6,8 @@ import { autoRehydrate } from 'redux-persist';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
-import { persist } from './persist';
+import { persist } from './defaults/persist';
+import { networkStatusChanged } from './actions';
 
 // @TODO: Take createStore as config?
 
@@ -30,7 +31,7 @@ export const createOfflineStore = (
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
-  const offlineEnhancer = config.persist && config.rehydrate
+  const offlineEnhancer = config.strategies.persist && config.rehydrate
     ? compose(offlineMiddleware, enhancer, autoRehydrate())
     : compose(offlineMiddleware, enhancer);
 
@@ -38,8 +39,16 @@ export const createOfflineStore = (
   const store = createStore(offlineReducer, preloadedState, offlineEnhancer);
 
   // launch store persistor
-  if (config.persist) {
-    persistor = persist(store);
+  if (config.strategies.persist) {
+    persistor = config.strategies.persist(store);
+  }
+
+  // launch network detector
+  if (config.strategies.detectNetwork) {
+    config.strategies.detectNetwork(online => {
+      console.log('received detectNetwork callback', online);
+      store.dispatch(networkStatusChanged(online));
+    });
   }
 
   return store;

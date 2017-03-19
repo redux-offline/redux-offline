@@ -1,5 +1,5 @@
 import { persistStore } from 'redux-persist';
 
-export const persist = store => {
+export default store => {
   return persistStore(store);
 };

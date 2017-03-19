@@ -1,35 +1,15 @@
 // @flow
-/*global fetch, $Shape*/
+/*global $Shape*/
+import type { Config } from './types';
+import defaults from './defaults';
 
-import type { Config, Retry, Outbox, OfflineAction } from './types';
-
-//@TODO nuke
-
-const defaultSettings = {
-  persist: true,
-  rehydrate: true
-};
-
-const defaultStrategies = {
-  batching(outbox: Outbox): Outbox {
-    if (outbox.length > 0) {
-      return [outbox[0]];
-    }
-    return [];
-  },
-  network(effect: any) {
-    const { url, ...options } = effect;
-    return fetch(url, options);
-  },
-  retry(_metadata: OfflineAction, _retries: number): ?Retry {
-    return null;
-  }
-};
-
-export const applyDefaults = (config: $Shape<Config>): Config => {
+export const applyDefaults = (config: $Shape<Config> = {}): Config => {
   return {
-    ...defaultSettings,
+    ...defaults,
     ...config,
-    strategy: { ...defaultStrategies, ...config.strategy }
+    strategies: {
+      ...defaults.strategies,
+      ...config.strategies
+    }
   };
 };

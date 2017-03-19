@@ -47,10 +47,14 @@ export type Retry = {
   delay: number
 };
 
+type NetworkCallback = (result: boolean) => void;
+
 export type Config = {
-  strategy: {
-    network: () => Promise<*>,
-    retry: (action: OfflineAction, retries: number) => ?Retry,
-    batching: (outbox: Outbox) => Outbox
+  strategies: {
+    batch: (outbox: Outbox) => Outbox,
+    detectNetwork: (callback: NetworkCallback) => void,
+    persist: (store: any) => any,
+    send: (effect: any, action: OfflineAction) => Promise<*>,
+    retry: (action: OfflineAction, retries: number) => ?Retry
   }
 };

@@ -2,7 +2,6 @@
 /* global $Shape*/
 
 import type { AppState, OfflineState, OfflineAction, ResultAction } from './types';
-import { warn } from './utils';
 
 type ControlAction =
   | { type: 'Offline/STATUS_CHANGED', payload: { online: boolean } }
@@ -27,7 +26,7 @@ const enqueue = (state: AppState, action: OfflineAction): AppState => {
 };
 
 const dequeue = (state: AppState): AppState => {
-  const [first, ...rest] = get(state).outbox;
+  const [, ...rest] = get(state).outbox;
   return update(state, { outbox: rest });
 };
 
