@@ -1,8 +1,6 @@
-<img alt="redux-offline" src="docs/logo.png" width="300"></img>
+# <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 
 Redux Offline-First Architecture
-
-## Features
 
 ## Design principles
 * Works in browser and React Native
