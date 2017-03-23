@@ -37,7 +37,9 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     });
 };
 
-export const createOfflineMiddleware = (config: Config) => store => next => action => {
+export const createOfflineMiddleware = (config: Config) => (store: any) => (next: any) => (
+  action: any
+) => {
   // allow other middleware to do their things
   const result = next(action);
 

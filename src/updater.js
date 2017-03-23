@@ -15,7 +15,7 @@ const update = (state: AppState, fragment: $Shape<OfflineState>): AppState => {
   return { ...state, offline: { ...state.offline, ...fragment } };
 };
 
-const enqueue = (state: AppState, action: OfflineAction): AppState => {
+const enqueue = (state: AppState, action: any): AppState => {
   const transaction = get(state).lastTransaction + 1;
   const stamped = { ...action, meta: { ...action.meta, transaction } };
   const outbox = get(state).outbox;
@@ -37,7 +37,9 @@ const initialState: OfflineState = {
   receipts: []
 };
 
-function offlineUpdater(
+// @TODO: the typing of this is all kinds of wack
+
+const offlineUpdater = function offlineUpdater(
   state: AppState,
   action: ControlAction | OfflineAction | ResultAction
 ): AppState {
@@ -47,12 +49,16 @@ function offlineUpdater(
   }
 
   // Update online/offline status
-  if (action.type === 'Offline/STATUS_CHANGED') {
+  if (
+    action.type === 'Offline/STATUS_CHANGED' &&
+    action.payload &&
+    typeof action.payload.online === 'boolean'
+  ) {
     return update(state, { online: action.payload.online });
   }
 
   // Add offline actions to queue
-  if (action.meta != null && action.meta.offline != null) {
+  if (action.meta && action.meta.offline) {
     return enqueue(state, action);
   }
 
@@ -62,7 +68,7 @@ function offlineUpdater(
   }
 
   return state;
-}
+};
 
 export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
   return offlineUpdater(reducer(state, action), action);

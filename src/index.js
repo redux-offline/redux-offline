@@ -6,17 +6,17 @@ import { autoRehydrate } from 'redux-persist';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
-import { persist } from './defaults/persist';
 import { networkStatusChanged } from './actions';
 
 // @TODO: Take createStore as config?
 
+// eslint-disable-next-line no-unused-vars
 let persistor;
 
 export const createOfflineStore = (
-  reducer,
-  preloadedState,
-  enhancer,
+  reducer: any,
+  preloadedState: any,
+  enhancer: any,
   userConfig: $Shape<Config> = {}
 ) => {
   console.log('user config', userConfig);
