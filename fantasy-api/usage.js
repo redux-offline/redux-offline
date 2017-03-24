@@ -34,27 +34,17 @@ const followUserSimplestOptimistic = userId => ({
   }
 });
 
-const followUserInline = userId => ({
+const followUser = userId => ({
   type: 'FOLLOW_USER_REQUEST',
   payload: { userId },
   meta: {
     offline: {
-      // passed to network sink
-      network: {
-        url: '/api/follow',
-        method: 'POST',
-        body: { userId }
-      },
+      // the network action to execute
+      effect: { url: '/api/follow', method: 'POST', body: { userId } },
       // dispatched when effect succeeds
-      commit: {
-        type: 'FOLLOW_USER_COMMIT',
-        payload: { userId }
-      },
-      // dispatched if effect fails
-      rollback: {
-        type: 'FOLLOW_USER_ROLLBACK',
-        payload: { userId }
-      }
+      commit: { type: 'FOLLOW_USER_COMMIT', meta: { userId } },
+      // dispatched if effect fails permanently
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId } }
     }
   }
 });
