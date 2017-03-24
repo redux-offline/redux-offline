@@ -5,9 +5,8 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ## Contents
 
 * [Quick start](#quick-start)
-* [Offline Guide](#offlne-guide)
+* [Offline Guide](#offline-guide)
 * [Configuration](#configuration)
-* [API documentation](#api)
 * [Contributing](#contributing)
 * [Miscellanea](#miscellanea)
 
@@ -19,7 +18,7 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 npm install --save redux-offline
 ```
 
-##### 2. Replace [redux createStore](http://redux.js.org/docs/api/createStore.html) with [createOfflineStore](#createofflinestore)
+##### 2. Replace [redux createStore](http://redux.js.org/docs/api/createStore.html) with createOfflineStore
 ```diff
 
 - import { applyMiddleware, createStore } from 'redux';
@@ -114,10 +113,10 @@ const action = userId => ({
   type: 'FOLLOW_USER',
   payload: { userId },
   meta: {
-  	offline: {
+    offline: {
       effect: //...,
-  	  rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
-   	}
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+     }
   }
 });
 
@@ -143,11 +142,11 @@ const completeOrder = (orderId, lineItems) => ({
   type: 'COMPLETE_ORDER',
   payload: { orderId, lineItems },
   meta: {
-  	offline: {
+    offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-  	  rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
-   	}
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+     }
   }
 });
 
@@ -166,7 +165,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state, 	
+        ...state,   
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -189,16 +188,16 @@ type EffectsReconciler = (effect: any, action: OfflineAction) => Promise<any>
 The default reconciler is simply a paper-thin wrapper around [fetch](https://developer.mozilla.org/en/docs/Web/API/Fetch_API) that rejects non-OK HTTP status codes, and assumes the response will be valid JSON.
 ```js
   const reconciler = ({url, ...opts}) =>
-  	fetch(url, opts).then(res => res.ok
-  		? res.json()
-  		: Promise.reject(res.text().then(msg => new Error(msg)));
+    fetch(url, opts).then(res => res.ok
+      ? res.json()
+      : Promise.reject(res.text().then(msg => new Error(msg)));
 ```
 So the default effect format expected by the reconciler is something like:
 ```js
 {
   type: 'ACTION',
   meta: {
-  	offline: {
+    offline: {
       effect: { url: '/api/endpoint', method: 'POST'}
     }
   }
@@ -207,25 +206,187 @@ So the default effect format expected by the reconciler is something like:
 
 That said, you'll probably want to [use your own method](#todo) - it can be anything, as long as it returns a Promise.
 
+### Is this thing even on?
 
-### What could go wrong?
+A library that aims to support offline usage, it would be useful to know whether or not the device is online or offline. Unfortunately, network availability is not a binary "Yes" or "No": It can also be "Yes, but not really". The network receiver on your mobile device may report connectivity, but if you can't reach the remote server, are we really connnected?
+
+Redux Offline uses the browser [Network Information APIs](https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API) and React Native [NetInfo](https://facebook.github.io/react-native/docs/netinfo.html) to be notified when the device *thinks* it's online to orchestrate synchronisation and retries. The current reported online state is stored in your store state as boolean `state.offline.online` and can be used to display a network indicator in your app, if desired.
+
+Sometimes, it's more reliable to check network connectivity by actually making sure you can exchange data with a remote server by periodically making a HEAD request, or keeping an open WebSocket connection with a heartbeat. This, too, [can be configured](#todo).
 
 
+### Giving up is hard to do
 
+Networks are flaky. Your backend could be down. Sometimes, when the moon is in waxing crescent and the sixth-degree leylines are obstructed by passing birds, things mysteriously fail. If you are processing your offline actions queue in serial, you will need a reliable mechanism to decide when to retry the requests, and when to give up to prevent blocking the rest of the queue from being flushed.
+
+Building an offline-friendly app, you should never give up because a *network* connection failed. You *may* want to give up if the server reports a *server error*. And if the server tells you that your *request is cannot be processed*, you need to give up immediately.
+
+Modelled after this principle, the default discard strategy is:
+* If server was not reached, always retry
+* If server responded with HTTP `4xx` client error, always discard
+* If server responded with HTTP `5xx` server error, retry with a decaying schedule configured by the [retry strategy](#todo).
+
+If your backend doesn't conform to this standard, or you've [changed the effects reconciler](#todo) to return errors that don't expose a HTTP `status` field, you'll want to [configure the error detection strategy](#todo), too.
+
+When a message is discarded, the `meta.offline.rollback` action defined in the message metadata is fired, and you can respond accordingly.
+
+
+### If you don't at first succeed, try, and try again
+
+When a network request has failed, and you've [chosen not to discard the message](#giving-up-is-hard-to-do), you need to decide when to retry the request. If your requests are failing due to an overloaded backend, retrying too often will make the problem worse and effectively DDoS your own service. Never kick a man when he's down.
+
+By default, we will always retry the first message in the queue when the [network detector](#is-this-thing-even-on) reports a change from offline to online. Otherwise, we will retry the request on a decaying schedule:
+* After 1 seconds
+* After 5 seconds
+* After 15 seconds
+* After 30 seconds
+* After 1 minute
+* After 3 minutes
+* After 5 minutes
+* After 10 minutes
+* After 30 minutes
+* After 1 hour
+
+After these 10 timed attempts, if the message is still failing due to a server error, it will be discarded.
+
+Retrying a request for this long may seem excessive, and for some use cases it can be. You can [configure the retry strategy](#todo) to suit yours.
+
+The reason the default behaviour is to desperately try to make the requests succeed is that we really, really want to avoid having to deal with conflict resolution...
+
+### None of the parties want this conflict to go on
+
+Let's say a user of your microblogging app does two actions while offline:
+1. Creates a Post
+2. Edits said Post
+
+If post creation fails permanently and the message is [discarded](#giving-up-is-hard-to-do), it's guaranteed that the edit will fail as well. How do you want to handle that?
+
+// @TODO
 
 
 ## Configuration
 
+
+### Configuration object
+
+Redux Offline supports the following configuration properties:
+```js
+//@TODO UPDATE
+export type Config = {
+  batch: (outbox: Outbox) => Outbox,
+  detectNetwork: (callback: NetworkCallback) => void,
+  persist: (store: any) => any,
+  send: (effect: any, action: OfflineAction) => Promise<*>,
+  retry: (action: OfflineAction, retries: number) => ?Retry
+};
+```
+
+#### Passing configuration to createOfflineStore
+The `createOfflineStore` store creator takes the [configuration object](#configuration-object) as a final parameter:
+```diff
++ import { createOfflineStore } from 'redux-offline';
++ import defaultConfig from 'redux-offline/config/default';
++
+- const store = createStore(
++ const store = createOfflineStore(
+  reducer,
+  preloadedState,
+  middleware,
++ defaultConfig  
+);
+```
+
+#### Overriding default properties
+You can override any individual property in the default configuration:
+```diff
+import { createOfflineStore } from 'redux-offline';
+import defaultConfig from 'redux-offline/config/default';
+
+const customConfig = {
+  ...defaultConfig,
+  send: (effect, _action) => Api.send(effect),
+  batch: (outbox) => take(outbox, 5)
+}
+
+const store = createOfflineStore(
+  reducer,
+  preloadedState,
+  middleware,
++ customConfig  
+);
+```
+
+#### Only import what you need
+The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring is only the pieces you need:
+
+```diff
+import { createOfflineStore } from 'redux-offline';
+import batch from 'redux-offline/config/batch';
+import retry from 'redux-offline/config/retry';
+import discard from 'redux-offline/config/discard';
+
+const myConfig = {
+  batch,
+  retry,
+  discard,
+  send: (effect, action) => MyCustomApiService.send(effect, action),
+  detectNetwork: () => MyCustomPingService.getNetworkStatus(),
+  persist: (store) => MyCustomPersistence.persist(store)
+};
+
+const store = createOfflineStore(
+  reducer,
+  preloadedState,
+  middleware,
++ myConfig  
+);
+```
+
+
 ### I want to...
 
-### Change how state is saved to disk
+#### Change how state is saved to disk
 
-### Change how network requests are made
+#### Change how network requests are made
 
-## API
+#### Change how network status is detected
 
-#### createOfflineStore
+#### Change how irreconcilable errors are detected
+
+#### Change how network requests are retried
+
+#### Change how errors are handled
+
+#### Change how queue processing is batched
+
+#### Synchronise my state while the app is not open
+
+Background sync is not yet supported. Coming soon.
+
+#### Use an [Immutable](https://facebook.github.io/immutable-js/) store
+
+Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline need to currently be vanilla JavaScript objects.
+
+[Contributions welcome](#contributing).
+
 
 ## Contributing
 
+Improvements and additions welcome. For large changes, please submit a discussion issue before jumping to coding; we'd hate you to waste the effort.
+
+In lieu of a formal style guide, follow the included eslint rules, and use Prettier to format your code.
+
 ## Miscellanea
+
+### Prior art
+
+Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
+
+* Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
+* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist)
+
+Without their work, Redux Offline wouldn't exist. If you like the ideas behind Redux Offline, but want to build your own stack from lower-level components, these are good places to start.
+
+### License
+
+MIT
