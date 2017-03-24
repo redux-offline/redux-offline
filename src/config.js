@@ -6,10 +6,6 @@ import defaults from './defaults';
 export const applyDefaults = (config: $Shape<Config> = {}): Config => {
   return {
     ...defaults,
-    ...config,
-    strategies: {
-      ...defaults.strategies,
-      ...config.strategies
-    }
+    ...config
   };
 };

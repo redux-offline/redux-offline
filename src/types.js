@@ -36,25 +36,23 @@ export type OfflineState = {
   lastTransaction: number,
   online: boolean,
   outbox: Outbox,
-  receipts: Array<Receipt>
+  receipts: Array<Receipt>,
+  retryToken: number,
+  retryScheduled: boolean
 };
 
 export type AppState = {
   offline: OfflineState
 };
 
-export type Retry = {
-  delay: number
-};
-
 type NetworkCallback = (result: boolean) => void;
 
 export type Config = {
-  strategies: {
-    batch: (outbox: Outbox) => Outbox,
-    detectNetwork: (callback: NetworkCallback) => void,
-    persist: (store: any) => any,
-    send: (effect: any, action: OfflineAction) => Promise<*>,
-    retry: (action: OfflineAction, retries: number) => ?Retry
-  }
+  batch: (outbox: Outbox) => Outbox,
+  detectNetwork: (callback: NetworkCallback) => void,
+  persist: (store: any) => any,
+  effect: (effect: any, action: OfflineAction) => Promise<*>,
+  retry: (action: OfflineAction, retries: number) => ?number,
+  discard: (error: any, action: OfflineAction, retries: number) => boolean,
+  persistOptions: {}
 };

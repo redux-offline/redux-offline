@@ -34,7 +34,9 @@ const initialState: OfflineState = {
   lastTransaction: 0,
   online: false,
   outbox: [],
-  receipts: []
+  receipts: [],
+  retryToken: 0,
+  retryScheduled: false
 };
 
 // @TODO: the typing of this is all kinds of wack
@@ -55,6 +57,14 @@ const offlineUpdater = function offlineUpdater(
     typeof action.payload.online === 'boolean'
   ) {
     return update(state, { online: action.payload.online });
+  }
+
+  if (action.type === 'Offline/SCHEDULE_RETRY') {
+    return update(state, { retryScheduled: true, retryToken: get(state).retryToken + 1 });
+  }
+
+  if (action.type === 'Offline/COMPLETE_RETRY') {
+    return update(state, { retryScheduled: false });
   }
 
   // Add offline actions to queue

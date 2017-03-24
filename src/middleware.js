@@ -6,11 +6,11 @@ const scheduleRetry = (delay = 0) => {
   return { type: 'Offline/SCHEDULE_RETRY', payload: { delay } };
 };
 
-const completeRetry = action => {
-  return { type: 'Offline/COMPLETE_RETRY', payload: action };
+const completeRetry = (action, retryToken) => {
+  return { type: 'Offline/COMPLETE_RETRY', payload: action, meta: { retryToken } };
 };
 
-const delay = (timeout = 0) => {
+const after = (timeout = 0) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
@@ -19,18 +19,19 @@ const complete = (action: ResultAction, success: boolean, payload: {}): ResultAc
 };
 
 const take = (state: AppState, config: Config): Outbox => {
-  return config.strategies.batch(state.offline.outbox);
+  return config.batch(state.offline.outbox);
 };
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
-  return config.strategies
-    .send(metadata.effect, action)
+  return config
+    .effect(metadata.effect, action)
     .then(result => dispatch(complete(metadata.commit, true, result)))
     .catch(error => {
-      const retry = config.strategies.retry(action, retries);
-      if (retry) {
-        return dispatch(scheduleRetry(retry.delay));
+      const delay = config.retry(action, retries);
+      console.log('retry delay', delay);
+      if (delay != null) {
+        return dispatch(scheduleRetry(delay));
       } else {
         return dispatch(complete(metadata.rollback, false, error));
       }
@@ -50,14 +51,26 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   // if the are any actions in the queue that we are not
   // yet processing, send those actions
   if (actions.length > 0 && !state.offline.busy && state.offline.online) {
-    // @TODO: batching
     send(actions[0], store.dispatch, config);
   }
 
-  // @TODO: retry
   if (action.type === 'Offline/SCHEDULE_RETRY') {
-    //retryToken = retryToken++;
-    delay(action.payload.delay).then(() => store.dispatch(completeRetry(action)));
+    const retryToken = state.offline.retryToken;
+    after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
+  }
+
+  if (action.type === 'Offline/COMPLETE_RETRY') {
+    if (
+      action.meta.retryToken === state.offline.retryToken &&
+      actions.length > 0 &&
+      !state.offline.busy
+    ) {
+      send(actions[0], store.dispatch, config);
+    }
+  }
+
+  if (action.type === 'Offline/SEND' && actions.length > 0 && !state.offline.busy) {
+    send(actions[0], store.dispatch, config);
   }
 
   return result;

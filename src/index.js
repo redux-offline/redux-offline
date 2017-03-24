@@ -31,7 +31,7 @@ export const createOfflineStore = (
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
-  const offlineEnhancer = config.strategies.persist && config.rehydrate
+  const offlineEnhancer = config.persist && config.rehydrate
     ? compose(offlineMiddleware, enhancer, autoRehydrate())
     : compose(offlineMiddleware, enhancer);
 
@@ -39,14 +39,13 @@ export const createOfflineStore = (
   const store = createStore(offlineReducer, preloadedState, offlineEnhancer);
 
   // launch store persistor
-  if (config.strategies.persist) {
-    persistor = config.strategies.persist(store);
+  if (config.persist) {
+    persistor = config.persist(store, config.persistOptions);
   }
 
   // launch network detector
-  if (config.strategies.detectNetwork) {
-    config.strategies.detectNetwork(online => {
-      console.log('received detectNetwork callback', online);
+  if (config.detectNetwork) {
+    config.detectNetwork(online => {
       store.dispatch(networkStatusChanged(online));
     });
   }
