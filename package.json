@@ -44,5 +44,8 @@
   },
   "dependencies": {
     "redux-persist": "^4.5.0"
+  },
+  "peerDependencies": {
+    "redux": ">=3"
   }
 }
