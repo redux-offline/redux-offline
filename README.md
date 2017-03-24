@@ -24,7 +24,7 @@ npm install --save redux-offline
 - import { applyMiddleware, createStore } from 'redux';
 + import { applyMiddleware } from 'redux';
 + import { createOfflineStore } from 'redux-offline';
-+ import offlineConfig from 'redux-offline/config/default';
++ import offlineConfig from 'redux-offline/lib/defaults';
 
 // ...
 
@@ -56,10 +56,17 @@ const followUser = userId => ({
     }
   }
 });
-
 ```
 
 Read the [Offline Guide](#offline-guide) to understand how effects are executed, and how the actions are dispatched.
+
+##### 4. (React Native Android) Ask permission to read network status
+
+If writing a native app for Android, you'll need to make sure to the permission to access network state in your `AndroidManifest.xml`:
+
+```xml
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
 
 
 ## Offline Guide
@@ -285,7 +292,7 @@ export type Config = {
 The `createOfflineStore` store creator takes the [configuration object](#configuration-object) as a final parameter:
 ```diff
 + import { createOfflineStore } from 'redux-offline';
-+ import defaultConfig from 'redux-offline/config/default';
++ import defaultConfig from 'redux-offline/lib/defaults';
 +
 - const store = createStore(
 + const store = createOfflineStore(
@@ -300,7 +307,7 @@ The `createOfflineStore` store creator takes the [configuration object](#configu
 You can override any individual property in the default configuration:
 ```diff
 import { createOfflineStore } from 'redux-offline';
-import defaultConfig from 'redux-offline/config/default';
+import defaultConfig from 'redux-offline/lib/defaults';
 
 const customConfig = {
   ...defaultConfig,
@@ -321,16 +328,16 @@ The reason for default config is defined as a separate import is, that it pulls 
 
 ```diff
 import { createOfflineStore } from 'redux-offline';
-import batch from 'redux-offline/config/batch';
-import retry from 'redux-offline/config/retry';
-import discard from 'redux-offline/config/discard';
+import batch from 'redux-offline/lib/defaults/batch';
+import retry from 'redux-offline/lib/defaults/retry';
+import discard from 'redux-offline/lib/defaults/discard';
 
 const myConfig = {
   batch,
   retry,
   discard,
   send: (effect, action) => MyCustomApiService.send(effect, action),
-  detectNetwork: () => MyCustomPingService.getNetworkStatus(),
+  detectNetwork: (callback) => MyCustomPingService.startPing(callback),
   persist: (store) => MyCustomPersistence.persist(store)
 };
 
@@ -345,15 +352,82 @@ const store = createOfflineStore(
 
 ### I want to...
 
+#### Change how network requests are made
+
+To replace the default `fetch` effects handler, define it as `config.effect`:
+```js
+const config = {
+  effect: (effect, action) => {
+    console.log(`Executing effect for ${action.type}`);
+    return MyApi.send(effect)
+  }
+}
+```
+
+The first parameter is whatever value is set in `action.meta.offline.effect`. The second parameter is the full action, which may be useful for context. The method is expected to return a Promise. The full signature of the effect handler is: `(effect: any, action: OfflineAction) => Promise<any>`.
+
+
 #### Change how state is saved to disk
 
-#### Change how network requests are made
+By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist). The recommended way of customizing
+persistence is to configure redux-persist. You can pass any valid configuration
+to redux-persist by defining it `config.persistOptions`:
+```js
+const config = {
+  persistOptions: { /*...*/ }
+};
+```
+
+If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsibe for setting any subscribers to listen for store changes to persist it.
+```js
+const config = {
+  persist: (store) =>
+    store.subscribe(() => console.log(store.getState()))
+  )
+}
+```
+
+If you override `config.store`, you will also need to manage the rehydration of your state manually.
 
 #### Change how network status is detected
 
+To replace the default network status detector, override the `config.detectNetwork` method:
+```js
+const config = {
+  detectNetwork: callback => MyCustomDetector.on('change', callback)
+}
+```
+
+The function is passed a callback, which you should call with boolean `true` when the app gets online, and `false` when it goes offline.
+
 #### Change how irreconcilable errors are detected
 
+Actions in the queue are by default discarded when a server returns
+a HTTP `4xx` error. To change this, set override the `congig.discard` method:
+```js
+const config = {
+  discard: (error, action, retries) => error.permanent || retries > 10;
+}
+```
+
+The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`.
+
 #### Change how network requests are retried
+
+By default, sending actions is retried on a decaying schedule starting with retries every few seconds, eventually slowing down to an hour before the last retry. These retry delays only apply to scenarios where the device reports being online but the server cannot be reached, or the server is reached by is responding with a non-permanent error.
+
+To configure the retry duration, override `config.retry`:
+```js
+const config = {
+  retry: (action, retries) => action.meta.urgent ? 100 : 1000 * (retries + 1)
+}
+```
+
+The function receives the action and a number representing how many times the
+action has been retried, and should reply with a number representing the amount
+of milliseconds to wait until the next retry. If this method returns `null` or
+`undefined`, the action will not be retried until the next time the app comes
+online, is started, or you manually fire an `Offline/SEND` action.
 
 #### Change how errors are handled
 
