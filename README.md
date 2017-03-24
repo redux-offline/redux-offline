@@ -106,7 +106,7 @@ type OfflineAction = {
 * `meta.offline.commit` action will be fired once the network effect has been successfully sent
 * `meta.offline.rollback` action will be fired if the network effect **permanently** fails (does not count network-related failures, which will be automatically retried).
 
-### Optimism will get you to places
+### Optimism will get you places
 
 When the initial action has been dispatched, you can update your application state in your reducers as you normally would.
 
@@ -238,7 +238,7 @@ If your backend doesn't conform to this standard, or you've [changed the effects
 When a message is discarded, the `meta.offline.rollback` action defined in the message metadata is fired, and you can respond accordingly.
 
 
-### If you don't at first succeed, try, and try again
+### And if you don't at first succeed, try, try again
 
 When a network request has failed, and you've [chosen not to discard the message](#giving-up-is-hard-to-do), you need to decide when to retry the request. If your requests are failing due to an overloaded backend, retrying too often will make the problem worse and effectively DDoS your own service. Never kick a man when he's down.
 
