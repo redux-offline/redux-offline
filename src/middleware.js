@@ -62,7 +62,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
     !state.offline.retryScheduled &&
     state.offline.online
   ) {
-    send(actions[0], store.dispatch, config);
+    send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
   if (action.type === 'Offline/SCHEDULE_RETRY') {
@@ -70,14 +70,14 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
     after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
   }
 
-  if (action.type === 'Offline/COMPLETE_RETRY') {
-    if (action.meta.retryToken === state.offline.retryToken && actions.length > 0) {
-      send(actions[0], store.dispatch, config);
-    }
-  }
+  // if (action.type === 'Offline/COMPLETE_RETRY') {
+  //   if (action.meta.retryToken === state.offline.retryToken && actions.length > 0) {
+  //     send(actions[0], store.dispatch, config);
+  //   }
+  // }
 
   if (action.type === 'Offline/SEND' && actions.length > 0 && !state.offline.busy) {
-    send(actions[0], store.dispatch, config);
+    send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
   return result;

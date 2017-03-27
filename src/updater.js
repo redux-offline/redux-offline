@@ -27,7 +27,7 @@ const enqueue = (state: AppState, action: any): AppState => {
 
 const dequeue = (state: AppState): AppState => {
   const [, ...rest] = get(state).outbox;
-  return update(state, { outbox: rest });
+  return update(state, { outbox: rest, retryCount: 0 });
 };
 
 const initialState: OfflineState = {
@@ -36,6 +36,7 @@ const initialState: OfflineState = {
   outbox: [],
   receipts: [],
   retryToken: 0,
+  retryCount: 0,
   retryScheduled: false
 };
 
@@ -60,7 +61,11 @@ const offlineUpdater = function offlineUpdater(
   }
 
   if (action.type === 'Offline/SCHEDULE_RETRY') {
-    return update(state, { retryScheduled: true, retryToken: get(state).retryToken + 1 });
+    return update(state, {
+      retryScheduled: true,
+      retryCount: get(state).retryCount + 1,
+      retryToken: get(state).retryToken + 1
+    });
   }
 
   if (action.type === 'Offline/COMPLETE_RETRY') {

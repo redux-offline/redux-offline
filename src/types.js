@@ -37,6 +37,7 @@ export type OfflineState = {
   online: boolean,
   outbox: Outbox,
   receipts: Array<Receipt>,
+  retryCount: number,
   retryToken: number,
   retryScheduled: boolean
 };
