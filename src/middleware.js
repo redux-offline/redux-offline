@@ -19,7 +19,12 @@ const complete = (action: ResultAction, success: boolean, payload: {}): ResultAc
 };
 
 const take = (state: AppState, config: Config): Outbox => {
-  return config.batch(state.offline.outbox);
+  // batching is optional, for now
+  if (config.batch) {
+    return config.batch(state.offline.outbox);
+  }
+
+  return [state.offline.outbox[0]];
 };
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
