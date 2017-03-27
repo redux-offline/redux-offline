@@ -1,6 +1,17 @@
-import { NetInfo } from 'react-native'; //eslint-disable-line
+import { AppState, NetInfo } from 'react-native'; //eslint-disable-line
 
 export default callback => {
-  NetInfo.isConnected.addEventListener('change', isOnline => callback(isOnline));
-  NetInfo.isConnected.fetch().then(isOnline => callback(isOnline));
+  let wasOnline;
+  const updateState = isOnline => {
+    if (wasOnline !== isOnline) {
+      wasOnline = isOnline;
+      callback(isOnline);
+    }
+  };
+
+  NetInfo.isConnected.addEventListener('change', updateState);
+  NetInfo.isConnected.fetch().then(updateState);
+  AppState.addEventListener('change', () => {
+    NetInfo.isConnected.fetch().then(updateState);
+  });
 };
