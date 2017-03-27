@@ -186,7 +186,7 @@ const ordersReducer = (state, action) {
 
 The last part of the offline metadata is `meta.offline.effect`. This property can contain anything, and will be passed as-is to the effects reconciler.
 
-The **effects reconciler** is a function that you pass to `createOfflineStore` configuration, whose responsible it is to take the effect payload, send it over the network, and return a Promise that resolves if sending was successful or rejects if the sending failed. The method is passed the full action as a second parameter:
+The **effects reconciler** is a function that you pass to `createOfflineStore` configuration, whose responsibility it is to take the effect payload, send it over the network, and return a Promise that resolves if sending was successful or rejects if the sending failed. The method is passed the full action as a second parameter:
 
 ```js
 type EffectsReconciler = (effect: any, action: OfflineAction) => Promise<any>
@@ -194,7 +194,7 @@ type EffectsReconciler = (effect: any, action: OfflineAction) => Promise<any>
 
 The default reconciler is simply a paper-thin wrapper around [fetch](https://developer.mozilla.org/en/docs/Web/API/Fetch_API) that rejects non-OK HTTP status codes, and assumes the response will be valid JSON.
 ```js
-  const reconciler = ({url, ...opts}) =>
+  const effectReconciler = ({url, ...opts}) =>
     fetch(url, opts).then(res => res.ok
       ? res.json()
       : Promise.reject(res.text().then(msg => new Error(msg)));
@@ -268,7 +268,7 @@ Let's say a user of your microblogging app does two actions while offline:
 
 If post creation fails permanently and the message is [discarded](#giving-up-is-hard-to-do), it's guaranteed that the edit will fail as well. How do you want to handle that?
 
-// @TODO
+
 
 
 ## Configuration
@@ -354,7 +354,7 @@ const store = createOfflineStore(
 
 #### Change how network requests are made
 
-To replace the default `fetch` effects handler, define it as `config.effect`:
+Probably the first thing you will want to do is to replace the default `fetch` effects handler. So this by overriding `config.effect`:
 ```js
 const config = {
   effect: (effect, action) => {
