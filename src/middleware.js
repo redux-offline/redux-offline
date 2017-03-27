@@ -28,11 +28,17 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     .effect(metadata.effect, action)
     .then(result => dispatch(complete(metadata.commit, true, result)))
     .catch(error => {
+      // discard
+      if (config.discard(error, action, retries)) {
+        console.log('Discarding action', action.type);
+        return dispatch(complete(metadata.rollback, false, error));
+      }
       const delay = config.retry(action, retries);
-      console.log('retry delay', delay);
       if (delay != null) {
+        console.log('Retrying action', action.type, 'with delay', delay);
         return dispatch(scheduleRetry(delay));
       } else {
+        console.log('Discarding action', action.type, 'because retry did not return a delay');
         return dispatch(complete(metadata.rollback, false, error));
       }
     });
@@ -50,7 +56,12 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
 
   // if the are any actions in the queue that we are not
   // yet processing, send those actions
-  if (actions.length > 0 && !state.offline.busy && state.offline.online) {
+  if (
+    actions.length > 0 &&
+    !state.offline.busy &&
+    !state.offline.retryScheduled &&
+    state.offline.online
+  ) {
     send(actions[0], store.dispatch, config);
   }
 
@@ -60,11 +71,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   }
 
   if (action.type === 'Offline/COMPLETE_RETRY') {
-    if (
-      action.meta.retryToken === state.offline.retryToken &&
-      actions.length > 0 &&
-      !state.offline.busy
-    ) {
+    if (action.meta.retryToken === state.offline.retryToken && actions.length > 0) {
       send(actions[0], store.dispatch, config);
     }
   }
