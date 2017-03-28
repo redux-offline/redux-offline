@@ -268,13 +268,13 @@ The reason the default behaviour is to desperately try to make the requests succ
 
 Redux Offline supports the following configuration properties:
 ```js
-//@TODO UPDATE
 export type Config = {
-  batch: (outbox: Outbox) => Outbox,
   detectNetwork: (callback: NetworkCallback) => void,
   persist: (store: any) => any,
-  send: (effect: any, action: OfflineAction) => Promise<*>,
-  retry: (action: OfflineAction, retries: number) => ?Retry
+  effect: (effect: any, action: OfflineAction) => Promise<*>,
+  retry: (action: OfflineAction, retries: number) => ?number,
+  discard: (error: any, action: OfflineAction, retries: number) => boolean,
+  persistOptions: {}
 };
 ```
 
