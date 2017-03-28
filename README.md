@@ -260,16 +260,6 @@ Retrying a request for this long may seem excessive, and for some use cases it c
 
 The reason the default behaviour is to desperately try to make the requests succeed is that we really, really want to avoid having to deal with conflict resolution...
 
-### None of the parties want this conflict to go on
-
-Let's say a user of your microblogging app does two actions while offline:
-1. Creates a Post
-2. Edits said Post
-
-If post creation fails permanently and the message is [discarded](#giving-up-is-hard-to-do), it's guaranteed that the edit will fail as well. How do you want to handle that?
-
-
-
 
 ## Configuration
 
