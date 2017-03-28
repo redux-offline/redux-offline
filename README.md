@@ -80,7 +80,7 @@ In order to be able to render meaningful content when the user opens your applic
 
 Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
 
-You can [configure every aspect of how your state is persisted](#todo).
+You can [configure every aspect of how your state is persisted](#configuration).
 
 ### That's all she wrote
 
@@ -211,15 +211,15 @@ So the default effect format expected by the reconciler is something like:
 }
 ```
 
-That said, you'll probably want to [use your own method](#todo) - it can be anything, as long as it returns a Promise.
+That said, you'll probably want to [use your own method](#change-how-network-requests-are-made) - it can be anything, as long as it returns a Promise.
 
 ### Is this thing even on?
 
-A library that aims to support offline usage, it would be useful to know whether or not the device is online or offline. Unfortunately, network availability is not a binary "Yes" or "No": It can also be "Yes, but not really". The network receiver on your mobile device may report connectivity, but if you can't reach the remote server, are we really connnected?
+A library that aims to support offline usage, it would be useful to know whether or not the device is online or offline. Unfortunately, network availability is not a binary "Yes" or "No": It can also be "Yes, but not really". The network receiver on your mobile device may report connectivity, but if you can't reach the remote server, are we really connected?
 
 Redux Offline uses the browser [Network Information APIs](https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API) and React Native [NetInfo](https://facebook.github.io/react-native/docs/netinfo.html) to be notified when the device *thinks* it's online to orchestrate synchronisation and retries. The current reported online state is stored in your store state as boolean `state.offline.online` and can be used to display a network indicator in your app, if desired.
 
-Sometimes, it's more reliable to check network connectivity by actually making sure you can exchange data with a remote server by periodically making a HEAD request, or keeping an open WebSocket connection with a heartbeat. This, too, [can be configured](#todo).
+Sometimes, it's more reliable to check network connectivity by actually making sure you can exchange data with a remote server by periodically making a HEAD request, or keeping an open WebSocket connection with a heartbeat. This, too, [can be configured](#change-how-network-status-is-detected).
 
 
 ### Giving up is hard to do
@@ -231,9 +231,9 @@ Building an offline-friendly app, you should never give up because a *network* c
 Modelled after this principle, the default discard strategy is:
 * If server was not reached, always retry
 * If server responded with HTTP `4xx` client error, always discard
-* If server responded with HTTP `5xx` server error, retry with a decaying schedule configured by the [retry strategy](#todo).
+* If server responded with HTTP `5xx` server error, retry with a decaying schedule configured by the [retry strategy](#change-how-network-requests-are-retried).
 
-If your backend doesn't conform to this standard, or you've [changed the effects reconciler](#todo) to return errors that don't expose a HTTP `status` field, you'll want to [configure the error detection strategy](#todo), too.
+If your backend doesn't conform to this standard, or you've [changed the effects reconciler](#change-how-network-requests-are-made) to return errors that don't expose a HTTP `status` field, you'll want to [configure the error detection strategy](#change-how-irreconcilable-errors-are-detected), too.
 
 When a message is discarded, the `meta.offline.rollback` action defined in the message metadata is fired, and you can respond accordingly.
 
@@ -256,7 +256,7 @@ By default, we will always retry the first message in the queue when the [networ
 
 After these 10 timed attempts, if the message is still failing due to a server error, it will be discarded.
 
-Retrying a request for this long may seem excessive, and for some use cases it can be. You can [configure the retry strategy](#todo) to suit yours.
+Retrying a request for this long may seem excessive, and for some use cases it can be. You can [configure the retry strategy](#change-how-network-requests-are-retried) to suit yours.
 
 The reason the default behaviour is to desperately try to make the requests succeed is that we really, really want to avoid having to deal with conflict resolution...
 
@@ -421,7 +421,13 @@ online, is started, or you manually fire an `Offline/SEND` action.
 
 #### Change how errors are handled
 
+Granular error handling is not yet implemented. You can use discard/retry, and
+if necessary to purge messages from your queue, you can filter `state.offline.outbox`
+in your reducers. Official support coming soon.
+
 #### Change how queue processing is batched
+
+Currently messages are sent one by one, in serial. Customization support coming soon.
 
 #### Synchronise my state while the app is not open
 
