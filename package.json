@@ -16,7 +16,7 @@
     "url": "git+https://github.com/jevakallio/redux-offline.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jevakallio/redux-offline/issues"
   },
