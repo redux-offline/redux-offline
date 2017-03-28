@@ -65,7 +65,7 @@ Read the [Offline Guide](#offline-guide) to understand how effects are executed,
 
 ##### 4. (React Native Android) Ask permission to read network status
 
-If writing a native app for Android, you'll need to make sure to the permission to access network state in your `AndroidManifest.xml`:
+If writing a native app for Android, you'll need to make sure to request the permission to access network state in your `AndroidManifest.xml`:
 
 ```xml
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
