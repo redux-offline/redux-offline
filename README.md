@@ -1,4 +1,4 @@
-# Redux Offline
+<img alt="redux-offline" src="docs/logo.png" width="300"></img>
 
 Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, with first-class support for optimistic UI. Use with React, React Native, or as standalone state container for any web app.
 
