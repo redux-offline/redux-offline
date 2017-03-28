@@ -10,7 +10,7 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 * [Contributing](#contributing)
 * [Miscellanea](#miscellanea)
 
-## Full disclaimer
+## Full disclosure
 
 Redux Offline is very, very new. If you find a bug, good job for being an early adopter! (And there will be issues.) If you find a problem, please submit an issue and I will get to them. 😇
 
