@@ -394,7 +394,7 @@ The function is passed a callback, which you should call with boolean `true` whe
 #### Change how irreconcilable errors are detected
 
 Actions in the queue are by default discarded when a server returns
-a HTTP `4xx` error. To change this, set override the `congig.discard` method:
+a HTTP `4xx` error. To change this, set override the `config.discard` method:
 ```js
 const config = {
   discard: (error, action, retries) => error.permanent || retries > 10;
