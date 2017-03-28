@@ -301,8 +301,7 @@ import defaultConfig from 'redux-offline/lib/defaults';
 
 const customConfig = {
   ...defaultConfig,
-  send: (effect, _action) => Api.send(effect),
-  batch: (outbox) => take(outbox, 5)
+  effect: (effect, _action) => Api.send(effect)
 }
 
 const store = createOfflineStore(
@@ -323,10 +322,9 @@ import retry from 'redux-offline/lib/defaults/retry';
 import discard from 'redux-offline/lib/defaults/discard';
 
 const myConfig = {
-  batch,
   retry,
   discard,
-  send: (effect, action) => MyCustomApiService.send(effect, action),
+  effect: (effect, action) => MyCustomApiService.send(effect, action),
   detectNetwork: (callback) => MyCustomPingService.startPing(callback),
   persist: (store) => MyCustomPersistence.persist(store)
 };
