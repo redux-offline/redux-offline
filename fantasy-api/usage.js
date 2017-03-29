@@ -5,11 +5,6 @@ const followUserSuccess = userId => ({
   payload: { userId }
 });
 
-const followUserSuccess = userId => ({
-  type: 'FOLLOW_USER_COMMIT',
-  payload: { userId }
-});
-
 const followUserError = userId => ({
   type: 'FOLLOW_USER_ROLLBACK',
   payload: { userId }
