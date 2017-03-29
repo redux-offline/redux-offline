@@ -4,12 +4,16 @@
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "babel src --out-dir lib --ignore **/__tests__/**",
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
+  },
+  "jest": {
+    "rootDir": "src"
   },
   "repository": {
     "type": "git",
@@ -38,6 +42,7 @@
     "eslint-plugin-filenames": "^1.1.0",
     "eslint-plugin-import": "^2.2.0",
     "flow-bin": "^0.42.0",
+    "jest": "^19.0.2",
     "react": "^15.4.2",
     "redux": "^3.6.0",
     "redux-logger": "^2.8.2"
