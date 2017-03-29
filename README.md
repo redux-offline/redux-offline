@@ -145,7 +145,7 @@ const followingUsersReducer = (state, action) {
 
 ### A pessimist is never disappointed
 
-Sometimes it's important that the user knows that the action actually went through, so you can't optimistically your state until the effect has been executed. Or sometimes, in order to render the final UI state, you need some data from the server response. For these cases, you can use the `meta.offline.commit` action:
+Sometimes it's important that the user knows that the action actually went through, so you can't optimistically update your state until the effect has been executed. Or sometimes, in order to render the final UI state, you need some data from the server response. For these cases, you can use the `meta.offline.commit` action:
 
 ```js
 const completeOrder = (orderId, lineItems) => ({
