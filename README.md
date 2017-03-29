@@ -229,7 +229,7 @@ Sometimes, it's more reliable to check network connectivity by actually making s
 
 Networks are flaky. Your backend could be down. Sometimes, when the moon is in waxing crescent and the sixth-degree leylines are obstructed by passing birds, things mysteriously fail. If you are processing your offline actions queue in serial, you will need a reliable mechanism to decide when to retry the requests, and when to give up to prevent blocking the rest of the queue from being flushed.
 
-Building an offline-friendly app, you should never give up because a *network* connection failed. You *may* want to give up if the server reports a *server error*. And if the server tells you that your *request is cannot be processed*, you need to give up immediately.
+Building an offline-friendly app, you should never give up because a *network* connection failed. You *may* want to give up if the server reports a *server error*. And if the server tells you that your *request cannot be processed*, you need to give up immediately.
 
 Modelled after this principle, the default discard strategy is:
 * If server was not reached, always retry
