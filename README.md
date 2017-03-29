@@ -316,7 +316,7 @@ const store = createOfflineStore(
 ```
 
 #### Only import what you need
-The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring is only the pieces you need:
+The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
 import { createOfflineStore } from 'redux-offline';
@@ -345,7 +345,7 @@ const store = createOfflineStore(
 
 #### Change how network requests are made
 
-Probably the first thing you will want to do is to replace the default `fetch` effects handler. So this by overriding `config.effect`:
+Probably the first thing you will want to do is to replace the default `fetch` effects handler. Do this by overriding `config.effect`:
 ```js
 const config = {
   effect: (effect, action) => {
@@ -389,7 +389,7 @@ const config = {
 }
 ```
 
-The function is passed a callback, which you should call with boolean `true` when the app gets online, and `false` when it goes offline.
+The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline.
 
 #### Change how irreconcilable errors are detected
 
@@ -405,7 +405,7 @@ The method receives the Error returned by the effect reconciler, the action bein
 
 #### Change how network requests are retried
 
-By default, sending actions is retried on a decaying schedule starting with retries every few seconds, eventually slowing down to an hour before the last retry. These retry delays only apply to scenarios where the device reports being online but the server cannot be reached, or the server is reached by is responding with a non-permanent error.
+By default, sending actions is retried on a decaying schedule starting with retries every few seconds, eventually slowing down to an hour before the last retry. These retry delays only apply to scenarios where the device reports being online but the server cannot be reached, or the server is reached but is responding with a non-permanent error.
 
 To configure the retry duration, override `config.retry`:
 ```js
@@ -436,7 +436,7 @@ Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline need to currently be vanilla JavaScript objects.
+Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently need to be vanilla JavaScript objects.
 
 [Contributions welcome](#contributing).
 
