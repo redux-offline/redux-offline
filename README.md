@@ -78,6 +78,10 @@ Making offline-friendly apps is not rocket science, but to make them work well i
 
 **Redux Offline** is a battle-tested offline-first architecture, and an _experimental_ library that implements it. To make use of the library, it'll be helpful to understand the architecture behind it.
 
+### Progressive Web Apps
+
+Redux Offline help you with offline state management, but it **does not** automatically make your web page available offline. For caching assets (HTML pages, images, and other resources) your website needs to implement a ServiceWorker. To get started with PWAs and React, [this article provides great list of resources](https://medium.com/@addyosmani/progressive-web-apps-with-react-js-part-3-offline-support-and-network-resilience-c84db889162c) to begin with.
+
 ### Persistence is key
 In order to be able to render meaningful content when the user opens your application offline, your application state needs to be persisted to disk.
 
