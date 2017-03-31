@@ -1,5 +1,7 @@
+import { OFFLINE_STATUS_CHANGED } from 'constants';
+
 export const networkStatusChanged = online => ({
-  type: 'Offline/STATUS_CHANGED',
+  type: OFFLINE_STATUS_CHANGED,
   payload: {
     online
   }
