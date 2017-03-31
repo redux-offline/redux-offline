@@ -375,7 +375,7 @@ const config = {
 };
 ```
 
-If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsibe for setting any subscribers to listen for store changes to persist it.
+If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsible for setting any subscribers to listen for store changes to persist it.
 ```js
 const config = {
   persist: (store) =>
