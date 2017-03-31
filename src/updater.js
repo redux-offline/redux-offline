@@ -68,7 +68,7 @@ const offlineUpdater = function offlineUpdater(
   }
 
   // Remove completed actions from queue (success or fail)
-  if (action.meta !== null && action.meta.completed === true) {
+  if (action.meta != null && action.meta.completed === true) {
     return dequeue(state);
   }
 
