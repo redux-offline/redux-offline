@@ -1,13 +1,14 @@
 // @flow
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
+import * as CONSTANTS from 'constants';
 
 const scheduleRetry = (delay = 0) => {
-  return { type: 'Offline/SCHEDULE_RETRY', payload: { delay } };
+  return { type: CONSTANTS.OFFLINE_SCHEDULE_RETRY, payload: { delay } };
 };
 
 const completeRetry = (action, retryToken) => {
-  return { type: 'Offline/COMPLETE_RETRY', payload: action, meta: { retryToken } };
+  return { type: CONSTANTS.OFFLINE_COMPLETE_RETRY, payload: action, meta: { retryToken } };
 };
 
 const after = (timeout = 0) => {
@@ -39,7 +40,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         return dispatch(complete(metadata.rollback, false, error));
       }
       const delay = config.retry(action, retries);
-      if (delay != null) {
+      if (delay !== null) {
         console.log('Retrying action', action.type, 'with delay', delay);
         return dispatch(scheduleRetry(delay));
       } else {
@@ -70,7 +71,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
     send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
-  if (action.type === 'Offline/SCHEDULE_RETRY') {
+  if (action.type === CONSTANTS.OFFLINE_SCHEDULE_RETRY) {
     const retryToken = state.offline.retryToken;
     after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
   }
@@ -81,7 +82,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   //   }
   // }
 
-  if (action.type === 'Offline/SEND' && actions.length > 0 && !state.offline.busy) {
+  if (action.type === CONSTANTS.OFFLINE_SEND && actions.length > 0 && !state.offline.busy) {
     send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
