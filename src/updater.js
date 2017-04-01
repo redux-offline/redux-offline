@@ -1,33 +1,26 @@
 // @flow
-/* global $Shape*/
+/* global */
 
-import type { AppState, OfflineState, OfflineAction, ResultAction } from './types';
+import type { OfflineState, OfflineAction, ResultAction } from './types';
 
 type ControlAction =
   | { type: 'Offline/STATUS_CHANGED', payload: { online: boolean } }
   | { type: 'Offline/SCHEDULE_RETRY' };
 
-const get = (state: AppState): OfflineState => {
-  return state.offline;
-};
-
-const update = (state: AppState, fragment: $Shape<OfflineState>): AppState => {
-  return { ...state, offline: { ...state.offline, ...fragment } };
-};
-
-const enqueue = (state: AppState, action: any): AppState => {
-  const transaction = get(state).lastTransaction + 1;
+const enqueue = (state: OfflineState, action: any): OfflineState => {
+  const transaction = state.lastTransaction + 1;
   const stamped = { ...action, meta: { ...action.meta, transaction } };
-  const outbox = get(state).outbox;
-  return update(state, {
+  const outbox = state.outbox;
+  return {
+    ...state,
     lastTransaction: transaction,
     outbox: [...outbox, stamped]
-  });
+  };
 };
 
-const dequeue = (state: AppState): AppState => {
-  const [, ...rest] = get(state).outbox;
-  return update(state, { outbox: rest, retryCount: 0 });
+const dequeue = (state: OfflineState): OfflineState => {
+  const [, ...rest] = state.outbox;
+  return { ...state, outbox: rest, retryCount: 0 };
 };
 
 const initialState: OfflineState = {
@@ -43,33 +36,29 @@ const initialState: OfflineState = {
 // @TODO: the typing of this is all kinds of wack
 
 const offlineUpdater = function offlineUpdater(
-  state: AppState,
+  state: OfflineState = initialState,
   action: ControlAction | OfflineAction | ResultAction
-): AppState {
-  // Initial state
-  if (!get(state || {})) {
-    return update(state || {}, initialState);
-  }
-
+): OfflineState {
   // Update online/offline status
   if (
     action.type === 'Offline/STATUS_CHANGED' &&
     action.payload &&
     typeof action.payload.online === 'boolean'
   ) {
-    return update(state, { online: action.payload.online });
+    return { ...state, online: action.payload.online };
   }
 
   if (action.type === 'Offline/SCHEDULE_RETRY') {
-    return update(state, {
+    return {
+      ...state,
       retryScheduled: true,
-      retryCount: get(state).retryCount + 1,
-      retryToken: get(state).retryToken + 1
-    });
+      retryCount: state.retryCount + 1,
+      retryToken: state.retryToken + 1
+    };
   }
 
   if (action.type === 'Offline/COMPLETE_RETRY') {
-    return update(state, { retryScheduled: false });
+    return { ...state, retryScheduled: false };
   }
 
   // Add offline actions to queue
@@ -86,5 +75,16 @@ const offlineUpdater = function offlineUpdater(
 };
 
 export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
-  return offlineUpdater(reducer(state, action), action);
+  let offlineState;
+  let restState;
+  if (typeof state !== 'undefined') {
+    const { offline, ...rest } = state;
+    offlineState = offline;
+    restState = rest;
+  }
+
+  return {
+    ...reducer(restState, action),
+    offline: offlineUpdater(offlineState, action)
+  };
 };
