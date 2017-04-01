@@ -1,21 +1,21 @@
-import * as CONSTANTS from 'constants';
+import { OFFLINE_STATUS_CHANGED, OFFLINE_SCHEDULE_RETRY, OFFLINE_COMPLETE_RETRY } from 'constants';
 
 export const networkStatusChanged = online => ({
-  type: CONSTANTS.OFFLINE_STATUS_CHANGED,
+  type: OFFLINE_STATUS_CHANGED,
   payload: {
     online
   }
 });
 
 export const scheduleRetry = (delay = 0) => ({
-  type: CONSTANTS.OFFLINE_SCHEDULE_RETRY,
+  type: OFFLINE_SCHEDULE_RETRY,
   payload: {
     delay
   }
 });
 
 export const completeRetry = (action, retryToken) => ({
-  type: CONSTANTS.OFFLINE_COMPLETE_RETRY,
+  type: OFFLINE_COMPLETE_RETRY,
   payload: action,
   meta: { retryToken }
 });
