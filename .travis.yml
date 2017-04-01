@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - 7
+script:
+  - node --version
+  - yarn --version
+  - yarn run lint && yarn run flow && yarn run test
+notifications:
+  email:
+    on_failure: change
+cache:
+  yarn: true
+  directories:
+    - node_modules

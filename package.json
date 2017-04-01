@@ -8,6 +8,7 @@
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "lint": "eslint src/",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
