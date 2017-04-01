@@ -1,4 +1,8 @@
-import { OFFLINE_STATUS_CHANGED, OFFLINE_SCHEDULE_RETRY, OFFLINE_COMPLETE_RETRY } from 'constants';
+import {
+  OFFLINE_STATUS_CHANGED,
+  OFFLINE_SCHEDULE_RETRY,
+  OFFLINE_COMPLETE_RETRY
+} from './constants';
 
 export const networkStatusChanged = online => ({
   type: OFFLINE_STATUS_CHANGED,
