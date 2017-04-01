@@ -17,8 +17,6 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 
 _To get started, take a moment to read through the **[Offline Guide](#offline-guide)** to understand the architecture and tradeoffs behind Redux Offline, and for further context why Offline matters, read [this blog post](https://hackernoon.com/introducing-redux-offline-offline-first-architecture-for-progressive-web-applications-and-react-68c5167ecfe0)_
 
-***
-
 ## Contents
 
 * [Quick start](#quick-start)
