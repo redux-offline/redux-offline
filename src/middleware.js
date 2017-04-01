@@ -1,14 +1,7 @@
 // @flow
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
-
-const scheduleRetry = (delay = 0) => {
-  return { type: 'Offline/SCHEDULE_RETRY', payload: { delay } };
-};
-
-const completeRetry = (action, retryToken) => {
-  return { type: 'Offline/COMPLETE_RETRY', payload: action, meta: { retryToken } };
-};
+import { completeRetry, scheduleRetry } from './actions';
 
 const after = (timeout = 0) => {
   return new Promise(resolve => setTimeout(resolve, timeout));

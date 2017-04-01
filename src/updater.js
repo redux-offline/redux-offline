@@ -2,10 +2,15 @@
 /* global */
 
 import type { OfflineState, OfflineAction, ResultAction } from './types';
+import {
+  OFFLINE_STATUS_CHANGED,
+  OFFLINE_SCHEDULE_RETRY,
+  OFFLINE_COMPLETE_RETRY
+} from './constants';
 
 type ControlAction =
-  | { type: 'Offline/STATUS_CHANGED', payload: { online: boolean } }
-  | { type: 'Offline/SCHEDULE_RETRY' };
+  | { type: OFFLINE_STATUS_CHANGED, payload: { online: boolean } }
+  | { type: OFFLINE_SCHEDULE_RETRY };
 
 const enqueue = (state: OfflineState, action: any): OfflineState => {
   const transaction = state.lastTransaction + 1;
@@ -41,14 +46,14 @@ const offlineUpdater = function offlineUpdater(
 ): OfflineState {
   // Update online/offline status
   if (
-    action.type === 'Offline/STATUS_CHANGED' &&
+    action.type === OFFLINE_STATUS_CHANGED &&
     action.payload &&
     typeof action.payload.online === 'boolean'
   ) {
     return { ...state, online: action.payload.online };
   }
 
-  if (action.type === 'Offline/SCHEDULE_RETRY') {
+  if (action.type === OFFLINE_SCHEDULE_RETRY) {
     return {
       ...state,
       retryScheduled: true,
@@ -57,7 +62,7 @@ const offlineUpdater = function offlineUpdater(
     };
   }
 
-  if (action.type === 'Offline/COMPLETE_RETRY') {
+  if (action.type === OFFLINE_COMPLETE_RETRY) {
     return { ...state, retryScheduled: false };
   }
 
