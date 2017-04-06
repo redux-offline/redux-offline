@@ -55,5 +55,6 @@ export type Config = {
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  persistOptions: {},
+  persistCallback: (callback: any) => any
 };
