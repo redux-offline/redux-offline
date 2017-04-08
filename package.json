@@ -8,8 +8,16 @@
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
+  },
+  "jest": {
+    "rootDir": "src",
+    "setupFiles": [
+      "../jest-setup.js"
+    ],
+    "testRegex": "\\.test\\.js$"
   },
   "repository": {
     "type": "git",
@@ -25,6 +33,7 @@
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
+    "babel-jest": "^19.0.0",
     "babel-loader": "^6.2.8",
     "babel-plugin-flow-react-proptypes": "^0.18.1",
     "babel-plugin-transform-class-properties": "^6.19.0",
@@ -38,9 +47,11 @@
     "eslint-plugin-filenames": "^1.1.0",
     "eslint-plugin-import": "^2.2.0",
     "flow-bin": "^0.42.0",
+    "jest": "^19.0.2",
     "react": "^15.4.2",
     "redux": "^3.6.0",
-    "redux-logger": "^2.8.2"
+    "redux-logger": "^2.8.2",
+    "redux-mock-store": "^1.2.2"
   },
   "dependencies": {
     "redux-persist": "^4.5.0"

@@ -1,11 +1,16 @@
 // @flow
 /* global $Shape*/
 
-import type { AppState, OfflineState, OfflineAction, ResultAction } from './types';
+import type {
+  AppState,
+  OfflineState,
+  OfflineAction,
+  ResultAction
+} from './types';
 
 type ControlAction =
-  | { type: 'Offline/STATUS_CHANGED', payload: { online: boolean } }
-  | { type: 'Offline/SCHEDULE_RETRY' };
+  | { type: "Offline/STATUS_CHANGED", payload: { online: boolean } }
+  | { type: "Offline/SCHEDULE_RETRY" };
 
 const get = (state: AppState): OfflineState => {
   return state.offline;
@@ -85,6 +90,7 @@ const offlineUpdater = function offlineUpdater(
   return state;
 };
 
-export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
-  return offlineUpdater(reducer(state, action), action);
-};
+export const enhanceReducer = (reducer: any) =>
+  (state: any, action: any) => {
+    return offlineUpdater(reducer(state, action), action);
+  };
