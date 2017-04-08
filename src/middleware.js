@@ -1,6 +1,7 @@
 // @flow
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
+import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
 import { completeRetry, scheduleRetry } from './actions';
 
 const after = (timeout = 0) => {
@@ -63,7 +64,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
     send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
-  if (action.type === 'Offline/SCHEDULE_RETRY') {
+  if (action.type === OFFLINE_SCHEDULE_RETRY) {
     const retryToken = state.offline.retryToken;
     after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
   }
@@ -74,7 +75,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   //   }
   // }
 
-  if (action.type === 'Offline/SEND' && actions.length > 0 && !state.offline.busy) {
+  if (action.type === OFFLINE_SEND && actions.length > 0 && !state.offline.busy) {
     send(actions[0], store.dispatch, config, state.offline.retryCount);
   }
 
