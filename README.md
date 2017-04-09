@@ -156,7 +156,7 @@ const followingUsersReducer = (state, action) {
       return { ...state, [action.payload.userId]: true };
     case 'FOLLOW_USER_ROLLBACK':
       return omit(state, [action.payload.userId]);
-    default;
+    default:
       return state;
   }
 }
@@ -198,7 +198,7 @@ const ordersReducer = (state, action) {
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
-    default;
+    default:
       return state;
   }
 }
