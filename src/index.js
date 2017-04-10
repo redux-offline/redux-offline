@@ -16,7 +16,7 @@ let persistor;
 export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) => (
   reducer: any,
   preloadedState: any,
-  enhancer: any
+  enhancer: any = x => x
 ) => {
   console.log('user config', userConfig);
   const config = applyDefaults(userConfig);
