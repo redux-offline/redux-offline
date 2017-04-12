@@ -6,7 +6,7 @@ import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
-  OFFLINE_BUSY,
+  OFFLINE_BUSY
 } from './constants';
 
 type ControlAction =
