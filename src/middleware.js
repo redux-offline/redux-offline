@@ -2,7 +2,7 @@
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
 import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
-import { completeRetry, scheduleRetry } from './actions';
+import { completeRetry, scheduleRetry, busy } from './actions';
 
 const after = (timeout = 0) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -23,6 +23,7 @@ const take = (state: AppState, config: Config): Outbox => {
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
+  dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
     .then(result => dispatch(complete(metadata.commit, true, result)))
@@ -40,7 +41,8 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         console.log('Discarding action', action.type, 'because retry did not return a delay');
         return dispatch(complete(metadata.rollback, false, error));
       }
-    });
+    })
+    .finally(() => dispatch(busy(false)));
 };
 
 export const createOfflineMiddleware = (config: Config) => (store: any) => (next: any) => (

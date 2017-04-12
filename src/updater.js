@@ -5,7 +5,8 @@ import type { OfflineState, OfflineAction, ResultAction } from './types';
 import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
-  OFFLINE_COMPLETE_RETRY
+  OFFLINE_COMPLETE_RETRY,
+  OFFLINE_BUSY,
 } from './constants';
 
 type ControlAction =
@@ -29,6 +30,7 @@ const dequeue = (state: OfflineState): OfflineState => {
 };
 
 const initialState: OfflineState = {
+  busy: false,
   lastTransaction: 0,
   online: false,
   outbox: [],
@@ -64,6 +66,10 @@ const offlineUpdater = function offlineUpdater(
 
   if (action.type === OFFLINE_COMPLETE_RETRY) {
     return { ...state, retryScheduled: false };
+  }
+
+  if (action.type === OFFLINE_BUSY) {
+    return { ...state, busy: action.payload.busy };
   }
 
   // Add offline actions to queue
