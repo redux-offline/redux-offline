@@ -43,7 +43,8 @@ export type OfflineState = {
 };
 
 export type AppState = {
-  offline: OfflineState
+  offline: OfflineState,
+  toJS?: Function // Any better way to say that State can be Immutable?
 };
 
 type NetworkCallback = (result: boolean) => void;
@@ -56,5 +57,6 @@ export type Config = {
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
+  immutable: boolean,
   persistCallback: (callback: any) => any
 };

@@ -1,7 +1,7 @@
 // @flow
 /* global */
 
-import type { OfflineState, OfflineAction, ResultAction } from './types';
+import type { OfflineState, OfflineAction, ResultAction, Config } from './types';
 import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
@@ -85,11 +85,18 @@ const offlineUpdater = function offlineUpdater(
   return state;
 };
 
-export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
+export const enhanceReducer = (reducer: any, config: Config) => (state: any, action: any) => {
   let offlineState;
   let restState;
   if (typeof state !== 'undefined') {
     const { offline, ...rest } = state;
+    if (config.immutable) {
+      offlineState = state.get('offline');
+      restState = state.delete('offline');
+
+      return reducer(restState, action)
+        .set('offline', offlineUpdater(offlineState, action));
+    }
     offlineState = offline;
     restState = rest;
   }

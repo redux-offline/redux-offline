@@ -52,7 +52,13 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   const result = next(action);
 
   // find any actions to send, if any
-  const state: AppState = store.getState();
+  let state: AppState = store.getState();
+  if (config.immutable) {
+    if (!state.toJS) {
+      throw new Error('Config.immutable is set to true but your root state is not immutable');
+    }
+    state = state.toJS();
+  }
   const actions = take(state, config);
 
   // if the are any actions in the queue that we are not
