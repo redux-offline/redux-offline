@@ -1,7 +1,8 @@
 import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
-  OFFLINE_COMPLETE_RETRY
+  OFFLINE_COMPLETE_RETRY,
+  OFFLINE_BUSY
 } from './constants';
 
 export const networkStatusChanged = online => ({
@@ -22,4 +23,9 @@ export const completeRetry = (action, retryToken) => ({
   type: OFFLINE_COMPLETE_RETRY,
   payload: action,
   meta: { retryToken }
+});
+
+export const busy = isBusy => ({
+  type: OFFLINE_BUSY,
+  payload: { busy: isBusy }
 });
