@@ -40,7 +40,7 @@ export const createOfflineStore = (
 
   // launch store persistor
   if (config.persist) {
-    persistor = config.persist(store, config.persistOptions);
+    persistor = config.persist(store, config.persistOptions, config.persistCallback);
   }
 
   // launch network detector

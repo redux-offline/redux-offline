@@ -388,6 +388,13 @@ const config = {
 };
 ```
 
+You can pass the callback for redux-persist as well. This function would be called when rehydration is complete. It's useful if you want to delay rendering until rehydration is complete. You can define it in `config.persistCallback`:
+```js
+const config = {
+  persistCallback: () => { /*...*/ }
+};
+```
+
 If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsible for setting any subscribers to listen for store changes to persist it.
 ```js
 const config = {
