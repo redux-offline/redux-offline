@@ -15,7 +15,11 @@
     "watch": "npm run build -- --watch"
   },
   "jest": {
-    "rootDir": "src"
+    "rootDir": "src",
+    "setupFiles": [
+      "../jest-setup.js"
+    ],
+    "testRegex": "\\.test\\.js$"
   },
   "repository": {
     "type": "git",
@@ -32,6 +36,7 @@
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.8",
+    "babel-jest": "^19.0.0",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-flow-strip-types": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
@@ -46,7 +51,8 @@
     "jest": "^19.0.2",
     "react": "^15.4.2",
     "redux": "^3.6.0",
-    "redux-logger": "^2.8.2"
+    "redux-logger": "^2.8.2",
+    "redux-mock-store": "^1.2.2"
   },
   "dependencies": {
     "redux-persist": "^4.5.0"

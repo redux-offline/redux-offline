@@ -74,7 +74,11 @@ const offlineUpdater = function offlineUpdater(
     return { ...state, retryScheduled: false };
   }
 
-  if (action.type === OFFLINE_BUSY && action.payload && typeof action.payload.busy === 'boolean') {
+  if (
+    action.type === OFFLINE_BUSY &&
+    action.payload &&
+    typeof action.payload.busy === 'boolean'
+  ) {
     return { ...state, busy: action.payload.busy };
   }
 

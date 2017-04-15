@@ -2890,6 +2890,10 @@ redux-logger@^2.8.2:
   dependencies:
     deep-diff "0.3.4"
 
+redux-mock-store@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/redux-mock-store/-/redux-mock-store-1.2.2.tgz#38007dc38f12ca8d965c7521afee5ccacc234d03"
+
 redux-persist@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-4.5.0.tgz#9730c93c1e3b3782cecf68ae5f4753d65d50c2b7"
