@@ -19,7 +19,8 @@ function _setUpMockResponse(mockType) {
         headers: {
           get: () => ['json']
         },
-        json: () => Promise.resolve(JSON.parse(body))
+        json: () => Promise.resolve(JSON.parse(body)),
+        text: () => Promise.resolve(body)
       }));
   };
 }

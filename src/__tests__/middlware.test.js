@@ -9,6 +9,7 @@ import {
   flushAllPromises,
   createInitialState,
   createOfflineAction,
+  newActionCapturingStore,
   createOfflineActionReceiver,
   createOfflineMiddlewareWithDefaults
 } from './utils';
@@ -29,25 +30,19 @@ describe('middleware', () => {
   it(`should take in the first item in state.offline.outbox and, in the case 
     where the first item has a length > 1, the middleware is online, not busy, 
     and does not have a retry scheuled, attempt to run the effect described in 
-    the action and dispatch the result to the store`, () => {
+    the action and dispatch the result to the store`, done => {
     const action = createOfflineAction();
-    const middleware = createOfflineMiddlewareWithDefaults();
-    const mockStore = configureStore([middleware]);
-
-    let initialState = createInitialState();
-    initialState.offline.outbox = [action];
-
-    const store = mockStore(() => initialState);
+    const store = newActionCapturingStore({
+      preloadedState: {
+        offline: { outbox: [action] }
+      }
+    });
 
     fetch.mockResponseSuccessOnce({ data: 'it works!' });
     store.dispatch({ type: 'ANY' });
 
-    // need to do this to prevent infininte loop caused by mockStore never
-    // clearing out the offline.outbox because it doesn't actually use a reducer
-    initialState = createInitialState();
-
-    setImmediate(() => {
-      const actions = store.getActions();
+    flushAllPromises().then(() => {
+      const actions = store.getState().actions;
       const finder = actionItem => actionItem.type === 'COMPLETE_ACTION_COMMIT';
       const offlineAction = actions.find(finder);
 
@@ -55,6 +50,7 @@ describe('middleware', () => {
       expect(offlineAction.meta.completed).toBe(true);
       expect(offlineAction.meta.success).toBe(true);
       expect(offlineAction.payload).toEqual({ data: 'it works!' });
+      done();
     });
   });
 

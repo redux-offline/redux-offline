@@ -3,18 +3,18 @@
 /*==================================================
                    IMPORTS / SETUP
 ==================================================*/
-import { cloneDeep } from 'lodash';
+import { offline } from '../index';
 import { applyDefaults } from '../config';
-import { createOfflineStore } from '../index';
+import { cloneDeep, omit } from 'lodash';
 import { createOfflineMiddleware } from '../middleware';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
 import type { OfflineState } from '../types';
 /*==================================================
                 UTILITY DEFINITIONS
 ==================================================*/
 type ActionType = { type: string, payload?: any };
-type ReducerType = Function<Object, ActionType>;
+type ReducerType = (Object, ActionType) => Object;
 
 const defaultUserConfig = {
   defaultUserConfig: true
@@ -31,7 +31,8 @@ const defaultState: OfflineState = {
 };
 
 // essentially a no-op Redux middleware
-const dummyMiddleWare = () => next => (action: ActionType) => next(action);
+const dummyMiddleWare = () =>
+  (next: Function) => (action: ActionType) => next(action);
 
 // returns a reducer which acts on given action type
 function mockReducerForActionType(actionType: string) {
@@ -49,22 +50,32 @@ function mockReducerForActionType(actionType: string) {
 // you just want to ensure it received an action
 const dummyReducer: ReducerType = mockReducerForActionType('ANY');
 
-// calls createOfflineStore with default args
-function createOfflineStoreWithDefaults(
+// calls offline with default args
+function offlineWithDefaults(
   {
     reducer = dummyReducer,
-    enhancer = applyMiddleware(dummyMiddleWare),
+    middleware = dummyMiddleWare,
     userConfig = defaultUserConfig,
     preloadedState = {}
   } = {}
 ) {
-  return createOfflineStore(reducer, preloadedState, enhancer, userConfig);
+  return createStore(
+    reducer,
+    preloadedState,
+    compose(applyMiddleware(middleware), offline(userConfig))
+  );
 }
 
 function createInitialState(overrides = {}) {
+  const nonOfflineState = omit(overrides, 'offline');
+
   return {
-    offline: { ...cloneDeep(defaultState), online: true },
-    ...overrides
+    offline: {
+      ...cloneDeep(defaultState),
+      online: true,
+      ...overrides.offline || {}
+    },
+    ...nonOfflineState
   };
 }
 
@@ -112,18 +123,49 @@ function flushAllPromises() {
   return new Promise(resolve => setImmediate(resolve));
 }
 
+function _captureActionsReducer(state = { actions: [] }, action) {
+  state.actions.push(action);
+
+  if (action.type === 'CLEAR_ACTIONS') {
+    state.actions = [];
+  }
+
+  return state;
+}
+
+function newActionCapturingStore(
+  {
+    reducer = _captureActionsReducer,
+    preloadedState = {}
+  } = {}
+) {
+  return offlineWithDefaults({
+    reducer,
+    preloadedState: { ...createInitialState(preloadedState), actions: [] }
+  });
+}
+
+const mockCreateStore = jest.fn(() => ({
+  dispatch: jest.fn(),
+  getState: jest.fn(),
+  subscribe: jest.fn(),
+  replaceReducer: jest.fn()
+}));
+
 /*==================================================
                        EXPORTS
 ==================================================*/
 export {
   dummyReducer,
+  mockCreateStore,
   dummyMiddleWare,
   flushAllPromises,
   defaultUserConfig,
   createInitialState,
   createOfflineAction,
+  offlineWithDefaults,
+  newActionCapturingStore,
   mockReducerForActionType,
   createOfflineActionReceiver,
-  createOfflineStoreWithDefaults,
   createOfflineMiddlewareWithDefaults
 };
