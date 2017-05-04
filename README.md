@@ -223,7 +223,7 @@ The default reconciler is simply a paper-thin wrapper around [fetch](https://dev
   const effectReconciler = ({url, ...opts}) =>
     fetch(url, opts).then(res => res.ok
       ? res.json()
-      : Promise.reject(res.text().then(msg => new Error(msg)));
+      : Promise.reject(res.text().then(msg => new Error(msg))));
 ```
 So the default effect format expected by the reconciler is something like:
 ```js
