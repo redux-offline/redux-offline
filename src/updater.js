@@ -6,7 +6,8 @@ import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
-  OFFLINE_BUSY
+  OFFLINE_BUSY,
+  PERSIST_REHYDRATE
 } from './constants';
 
 type ControlAction =
@@ -26,7 +27,7 @@ const enqueue = (state: OfflineState, action: any): OfflineState => {
 
 const dequeue = (state: OfflineState): OfflineState => {
   const [, ...rest] = state.outbox;
-  return { ...state, outbox: rest, retryCount: 0 };
+  return { ...state, outbox: rest, retryCount: 0, busy: false };
 };
 
 const initialState: OfflineState = {
@@ -55,9 +56,14 @@ const offlineUpdater = function offlineUpdater(
     return { ...state, online: action.payload.online };
   }
 
+  if (action.type === PERSIST_REHYDRATE) {
+    return { ...state, busy: false };
+  }
+
   if (action.type === OFFLINE_SCHEDULE_RETRY) {
     return {
       ...state,
+      busy: false,
       retryScheduled: true,
       retryCount: state.retryCount + 1,
       retryToken: state.retryToken + 1
@@ -68,7 +74,7 @@ const offlineUpdater = function offlineUpdater(
     return { ...state, retryScheduled: false };
   }
 
-  if (action.type === OFFLINE_BUSY) {
+  if (action.type === OFFLINE_BUSY && action.payload && typeof action.payload.busy === 'boolean') {
     return { ...state, busy: action.payload.busy };
   }
 
@@ -85,24 +91,25 @@ const offlineUpdater = function offlineUpdater(
   return state;
 };
 
-export const enhanceReducer = (reducer: any, config: Config) => (state: any, action: any) => {
-  let offlineState;
-  let restState;
-  if (typeof state !== 'undefined') {
-    const { offline, ...rest } = state;
-    if (config.immutable) {
-      offlineState = state.get('offline');
-      restState = state.delete('offline');
+export const enhanceReducer = (reducer: any, config: Config) =>
+  (state: any, action: any) => {
+    let offlineState;
+    let restState;
+    if (typeof state !== 'undefined') {
+      const { offline, ...rest } = state;
+      if (config.immutable) {
+        offlineState = state.get('offline');
+        restState = state.delete('offline');
 
-      return reducer(restState, action)
-        .set('offline', offlineUpdater(offlineState, action));
+        return reducer(restState, action)
+          .set('offline', offlineUpdater(offlineState, action));
+      }
+      offlineState = offline;
+      restState = rest;
     }
-    offlineState = offline;
-    restState = rest;
-  }
 
-  return {
-    ...reducer(restState, action),
-    offline: offlineUpdater(offlineState, action)
+    return {
+      ...reducer(restState, action),
+      offline: offlineUpdater(offlineState, action)
+    };
   };
-};

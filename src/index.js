@@ -1,7 +1,7 @@
 // @flow
 /*global $Shape*/
 import type { Config } from './types';
-import { applyMiddleware, createStore, compose } from 'redux';
+import { applyMiddleware, compose } from 'redux';
 import { autoRehydrate as reduxAutoRehydrate } from 'redux-persist';
 import {
   persistStore as immutablePersistStore,
@@ -18,11 +18,10 @@ import { networkStatusChanged } from './actions';
 let persistor;
 let autoRehydrate = reduxAutoRehydrate;
 
-export const createOfflineStore = (
+export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) => (
   reducer: any,
   preloadedState: any,
-  enhancer: any,
-  userConfig: $Shape<Config> = {}
+  enhancer: any = x => x
 ) => {
   console.log('user config', userConfig);
   const config = applyDefaults(userConfig);

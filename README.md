@@ -36,26 +36,30 @@ Redux Offline is very, very new. If you find a bug, good job for being an early 
 npm install --save redux-offline
 ```
 
-##### 2. Replace [redux createStore](http://redux.js.org/docs/api/createStore.html) with createOfflineStore
+##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
 ```diff
 
 - import { applyMiddleware, createStore } from 'redux';
-+ import { applyMiddleware } from 'redux';
-+ import { createOfflineStore } from 'redux-offline';
++ import { applyMiddleware, createStore, compose } from 'redux';
++ import { offline } from 'redux-offline';
 + import offlineConfig from 'redux-offline/lib/defaults';
 
 // ...
 
-- const store = createStore(
-+ const store = createOfflineStore(
+const store = createStore(
   reducer,
   preloadedState,
-  applyMiddleware(middleware),
-+ offlineConfig  
+-  applyMiddleware(middleware)
++  compose(
++    applyMiddleware(middleware),
++    offline(offlineConfig)
++  )
 );
 ```
 
 See [Configuration](#configuration) for overriding default configurations.
+
+Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/jevakallio/redux-offline/releases/tag/v2.0.0).
 
 ##### 3. Decorate actions with offline metadata
 
@@ -208,7 +212,7 @@ const ordersReducer = (state, action) {
 
 The last part of the offline metadata is `meta.offline.effect`. This property can contain anything, and will be passed as-is to the effects reconciler.
 
-The **effects reconciler** is a function that you pass to `createOfflineStore` configuration, whose responsibility it is to take the effect payload, send it over the network, and return a Promise that resolves if sending was successful or rejects if the sending failed. The method is passed the full action as a second parameter:
+The **effects reconciler** is a function that you pass to offline enhancer configuration, whose responsibility it is to take the effect payload, send it over the network, and return a Promise that resolves if sending was successful or rejects if the sending failed. The method is passed the full action as a second parameter:
 
 ```js
 type EffectsReconciler = (effect: any, action: OfflineAction) => Promise<any>
@@ -300,25 +304,24 @@ export type Config = {
 };
 ```
 
-#### Passing configuration to createOfflineStore
-The `createOfflineStore` store creator takes the [configuration object](#configuration-object) as a final parameter:
+#### Passing configuration to the enhancer
+The `offline` store enhancer takes the [configuration object](#configuration-object) as a final parameter:
 ```diff
-+ import { createOfflineStore } from 'redux-offline';
++ import { offline } from 'redux-offline';
 + import defaultConfig from 'redux-offline/lib/defaults';
-+
-- const store = createStore(
-+ const store = createOfflineStore(
+
+const store = createStore(
   reducer,
   preloadedState,
-  middleware,
-+ defaultConfig  
+-  middleware
++  compose(middleware, offline(defaultConfig))
 );
 ```
 
 #### Overriding default properties
 You can override any individual property in the default configuration:
 ```diff
-import { createOfflineStore } from 'redux-offline';
+import { offline } from 'redux-offline';
 import defaultConfig from 'redux-offline/lib/defaults';
 
 const customConfig = {
@@ -326,11 +329,11 @@ const customConfig = {
   effect: (effect, _action) => Api.send(effect)
 }
 
-const store = createOfflineStore(
+const store = createStore(
   reducer,
   preloadedState,
-  middleware,
-+ customConfig  
+-  middleware
++  compose(middleware, offline(customConfig))
 );
 ```
 
@@ -338,7 +341,7 @@ const store = createOfflineStore(
 The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
-import { createOfflineStore } from 'redux-offline';
+import { offline } from 'redux-offline';
 import batch from 'redux-offline/lib/defaults/batch';
 import retry from 'redux-offline/lib/defaults/retry';
 import discard from 'redux-offline/lib/defaults/discard';
@@ -351,11 +354,12 @@ const myConfig = {
   persist: (store) => MyCustomPersistence.persist(store)
 };
 
-const store = createOfflineStore(
+const store = createStore(
   reducer,
   preloadedState,
-  middleware,
-+ myConfig  
+-  middleware
++  compose(middleware, offline(myConfig))
+ myConfig  
 );
 ```
 
