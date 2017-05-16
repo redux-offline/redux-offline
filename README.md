@@ -466,10 +466,12 @@ Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
-
-[Contributions welcome](#contributing).
-
+To use an immutable store, just override `config.immutable`:
+```js
+const config = {
+  immutable: true
+}
+```
 
 ## Contributing
 

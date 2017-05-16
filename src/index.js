@@ -2,7 +2,11 @@
 /*global $Shape*/
 import type { Config } from './types';
 import { applyMiddleware, compose } from 'redux';
-import { autoRehydrate } from 'redux-persist';
+import { autoRehydrate as reduxAutoRehydrate } from 'redux-persist';
+import {
+  persistStore as immutablePersistStore,
+  autoRehydrate as immutableAutoRehydrateImmutable
+} from 'redux-persist-immutable';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
@@ -12,6 +16,7 @@ import { networkStatusChanged } from './actions';
 
 // eslint-disable-next-line no-unused-vars
 let persistor;
+let autoRehydrate = reduxAutoRehydrate;
 
 export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) => (
   reducer: any,
@@ -25,9 +30,14 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
 
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
-  const offlineReducer = enhanceReducer(reducer);
+  const offlineReducer = enhanceReducer(reducer, config);
 
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
+
+  if (config.immutable) {
+    autoRehydrate = immutableAutoRehydrateImmutable;
+    config.persist = immutablePersistStore;
+  }
 
   // create autoRehydrate enhancer if required
   const offlineEnhancer = config.persist && config.rehydrate
