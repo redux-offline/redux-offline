@@ -41,8 +41,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         console.log('Discarding action', action.type, 'because retry did not return a delay');
         return dispatch(complete(metadata.rollback, false, error));
       }
-    })
-    .finally(() => dispatch(busy(false)));
+    });
 };
 
 export const createOfflineMiddleware = (config: Config) => (store: any) => (next: any) => (

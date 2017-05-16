@@ -1,6 +1,6 @@
 {
   "name": "redux-offline",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint src/",
+    "prepublish": "npm run lint && npm run flow && npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
@@ -31,7 +32,6 @@
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.8",
-    "babel-plugin-flow-react-proptypes": "^0.18.1",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-flow-strip-types": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
