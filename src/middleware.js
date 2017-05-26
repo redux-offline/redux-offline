@@ -50,8 +50,15 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   // allow other middleware to do their things
   const result = next(action);
 
-  // find any actions to send, if any
+  // load application state
   const state: AppState = store.getState();
+
+  // if state hasn't been initialized, just return result
+  if (!state || !state.offline) {
+    return result;
+  }
+
+  // find any actions to send, if any
   const actions = take(state, config);
 
   // if the are any actions in the queue that we are not
