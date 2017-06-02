@@ -26,12 +26,12 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
-    .then(result => dispatch(complete(metadata.commit, true, result)))
+    .then(result => metadata.commit && dispatch(complete(metadata.commit, true, result)))
     .catch(error => {
       // discard
       if (config.discard(error, action, retries)) {
         console.log('Discarding action', action.type);
-        return dispatch(complete(metadata.rollback, false, error));
+        return metadata.rollback && dispatch(complete(metadata.rollback, false, error));
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
