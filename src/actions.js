@@ -5,10 +5,11 @@ import {
   OFFLINE_BUSY
 } from './constants';
 
-export const networkStatusChanged = online => ({
+export const networkStatusChanged = ({ online, netInfo }) => ({
   type: OFFLINE_STATUS_CHANGED,
   payload: {
-    online
+    online,
+    netInfo
   }
 });
 
