@@ -1,5 +1,4 @@
 # Redux Offline specific ignores
-lib/
 
 # Logs
 logs
