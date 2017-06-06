@@ -53,7 +53,7 @@ const offlineUpdater = function offlineUpdater(
     action.payload &&
     typeof action.payload.online === 'boolean'
   ) {
-    return { ...state, online: action.payload.online };
+    return { ...state, online: action.payload.online, netInfo: action.payload.netInfo };
   }
 
   if (action.type === PERSIST_REHYDRATE) {
