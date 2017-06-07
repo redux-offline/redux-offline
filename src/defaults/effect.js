@@ -25,8 +25,11 @@ const tryParseJSON = (json: string): ?{} => {
 };
 
 const getResponseBody = (res: any): Promise<{} | string> => {
-  const contentType = res.headers.get('content-type');
-  return contentType.indexOf('json') >= 0 ? res.text().then(tryParseJSON) : res.text();
+  const contentType = res.headers.get('content-type') || false;
+  if (contentType) {
+    return contentType.indexOf('json') >= 0 ? res.text().then(tryParseJSON) : res.text();
+  }
+  return null;
 };
 
 export default (effect: any, _action: OfflineAction): Promise<any> => {
