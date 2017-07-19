@@ -42,12 +42,16 @@ type NetworkCallback = (result: boolean) => void;
 
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
+  persist: (store: any, options: {}, callback: () => void) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
   persistCallback: (callback: any) => any,
   defaultCommit: { type: string },
-  defaultRollback: { type: string }
+  defaultRollback: { type: string },
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (
+    state: any
+  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };

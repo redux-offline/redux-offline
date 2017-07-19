@@ -298,13 +298,16 @@ Redux Offline supports the following configuration properties:
 ```js
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {},
   defaultCommit: { type: string },
-  defaultRollback: { type: string }
+  defaultRollback: { type: string },
+  persist: (store: any) => any,
+  persistOptions: {},
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
 ```
 
@@ -402,6 +405,15 @@ const config = {
 };
 ```
 
+You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+```js
+import { autoRehydrate } from 'redux-persist';
+
+const config = {
+  persistAutoRehydrate: () => autoRehydrate({log: true})
+};
+```
+
 If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsible for setting any subscribers to listen for store changes to persist it.
 ```js
 const config = {
@@ -465,10 +477,11 @@ Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
+The `offline` state branch created by Redux Offline needs to be a vanilla JavaScript object.
+If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
+If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
 [Contributions welcome](#contributing).
-
 
 ## Contributing
 

@@ -1,7 +1,12 @@
 // @flow
-/* global */
+/* global $Shape */
 
-import type { OfflineState, OfflineAction, ResultAction } from './types';
+import type {
+  OfflineState,
+  OfflineAction,
+  ResultAction,
+  Config
+} from './types';
 import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
@@ -118,17 +123,18 @@ const offlineUpdater = function offlineUpdater(
   return state;
 };
 
-export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
+export const enhanceReducer = (reducer: any, config: $Shape<Config>) => (
+  state: any,
+  action: any
+) => {
   let offlineState;
   let restState;
   if (typeof state !== 'undefined') {
-    const { offline, ...rest } = state;
-    offlineState = offline;
-    restState = rest;
+    offlineState = config.offlineStateLens(state).get;
+    restState = config.offlineStateLens(state).set();
   }
 
-  return {
-    ...reducer(restState, action),
-    offline: offlineUpdater(offlineState, action)
-  };
+  return config
+    .offlineStateLens(reducer(restState, action))
+    .set(offlineUpdater(offlineState, action));
 };
