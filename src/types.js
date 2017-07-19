@@ -56,5 +56,7 @@ export type Config = {
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
-  persistCallback: (callback: any) => any
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };

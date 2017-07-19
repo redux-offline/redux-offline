@@ -148,7 +148,7 @@ const action = userId => ({
   meta: {
     offline: {
       effect: //...,
-      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}
      }
   }
 });
@@ -178,7 +178,7 @@ const completeOrder = (orderId, lineItems) => ({
     offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}
      }
   }
 });
@@ -198,7 +198,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state,   
+        ...state,
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -296,11 +296,14 @@ Redux Offline supports the following configuration properties:
 ```js
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  persist: (store: any) => any,
+  persistOptions: {},
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
 ```
 
@@ -359,7 +362,7 @@ const store = createStore(
   preloadedState,
 -  middleware
 +  compose(middleware, offline(myConfig))
- myConfig  
+ myConfig
 );
 ```
 
@@ -396,6 +399,15 @@ You can pass the callback for redux-persist as well. This function would be call
 ```js
 const config = {
   persistCallback: () => { /*...*/ }
+};
+```
+
+You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+```js
+import { autoRehydrate } from 'redux-persist';
+
+const config = {
+  persistAutoRehydrate: () => autoRehydrate({log: true})
 };
 ```
 
@@ -466,10 +478,11 @@ Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
+The `offline` state branch created by Redux Offline needs to be a vanilla JavaScript object.
+If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
+If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
 [Contributions welcome](#contributing).
-
 
 ## Contributing
 
