@@ -87,6 +87,10 @@ const offlineUpdater = function offlineUpdater(
   if (action.meta != null && action.meta.completed === true) {
     return dequeue(state);
   }
+    
+  if (action.type === RESET_STATE) {
+    return { ...initialState, online: state.online };
+  }
 
   return state;
 };
