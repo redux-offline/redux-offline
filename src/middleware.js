@@ -1,6 +1,6 @@
 // @flow
 
-import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
+import type { AppState, Config, OfflineAction, ResultAction, Outbox, OfflineState } from './types';
 import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
 import { completeRetry, scheduleRetry, busy } from './actions';
 
@@ -12,13 +12,13 @@ const complete = (action: ResultAction, success: boolean, payload: {}): ResultAc
   return { ...action, payload, meta: { ...action.meta, success, completed: true } };
 };
 
-const take = (state: AppState, config: Config): Outbox => {
+const take = (offline: OfflineState, config: Config): Outbox => {
   // batching is optional, for now
   if (config.batch) {
-    return config.batch(state.offline.outbox);
+    return config.batch(offline.outbox);
   }
 
-  return [state.offline.outbox[0]];
+  return [offline.outbox[0]];
 };
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
@@ -52,32 +52,35 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
 
   // find any actions to send, if any
   const state: AppState = store.getState();
-  const actions = take(state, config);
+
+  const offline = config.offlineStateLens(state).get;
+
+  const actions = take(offline, config);
 
   // if the are any actions in the queue that we are not
   // yet processing, send those actions
   if (
     actions.length > 0 &&
-    !state.offline.busy &&
-    !state.offline.retryScheduled &&
-    state.offline.online
+    !offline.busy &&
+    !offline.retryScheduled &&
+    offline.online
   ) {
-    send(actions[0], store.dispatch, config, state.offline.retryCount);
+    send(actions[0], store.dispatch, config, offline.retryCount);
   }
 
   if (action.type === OFFLINE_SCHEDULE_RETRY) {
-    const retryToken = state.offline.retryToken;
+    const retryToken = offline.retryToken;
     after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
   }
 
   // if (action.type === 'Offline/COMPLETE_RETRY') {
-  //   if (action.meta.retryToken === state.offline.retryToken && actions.length > 0) {
+  //   if (action.meta.retryToken === offline.retryToken && actions.length > 0) {
   //     send(actions[0], store.dispatch, config);
   //   }
   // }
 
-  if (action.type === OFFLINE_SEND && actions.length > 0 && !state.offline.busy) {
-    send(actions[0], store.dispatch, config, state.offline.retryCount);
+  if (action.type === OFFLINE_SEND && actions.length > 0 && !offline.busy) {
+    send(actions[0], store.dispatch, config, offline.retryCount);
   }
 
   return result;

@@ -2,7 +2,6 @@
 /*global $Shape*/
 import type { Config } from './types';
 import { applyMiddleware, compose } from 'redux';
-import { autoRehydrate } from 'redux-persist';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
@@ -25,13 +24,13 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
 
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
-  const offlineReducer = enhanceReducer(reducer);
+  const offlineReducer = enhanceReducer(reducer, config);
 
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
-  const offlineEnhancer = config.persist && config.rehydrate
-    ? compose(offlineMiddleware, enhancer, autoRehydrate())
+  const offlineEnhancer = config.persist && config.rehydrate && config.persistAutoRehydrate
+    ? compose(offlineMiddleware, enhancer, config.persistAutoRehydrate())
     : compose(offlineMiddleware, enhancer);
 
   // create store
