@@ -94,7 +94,7 @@ const offlineUpdater = function offlineUpdater(
   }
     
   if (action.type === RESET_STATE) {
-    return { ...initialState, online: state.online };
+    return { ...initialState, online: state.online, netInfo: state.netInfo };
   }
 
   return state;
