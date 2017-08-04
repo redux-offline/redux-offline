@@ -38,7 +38,11 @@ const initialState: OfflineState = {
   receipts: [],
   retryToken: 0,
   retryCount: 0,
-  retryScheduled: false
+  retryScheduled: false,
+  netInfo: {
+    isConnectionExpensive: null,
+    reach: 'NONE'
+  }
 };
 
 // @TODO: the typing of this is all kinds of wack
