@@ -7,6 +7,7 @@ import {
   OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
   OFFLINE_BUSY,
+  RESET_STATE,
   PERSIST_REHYDRATE
 } from './constants';
 
@@ -86,6 +87,10 @@ const offlineUpdater = function offlineUpdater(
   // Remove completed actions from queue (success or fail)
   if (action.meta != null && action.meta.completed === true) {
     return dequeue(state);
+  }
+    
+  if (action.type === RESET_STATE) {
+    return { ...initialState, online: state.online };
   }
 
   return state;
