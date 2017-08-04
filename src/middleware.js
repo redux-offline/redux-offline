@@ -8,9 +8,10 @@ const after = (timeout = 0) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
-const complete = (action: ResultAction, success: boolean, payload: {}): ResultAction => {
-  return { ...action, payload, meta: { ...action.meta, success, completed: true } };
-};
+const complete = (action: any, success: boolean, payload: {}): ResultAction =>
+  typeof action === 'function'
+  ? { ...action, payload, meta: { ...action.meta, success, completed: true } }
+  : action({ success, payload });
 
 const take = (state: AppState, config: Config): Outbox => {
   // batching is optional, for now
