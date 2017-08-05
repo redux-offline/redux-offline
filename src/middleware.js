@@ -10,7 +10,7 @@ const after = (timeout = 0) => {
 
 const complete = (action: any, success: boolean, payload: {}): ResultAction =>
   typeof action === 'function'
-  ? action.bind(payload)
+  ? action(payload)
   : { ...action, payload, meta: { ...action.meta, success, completed: true } };
 
 const take = (state: AppState, config: Config): Outbox => {
