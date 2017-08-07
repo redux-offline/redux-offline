@@ -5,6 +5,14 @@ import batch from './batch';
 import retry from './retry';
 import discard from './discard';
 
+const noop = () => {};
+const loggerStub = {
+  log: noop,
+  warn: noop,
+  error: noop,
+  debug: noop
+};
+
 export default {
   rehydrate: true,
   persist,
@@ -12,5 +20,6 @@ export default {
   batch,
   effect,
   retry,
-  discard
+  discard,
+  logger: loggerStub
 };

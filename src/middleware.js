@@ -22,6 +22,7 @@ const take = (state: AppState, config: Config): Outbox => {
 };
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
+  const { logger } = config;
   const metadata = action.meta.offline;
   dispatch(busy(true));
   return config
@@ -30,15 +31,15 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     .catch(error => {
       // discard
       if (config.discard(error, action, retries)) {
-        console.log('Discarding action', action.type);
+        logger.log('Discarding action', action.type);
         return dispatch(complete(metadata.rollback, false, error));
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
-        console.log('Retrying action', action.type, 'with delay', delay);
+        logger.log('Retrying action', action.type, 'with delay', delay);
         return dispatch(scheduleRetry(delay));
       } else {
-        console.log('Discarding action', action.type, 'because retry did not return a delay');
+        logger.log('Discarding action', action.type, 'because retry did not return a delay');
         return dispatch(complete(metadata.rollback, false, error));
       }
     });
