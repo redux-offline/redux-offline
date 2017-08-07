@@ -6,6 +6,7 @@ import retry from './retry';
 import discard from './discard';
 
 export default {
+  logging: true,
   rehydrate: true,
   persist,
   detectNetwork,
