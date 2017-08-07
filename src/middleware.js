@@ -1,17 +1,25 @@
 // @flow
 
-import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
-import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
+import type { AppState, Config, OfflineAction, Outbox } from './types';
+import { OFFLINE_SEND, OFFLINE_ASYNC_COMPLETED, OFFLINE_SCHEDULE_RETRY } from './constants';
 import { completeRetry, scheduleRetry, busy } from './actions';
 
 const after = (timeout = 0) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
-const complete = (action: any, success: boolean, payload: {}): ResultAction =>
-  typeof action === 'function'
-  ? action(payload)
-  : { ...action, payload, meta: { ...action.meta, success, completed: true } };
+const complete = (dispatch: any, action: any, success: boolean, payload: {}) => {
+  const completed = { success, completed: true };
+
+  if (typeof action === 'function') {
+    const res = action(payload);
+    if (typeof res === 'function') {
+      return dispatch(res(() => dispatch({ type: OFFLINE_ASYNC_COMPLETED, meta: completed })));
+    }
+    return dispatch({ ...res, meta: { ...res.meta, ...completed } });
+  }
+  return dispatch({ ...action, payload, meta: { ...action.meta, ...completed } });
+};
 
 const take = (state: AppState, config: Config): Outbox => {
   // batching is optional, for now
@@ -27,12 +35,12 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
-    .then(result => dispatch(complete(metadata.commit, true, result)))
+    .then(result => complete(dispatch, metadata.commit, true, result))
     .catch(error => {
       // discard
       if (config.discard(error, action, retries)) {
         console.log('Discarding action', action.type);
-        return dispatch(complete(metadata.rollback, false, error));
+        return complete(dispatch, metadata.rollback, false, error);
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
@@ -40,7 +48,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         return dispatch(scheduleRetry(delay));
       } else {
         console.log('Discarding action', action.type, 'because retry did not return a delay');
-        return dispatch(complete(metadata.rollback, false, error));
+        return complete(dispatch, metadata.rollback, false, error);
       }
     });
 };
