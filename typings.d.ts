@@ -61,11 +61,12 @@ declare module 'redux-offline' {
     retry: (action: OfflineAction, retries: number) => number | void;
   }
 
-  export const offline: <T>(config: Config) => (createStore: typeof createReduxStore) => (
-    reducer: (state: T, action: any) => T,
-    preloadedState: T,
-    enhancer: StoreEnhancer<T>,
-  ) => Store<T>;
+  export const offline: (config: Config) => (createStore: typeof createReduxStore) =>
+    <T extends { [key: string]: any }>(
+      reducer: (state: T, action: any) => T,
+      preloadedState: T,
+      enhancer: StoreEnhancer<T>,
+    ) => Store<T>;
 }
 
 declare module 'redux-offline/lib/defaults' {
