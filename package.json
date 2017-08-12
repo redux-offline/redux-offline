@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
+  "types": "./typings.d.ts",
   "scripts": {
     "build": "babel src --out-dir lib --ignore **/__tests__/**",
     "flow:start": "flow server",
@@ -28,6 +29,7 @@
   },
   "homepage": "https://github.com/jevakallio/redux-offline#readme",
   "devDependencies": {
+    "@types/redux": "^3.6.0",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
