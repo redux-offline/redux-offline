@@ -5,3 +5,4 @@ export const OFFLINE_SEND = 'Offline/SEND';
 export const OFFLINE_BUSY = 'Offline/BUSY';
 export const RESET_STATE = 'Offline/RESET_STATE';
 export const PERSIST_REHYDRATE = 'persist/REHYDRATE';
+export const JS_ERROR = 'Offline/JS_ERROR';
