@@ -1,7 +1,7 @@
 // @flow
 
 import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './types';
-import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
+import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY, JS_ERROR } from './constants';
 import { completeRetry, scheduleRetry, busy } from './actions';
 
 const after = (timeout = 0) => {
@@ -31,8 +31,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         return dispatch(complete(metadata.commit, true, result));
       } catch (e) {
         console.error(e);
-        config.discard(e, action, 0);
-        return undefined;
+        return dispatch(complete({ type: JS_ERROR, payload: e }, false));
       }
     })
     .catch(error => {
