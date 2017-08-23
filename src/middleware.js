@@ -26,7 +26,15 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
-    .then(result => dispatch(complete(metadata.commit, true, result)))
+    .then(result => {
+      try {
+        return dispatch(complete(metadata.commit, true, result));
+      } catch (e) {
+        console.error(e);
+        config.discard(e, action, 0);
+        return undefined;
+      }
+    })
     .catch(error => {
       // discard
       if (config.discard(error, action, retries)) {
