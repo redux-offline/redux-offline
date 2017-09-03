@@ -9,7 +9,7 @@
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint src/",
-    "prepublish": "npm run lint && npm run flow && npm run test && npm run build",
+    "prepublish": "npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
@@ -19,14 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jevakallio/redux-offline.git"
+    "url": "git+https://github.com/redux-offline/redux-offline"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jevakallio/redux-offline/issues"
+    "url": "https://github.com/redux-offline/redux-offline/issues"
   },
-  "homepage": "https://github.com/jevakallio/redux-offline#readme",
+  "homepage": "https://github.com/redux-offline/redux-offline#readme",
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",

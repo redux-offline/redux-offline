@@ -2,14 +2,14 @@
   <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 </p>
 <p>
-  <a title='License' href="https://raw.githubusercontent.com/jevakallio/redux-offline/master/LICENSE" height="18">
+  <a title='License' href="https://raw.githubusercontent.com/redux-offline/redux-offline/master/LICENSE" height="18">
     <img src='https://img.shields.io/badge/license-MIT-blue.svg' />
   </a>
   <a href="https://badge.fury.io/js/redux-offline">
     <img src="https://badge.fury.io/js/redux-offline.svg" alt="npm version" height="18">
   </a>
-  <a href="https://travis-ci.org/jevakallio/redux-offline">
-    <img src="https://travis-ci.org/jevakallio/redux-offline.svg?branch=master" alt="travis" height="18">
+  <a href="https://travis-ci.org/redux-offline/redux-offline">
+    <img src="https://travis-ci.org/redux-offline/redux-offline.svg?branch=master" alt="travis" height="18">
   </a>
 </p>
 
@@ -27,13 +27,15 @@ _To get started, take a moment to read through the **[Offline Guide](#offline-gu
 
 ## Full disclosure
 
+This is a community maintained fork. The original repo can be found in [here](https://github.com/jevakallio/redux-offline).
+
 Redux Offline is very, very new. If you find a bug, good job for being an early adopter! (And there will be issues.) If you find a problem, please submit an issue and I will get to them. 😇
 
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
 ```sh
-npm install --save redux-offline
+npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
@@ -59,7 +61,7 @@ const store = createStore(
 
 See [Configuration](#configuration) for overriding default configurations.
 
-Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/jevakallio/redux-offline/releases/tag/v2.0.0).
+Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/redux-offline/redux-offline/releases/tag/v2.0.0).
 
 ##### 3. Decorate actions with offline metadata
 

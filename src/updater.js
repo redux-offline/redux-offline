@@ -7,6 +7,7 @@ import {
   OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
   OFFLINE_BUSY,
+  RESET_STATE,
   PERSIST_REHYDRATE
 } from './constants';
 
@@ -38,7 +39,11 @@ const initialState: OfflineState = {
   receipts: [],
   retryToken: 0,
   retryCount: 0,
-  retryScheduled: false
+  retryScheduled: false,
+  netInfo: {
+    isConnectionExpensive: null,
+    reach: 'NONE'
+  }
 };
 
 // @TODO: the typing of this is all kinds of wack
@@ -53,7 +58,7 @@ const offlineUpdater = function offlineUpdater(
     action.payload &&
     typeof action.payload.online === 'boolean'
   ) {
-    return { ...state, online: action.payload.online };
+    return { ...state, online: action.payload.online, netInfo: action.payload.netInfo };
   }
 
   if (action.type === PERSIST_REHYDRATE) {
@@ -86,6 +91,10 @@ const offlineUpdater = function offlineUpdater(
   // Remove completed actions from queue (success or fail)
   if (action.meta != null && action.meta.completed === true) {
     return dequeue(state);
+  }
+
+  if (action.type === RESET_STATE) {
+    return { ...initialState, online: state.online, netInfo: state.netInfo };
   }
 
   return state;
