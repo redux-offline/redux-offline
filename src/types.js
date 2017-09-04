@@ -15,12 +15,6 @@ export type OfflineMetadata = {
   rollback: ResultAction
 };
 
-export type Receipt = {
-  message: OfflineMetadata,
-  success: boolean,
-  result: {}
-};
-
 export type OfflineAction = {
   type: string,
   payload?: {},
@@ -36,9 +30,7 @@ export type OfflineState = {
   lastTransaction: number,
   online: boolean,
   outbox: Outbox,
-  receipts: Array<Receipt>,
   retryCount: number,
-  retryToken: number,
   retryScheduled: boolean
 };
 

@@ -20,10 +20,9 @@ export const scheduleRetry = (delay = 0) => ({
   }
 });
 
-export const completeRetry = (action, retryToken) => ({
+export const completeRetry = (action) => ({
   type: OFFLINE_COMPLETE_RETRY,
-  payload: action,
-  meta: { retryToken }
+  payload: action
 });
 
 export const busy = isBusy => ({

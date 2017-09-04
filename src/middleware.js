@@ -73,15 +73,8 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   }
 
   if (action.type === OFFLINE_SCHEDULE_RETRY) {
-    const retryToken = state.offline.retryToken;
-    after(action.payload.delay).then(() => store.dispatch(completeRetry(retryToken)));
+    after(action.payload.delay).then(() => store.dispatch(completeRetry()));
   }
-
-  // if (action.type === 'Offline/COMPLETE_RETRY') {
-  //   if (action.meta.retryToken === state.offline.retryToken && actions.length > 0) {
-  //     send(actions[0], store.dispatch, config);
-  //   }
-  // }
 
   if (action.type === OFFLINE_SEND && actions.length > 0 && !state.offline.busy) {
     send(actions[0], store.dispatch, config, state.offline.retryCount);
