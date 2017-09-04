@@ -344,7 +344,6 @@ The reason for default config is defined as a separate import is, that it pulls 
 
 ```diff
 import { offline } from 'redux-offline';
-import batch from 'redux-offline/lib/defaults/batch';
 import retry from 'redux-offline/lib/defaults/retry';
 import discard from 'redux-offline/lib/defaults/discard';
 
@@ -457,10 +456,6 @@ online, is started, or you manually fire an `Offline/SEND` action.
 Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
-
-#### Change how queue processing is batched
-
-Currently messages are sent one by one, in serial. Customization support coming soon.
 
 #### Synchronise my state while the app is not open
 

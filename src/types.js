@@ -41,7 +41,6 @@ export type AppState = {
 type NetworkCallback = (result: boolean) => void;
 
 export type Config = {
-  batch: (outbox: Outbox) => Outbox,
   detectNetwork: (callback: NetworkCallback) => void,
   persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,

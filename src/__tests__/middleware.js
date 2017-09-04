@@ -66,8 +66,7 @@ describe("on OFFLINE_SEND", () => {
   });
 });
 
-// FIXME: completeRetry is called with an action and retryToken
-//  but in the code it is called just with a retryToken
+// FIXME: completeRetry is supposed to be called with an action
 // TODO: wrapping `setTimeout()` in a promise in `after()` is pointless
 describe("on OFFLINE_SCHEDULE_RETRY", () => {
   jest.useFakeTimers();
@@ -78,10 +77,9 @@ describe("on OFFLINE_SCHEDULE_RETRY", () => {
     createOfflineMiddleware(config)(store)(next)(scheduleRetry(delay));
     jest.runTimersToTime(delay);
 
-    const { offline: { retryToken } } = store.getState();
     expect.assertions(1);
     return Promise.resolve().then(() =>
-      expect(store.dispatch).toBeCalledWith(completeRetry(retryToken))
+      expect(store.dispatch).toBeCalledWith(completeRetry())
     );
   });
 });
