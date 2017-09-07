@@ -62,7 +62,13 @@ const offlineUpdater = function offlineUpdater(
   }
 
   if (action.type === PERSIST_REHYDRATE) {
-    return { ...state, ...action.payload.offline, online: state.online, busy: false };
+    return {
+      ...state,
+      ...action.payload.offline,
+      online: state.online,
+      netInfo: state.netInfo,
+      busy: false
+    };
   }
 
   if (action.type === OFFLINE_SCHEDULE_RETRY) {
