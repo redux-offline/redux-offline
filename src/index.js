@@ -31,11 +31,11 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
 
   // create autoRehydrate enhancer if required
   const offlineEnhancer = config.persist && config.rehydrate
-    ? compose(offlineMiddleware, enhancer, autoRehydrate())
-    : compose(offlineMiddleware, enhancer);
+    ? compose(offlineMiddleware, autoRehydrate())
+    : offlineMiddleware;
 
   // create store
-  const store = createStore(offlineReducer, preloadedState, offlineEnhancer);
+  const store = offlineEnhancer(createStore)(offlineReducer, preloadedState, enhancer);
 
   // launch store persistor
   if (config.persist) {

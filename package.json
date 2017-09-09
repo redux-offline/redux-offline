@@ -46,7 +46,9 @@
     "jest": "^19.0.2",
     "react": "^15.4.2",
     "redux": "^3.6.0",
-    "redux-logger": "^2.8.2"
+    "redux-devtools-instrument": "^1.8.2",
+    "redux-logger": "^2.8.2",
+    "redux-persist-node-storage": "^1.0.2"
   },
   "dependencies": {
     "redux-persist": "^4.5.0"
