@@ -67,7 +67,9 @@ const offlineUpdater = function offlineUpdater(
       ...action.payload.offline,
       online: state.online,
       netInfo: state.netInfo,
-      busy: false
+      retryScheduled: initialState.retryScheduled,
+      retryCount: initialState.retryCount,
+      busy: initialState.busy
     };
   }
 
