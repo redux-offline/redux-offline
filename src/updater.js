@@ -36,8 +36,6 @@ const initialState: OfflineState = {
   lastTransaction: 0,
   online: false,
   outbox: [],
-  receipts: [],
-  retryToken: 0,
   retryCount: 0,
   retryScheduled: false,
   netInfo: {
@@ -70,8 +68,7 @@ const offlineUpdater = function offlineUpdater(
       ...state,
       busy: false,
       retryScheduled: true,
-      retryCount: state.retryCount + 1,
-      retryToken: state.retryToken + 1
+      retryCount: state.retryCount + 1
     };
   }
 
