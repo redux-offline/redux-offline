@@ -1,0 +1,141 @@
+import { createOfflineMiddleware } from "../middleware";
+import { completeRetry, scheduleRetry } from "../actions";
+import { OFFLINE_SEND } from "../constants";
+
+test("creates middleware", () => {
+  const { config, store, next, action } = setup();
+  const middleware = createOfflineMiddleware(config);
+
+  const result = middleware(store)(next)(action);
+  expect(next).toBeCalled();
+  expect(result).toEqual(next(action));
+});
+
+// TODO: test that send is called not config.effect
+describe("on any action", () => {
+  it("processes outbox when idle", () => {
+    const { config, store, next, action } = setup();
+    createOfflineMiddleware(config)(store)(next)(action);
+    expect(config.effect).toBeCalled();
+  });
+
+  it("does not process outbox when busy", () => {
+    const { config, store, next, action } = setup({ busy: true });
+    createOfflineMiddleware(config)(store)(next)(action);
+    expect(config.effect).not.toBeCalled();
+  });
+
+  it("does not process outbox when retry scheduled", () => {
+    const { config, store, next, action } = setup({ retryScheduled: true });
+    createOfflineMiddleware(config)(store)(next)(action);
+    expect(config.effect).not.toBeCalled();
+  });
+
+  it("does not process outbox when offline", () => {
+    const { config, store, next, action } = setup({ online: false });
+    createOfflineMiddleware(config)(store)(next)(action);
+    expect(config.effect).not.toBeCalled();
+  });
+});
+
+// TODO: test that send is called not config.effect
+// TODO: test for double dispatch
+describe("on OFFLINE_SEND", () => {
+  it("processes outbox when idle", () => {
+    const { config, store, next } = setup();
+    createOfflineMiddleware(config)(store)(next)(offlineSend());
+    expect(config.effect).toBeCalled();
+  });
+
+  it("does not process outbox when busy", () => {
+    const { config, store, next } = setup({ busy: true });
+    createOfflineMiddleware(config)(store)(next)(offlineSend());
+    expect(config.effect).not.toBeCalled();
+  });
+
+  it("processes outbox when retry scheduled", () => {
+    const { config, store, next } = setup({ retryScheduled: true });
+    createOfflineMiddleware(config)(store)(next)(offlineSend());
+    expect(config.effect).toBeCalled();
+  });
+
+  it("processes outbox when offline", () => {
+    const { config, store, next } = setup({ online: false });
+    createOfflineMiddleware(config)(store)(next)(offlineSend());
+    expect(config.effect).toBeCalled();
+  });
+});
+
+// FIXME: completeRetry is called with an action and retryToken
+//  but in the code it is called just with a retryToken
+// TODO: wrapping `setTimeout()` in a promise in `after()` is pointless
+describe("on OFFLINE_SCHEDULE_RETRY", () => {
+  jest.useFakeTimers();
+  const delay = 15000;
+
+  test("dispatches COMPLETE_RETRY after delay", () => {
+    const { config, store, next } = setup();
+    createOfflineMiddleware(config)(store)(next)(scheduleRetry(delay));
+    jest.runTimersToTime(delay);
+
+    const { offline: { retryToken } } = store.getState();
+    expect.assertions(1);
+    return Promise.resolve().then(() =>
+      expect(store.dispatch).toBeCalledWith(completeRetry(retryToken))
+    );
+  });
+});
+
+const offlineAction = {
+  type:"OFFLINE_ACTION_REQUEST",
+  meta: {
+    offline: {
+      effect: { url: '/api/endpoint', method: 'POST' },
+      commit: { type: 'OFFLINE_ACTION_COMMIT' },
+      rollback: { type: 'OFFLINE_ACTION_ROLLBACK' }
+    }
+  }
+};
+
+const defaultOfflineState = {
+  busy: false,
+  lastTransaction: 0,
+  online: true,
+  outbox: [offlineAction],
+  receipts: [],
+  retryToken: 0,
+  retryCount: 0,
+  retryScheduled: false,
+  netInfo: {
+    isConnectionExpensive: null,
+    reach: 'NONE'
+  }
+};
+
+function setup(offlineState = {}) {
+  const state = {
+    offline: { ...defaultOfflineState, ...offlineState }
+  };
+  return {
+    config: {
+      rehydrate: false,
+      persist: null,
+      detectNetwork: null,
+      batch: jest.fn(outbox => outbox.slice(0, 1)),
+      effect: jest.fn(() => Promise.resolve()),
+      retry: jest.fn(),
+      discard: jest.fn()
+    },
+    store: {
+      getState: jest.fn(() => state),
+      dispatch: jest.fn()
+    },
+    next: jest.fn(action => { actions: [action] }),
+    action: { type: "NOT_OFFLINE_ACTION" }
+  };
+}
+
+// NOTE: there is not currently an action creator for this
+function offlineSend() {
+  return { type: OFFLINE_SEND };
+}
