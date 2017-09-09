@@ -1,6 +1,7 @@
-import { createStore } from "redux";
+import { compose, createStore } from "redux";
 import { KEY_PREFIX } from "redux-persist/lib/constants"
 import { AsyncNodeStorage } from "redux-persist-node-storage";
+import instrument from "redux-devtools-instrument";
 import { offline } from "../index";
 import { applyDefaults } from "../config";
 
@@ -36,6 +37,19 @@ test("restores offline outbox when rehydrates", () => {
       }
     })(createStore)(reducer);
   });
+});
+
+// see https://github.com/jevakallio/redux-offline/pull/91
+test("works with devtools store enhancer", () => {
+  const monitorReducer = state => state;
+  const devtoolsEnhancer = instrument(monitorReducer);
+  const offlineEnhancer = offline(defaultConfig);
+  const reducer = noop;
+  const store = createStore(reducer, compose(offlineEnhancer, devtoolsEnhancer));
+
+  expect(() => {
+    store.dispatch({ type: "SOME_ACTION" });
+  }).not.toThrow();
 });
 
 const storage = new AsyncNodeStorage("/tmp/storageDir");
