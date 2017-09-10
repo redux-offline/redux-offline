@@ -1,4 +1,4 @@
-/*global window*/
+/* global window */
 
 const handle = (callback, online) => {
   // NetInfo is not supported in browsers, hence we only pass online status
@@ -9,7 +9,7 @@ const handle = (callback, online) => {
   }
 };
 
-export default callback => {
+export default (callback) => {
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('online', () => handle(callback, true));
     window.addEventListener('offline', () => handle(callback, false));

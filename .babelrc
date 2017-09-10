@@ -1,11 +1,10 @@
 {
   "presets": [
     "latest",
-    "react"
+    "stage-3"
   ],
   "plugins": [
-    "transform-object-rest-spread",
-    "transform-class-properties",
-    "transform-flow-strip-types"
+    "transform-flow-strip-types",
+    ["transform-class-properties", { "spec": true }]
   ]
 }

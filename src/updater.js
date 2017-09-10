@@ -18,7 +18,7 @@ type ControlAction =
 const enqueue = (state: OfflineState, action: any): OfflineState => {
   const transaction = state.lastTransaction + 1;
   const stamped = { ...action, meta: { ...action.meta, transaction } };
-  const outbox = state.outbox;
+  const { outbox } = state;
   return {
     ...state,
     lastTransaction: transaction,
@@ -28,7 +28,9 @@ const enqueue = (state: OfflineState, action: any): OfflineState => {
 
 const dequeue = (state: OfflineState): OfflineState => {
   const [, ...rest] = state.outbox;
-  return { ...state, outbox: rest, retryCount: 0, busy: false };
+  return {
+    ...state, outbox: rest, retryCount: 0, busy: false
+  };
 };
 
 const initialState: OfflineState = {
@@ -94,7 +96,7 @@ const offlineUpdater = function offlineUpdater(
   }
 
   // Remove completed actions from queue (success or fail)
-  if (action.meta != null && action.meta.completed === true) {
+  if (action.meta && action.meta.completed === true) {
     return dequeue(state);
   }
 
