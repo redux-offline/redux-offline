@@ -28,7 +28,9 @@ const enqueue = (state: OfflineState, action: any): OfflineState => {
 
 const dequeue = (state: OfflineState): OfflineState => {
   const [, ...rest] = state.outbox;
-  return { ...state, outbox: rest, retryCount: 0, busy: false };
+  return {
+    ...state, outbox: rest, retryCount: 0, busy: false
+  };
 };
 
 const initialState: OfflineState = {
@@ -60,7 +62,9 @@ const offlineUpdater = function offlineUpdater(
   }
 
   if (action.type === PERSIST_REHYDRATE) {
-    return { ...state, ...action.payload.offline, online: state.online, busy: false };
+    return {
+      ...state, ...action.payload.offline, online: state.online, busy: false
+    };
   }
 
   if (action.type === OFFLINE_SCHEDULE_RETRY) {

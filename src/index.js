@@ -1,5 +1,5 @@
 // @flow
-/*global $Shape*/
+/* global $Shape */
 import type { Config } from './types';
 import { applyMiddleware, compose } from 'redux';
 import { autoRehydrate } from 'redux-persist';
@@ -44,7 +44,7 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
 
   // launch network detector
   if (config.detectNetwork) {
-    config.detectNetwork(online => {
+    config.detectNetwork((online) => {
       store.dispatch(networkStatusChanged(online));
     });
   }

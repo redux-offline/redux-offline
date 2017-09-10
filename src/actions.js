@@ -20,7 +20,7 @@ export const scheduleRetry = (delay = 0) => ({
   }
 });
 
-export const completeRetry = (action) => ({
+export const completeRetry = action => ({
   type: OFFLINE_COMPLETE_RETRY,
   payload: action
 });

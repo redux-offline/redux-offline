@@ -4,20 +4,16 @@ import type { AppState, Config, OfflineAction, ResultAction, Outbox } from './ty
 import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY, JS_ERROR } from './constants';
 import { completeRetry, scheduleRetry, busy } from './actions';
 
-const after = (timeout = 0) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-};
+const after = (timeout = 0) => new Promise(resolve => setTimeout(resolve, timeout));
 
-const complete = (action: ResultAction, success: boolean, payload: {}): ResultAction => {
-  return { ...action, payload, meta: { ...action.meta, success, completed: true } };
-};
+const complete = (action: ResultAction, success: boolean, payload: {}): ResultAction => ({ ...action, payload, meta: { ...action.meta, success, completed: true } });
 
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
-    .then(result => {
+    .then((result) => {
       try {
         return dispatch(complete(metadata.commit, true, result));
       } catch (e) {
@@ -25,7 +21,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         return dispatch(complete({ type: JS_ERROR, payload: e }, false));
       }
     })
-    .catch(error => {
+    .catch((error) => {
       // discard
       if (config.discard(error, action, retries)) {
         console.log('Discarding action', action.type);
@@ -35,16 +31,13 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       if (delay != null) {
         console.log('Retrying action', action.type, 'with delay', delay);
         return dispatch(scheduleRetry(delay));
-      } else {
-        console.log('Discarding action', action.type, 'because retry did not return a delay');
-        return dispatch(complete(metadata.rollback, false, error));
       }
+      console.log('Discarding action', action.type, 'because retry did not return a delay');
+      return dispatch(complete(metadata.rollback, false, error));
     });
 };
 
-export const createOfflineMiddleware = (config: Config) => (store: any) => (next: any) => (
-  action: any
-) => {
+export const createOfflineMiddleware = (config: Config) => (store: any) => (next: any) => (action: any) => {
   // allow other middleware to do their things
   const result = next(action);
 

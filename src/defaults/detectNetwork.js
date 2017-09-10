@@ -1,4 +1,4 @@
-/*global window*/
+/* global window */
 
 const handle = (callback, result) => {
   if (window.requestAnimationFrame) {
@@ -8,7 +8,7 @@ const handle = (callback, result) => {
   }
 };
 
-export default callback => {
+export default (callback) => {
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('online', () => handle(callback, true));
     window.addEventListener('offline', () => handle(callback, false));

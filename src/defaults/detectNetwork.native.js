@@ -21,7 +21,7 @@ class DetectNetwork {
    * @returns {boolean} - Whether the connection reachability or the connection props have changed
    * @private
    */
-  _hasChanged = reach => {
+  _hasChanged = (reach) => {
     if (this._reach !== reach) {
       return true;
     }
@@ -39,7 +39,7 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _setReach = reach => {
+  _setReach = (reach) => {
     this._reach = reach;
     this._isConnected = this._getConnection(reach);
   }
@@ -52,9 +52,7 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _getConnection = reach => {
-    return reach !== 'NONE' && reach !== 'UNKNOWN';
-  }
+  _getConnection = reach => reach !== 'NONE' && reach !== 'UNKNOWN'
   /**
    * Sets the isConnectionExpensive prop
    * @returns {Promise.<void>} Resolves to true if connection is expensive,
@@ -88,7 +86,7 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _update = reach => {
+  _update = (reach) => {
     const normalizedReach = reach.toUpperCase();
     if (this._hasChanged(normalizedReach)) {
       this._setReach(normalizedReach);
@@ -102,7 +100,7 @@ class DetectNetwork {
    * @private
    */
   _addListeners() {
-    NetInfo.addEventListener('change', reach => {
+    NetInfo.addEventListener('change', (reach) => {
       this._update(reach);
     });
     AppState.addEventListener('change', this._init);

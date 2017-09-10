@@ -9,7 +9,7 @@ export default (error: NetworkError, action: OfflineAction, _retries: number = 0
     return true;
   }
 
-  //discard http 4xx errors
-  //$FlowFixMe
+  // discard http 4xx errors
+  // $FlowFixMe
   return error.status >= 400 && error.status < 500;
 };
