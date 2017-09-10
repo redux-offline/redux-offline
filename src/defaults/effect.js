@@ -32,6 +32,7 @@ const getResponseBody = (res: any): Promise<{} | string> => {
   return res.text();
 };
 
+// eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
   const { url, ...options } = effect;
   const headers = { 'content-type': 'application/json', ...options.headers };
