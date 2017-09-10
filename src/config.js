@@ -1,5 +1,5 @@
 // @flow
-/*global $Shape*/
+/* global $Shape */
 import type { Config } from './types';
 import defaults from './defaults';
 
