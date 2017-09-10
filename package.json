@@ -1,10 +1,10 @@
 {
-  "name": "redux-offline",
+  "name": "@redux-offline/redux-offline",
   "version": "2.1.0",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib --ignore **/__tests__/**",
+    "build": "babel src --out-dir lib --ignore '**/__tests__/**'",
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
@@ -32,6 +32,7 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-plugin-transform-flow-strip-types": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "eslint": "^4.6.1",
@@ -47,7 +48,6 @@
     "redux-persist-node-storage": "^1.0.2"
   },
   "dependencies": {
-    "babel-plugin-transform-class-properties": "^6.24.1",
     "redux-persist": "^4.5.0"
   },
   "peerDependencies": {
