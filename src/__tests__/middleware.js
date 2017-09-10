@@ -78,8 +78,9 @@ describe("on OFFLINE_SCHEDULE_RETRY", () => {
     jest.runTimersToTime(delay);
 
     expect.assertions(1);
+    const offlineAction = store.getState().offline.outbox[0];
     return Promise.resolve().then(() =>
-      expect(store.dispatch).toBeCalledWith(completeRetry())
+      expect(store.dispatch).toBeCalledWith(completeRetry(offlineAction))
     );
   });
 });

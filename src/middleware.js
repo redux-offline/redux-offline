@@ -64,7 +64,8 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (next
   }
 
   if (action.type === OFFLINE_SCHEDULE_RETRY) {
-    after(action.payload.delay).then(() => store.dispatch(completeRetry()));
+    after(action.payload.delay).then(() => { store.dispatch(completeRetry(offlineAction));
+    });
   }
 
   if (action.type === OFFLINE_SEND && offlineAction && !state.offline.busy) {
