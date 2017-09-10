@@ -4,7 +4,6 @@
     "stage-3"
   ],
   "plugins": [
-    "transform-flow-strip-types",
-    "jest"
+    "transform-flow-strip-types"
   ]
 }
