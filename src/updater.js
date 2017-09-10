@@ -18,7 +18,7 @@ type ControlAction =
 const enqueue = (state: OfflineState, action: any): OfflineState => {
   const transaction = state.lastTransaction + 1;
   const stamped = { ...action, meta: { ...action.meta, transaction } };
-  const outbox = state.outbox;
+  const { outbox } = state;
   return {
     ...state,
     lastTransaction: transaction,

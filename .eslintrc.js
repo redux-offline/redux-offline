@@ -9,6 +9,8 @@ module.exports = {
   },
   rules: {
     'comma-dangle': 'off',
-    'import/prefer-default-export': ['warn']
+    'import/prefer-default-export': ['warn'],
+    'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+    'function-paren-newline': ['error', 'consistent']
   }
 };

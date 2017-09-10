@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
-import { AppState, NetInfo } from 'react-native'; // eslint-disable-line import/no-unresolved
+import { AppState, NetInfo } from 'react-native'; // eslint-disable-line
 
 class DetectNetwork {
   constructor(callback) {

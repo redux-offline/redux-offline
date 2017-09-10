@@ -1,8 +1,8 @@
 // @flow
 /* global $Shape */
-import type { Config } from './types';
 import { applyMiddleware, compose } from 'redux';
 import { autoRehydrate } from 'redux-persist';
+import type { Config } from './types';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
@@ -18,10 +18,10 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
   preloadedState: any,
   enhancer: any = x => x
 ) => {
-  console.log('user config', userConfig);
+  console.info('user config', userConfig);
   const config = applyDefaults(userConfig);
 
-  console.log('Creating offline store', config);
+  console.info('Creating offline store', config);
 
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
