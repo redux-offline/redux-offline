@@ -9,7 +9,7 @@ const handle = (callback, online) => {
   }
 };
 
-export default (callback) => {
+export default callback => {
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('online', () => handle(callback, true));
     window.addEventListener('offline', () => handle(callback, false));
