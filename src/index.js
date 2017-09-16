@@ -79,3 +79,56 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
 
   return store;
 };
+
+export const createOffline = (userConfig: $Shape<Config> = {}) => {
+  const config = applyDefaults(userConfig);
+
+  warnIfNotReduxAction(config, 'defaultCommit');
+  warnIfNotReduxAction(config, 'defaultRollback');
+
+  const enhanceStore = (next: any) => (
+    reducer: any,
+    preloadedState: any,
+    enhancer: any
+  ) => {
+    // create autoRehydrate enhancer if required
+    const createStore =
+      config.persist && config.rehydrate && config.persistAutoRehydrate
+        ? config.persistAutoRehydrate()(next)
+        : next;
+
+    // create store
+    const store = createStore(reducer, preloadedState, enhancer);
+
+    const baseReplaceReducer = store.replaceReducer.bind(store);
+    store.replaceReducer = function replaceReducer(nextReducer) {
+      return baseReplaceReducer(enhanceReducer(nextReducer, config));
+    };
+
+    // launch store persistor
+    if (config.persist) {
+      persistor = config.persist(
+        store,
+        config.persistOptions,
+        config.persistCallback
+      );
+    }
+
+    // launch network detector
+    if (config.detectNetwork) {
+      config.detectNetwork(online => {
+        store.dispatch(networkStatusChanged(online));
+      });
+    }
+
+    return store;
+  };
+
+  return {
+    middleware: createOfflineMiddleware(config),
+    enhanceReducer(reducer) {
+      return enhanceReducer(reducer, config);
+    },
+    enhanceStore
+  };
+};

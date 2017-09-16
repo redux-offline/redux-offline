@@ -1,8 +1,8 @@
-import { compose, createStore } from "redux";
+import { applyMiddleware, compose, createStore } from "redux";
 import { KEY_PREFIX } from "redux-persist/lib/constants"
 import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
-import { offline } from "../index";
+import { createOffline, offline } from "../index";
 import { applyDefaults } from "../config";
 
 const storage = new AsyncNodeStorage("/tmp/storageDir");
@@ -35,10 +35,22 @@ function defaultReducer(state = {
   return state;
 }
 
-test("creates storeEnhancer", () => {
+test("offline() creates storeEnhancer", () => {
   const storeEnhancer = offline(defaultConfig);
 
   const store = storeEnhancer(createStore)(defaultReducer);
+  expect(store.dispatch).toEqual(expect.any(Function));
+  expect(store.getState).toEqual(expect.any(Function));
+});
+
+test("createOffline() creates storeEnhancer", () => {
+  const { middleware, enhanceReducer, enhanceStore } =
+    createOffline(defaultConfig);
+  const reducer = enhanceReducer(defaultReducer);
+  const store = createStore(reducer, compose(
+    applyMiddleware(middleware),
+    enhanceStore
+  ));
   expect(store.dispatch).toEqual(expect.any(Function));
   expect(store.getState).toEqual(expect.any(Function));
 });

@@ -483,6 +483,21 @@ If you use Immutable in the rest of your store, but the root object, you should 
 
 [Contributions welcome](#contributing).
 
+#### Choose where the offline middleware is added
+
+By default, the offline middleware is inserted right before the offline store enhancer as part of its own middleware chain. If you want more control over where the middleware is inserted, consider using the alternative api, `createOffline()`.
+
+```js
+import { createOffline } from "@redux-offline/redux-offline";
+const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
+const store = createStore(
+  enhanceReducer(rootReducer),
+  initialStore,
+  compose(applyMiddleware(middleware), enhanceStore)
+);
+```
+
+
 ## Contributing
 
 Improvements and additions welcome. For large changes, please submit a discussion issue before jumping to coding; we'd hate you to waste the effort.
