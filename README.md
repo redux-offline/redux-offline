@@ -159,7 +159,7 @@ const followingUsersReducer = (state, action) {
     case 'FOLLOW_USER':
       return { ...state, [action.payload.userId]: true };
     case 'FOLLOW_USER_ROLLBACK':
-      return omit(state, [action.payload.userId]);
+      return omit(state, [action.meta.userId]);
     default:
       return state;
   }
