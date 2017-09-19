@@ -11,8 +11,8 @@ export type ResultAction = {
 
 export type OfflineMetadata = {
   effect: {},
-  commit: ResultAction,
-  rollback: ResultAction
+  commit?: ResultAction,
+  rollback?: ResultAction
 };
 
 export type OfflineAction = {
