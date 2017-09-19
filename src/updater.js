@@ -29,7 +29,10 @@ const enqueue = (state: OfflineState, action: any): OfflineState => {
 const dequeue = (state: OfflineState): OfflineState => {
   const [, ...rest] = state.outbox;
   return {
-    ...state, outbox: rest, retryCount: 0, busy: false
+    ...state,
+    outbox: rest,
+    retryCount: 0,
+    busy: false
   };
 };
 
@@ -58,7 +61,11 @@ const offlineUpdater = function offlineUpdater(
     action.payload &&
     typeof action.payload.online === 'boolean'
   ) {
-    return { ...state, online: action.payload.online, netInfo: action.payload.netInfo };
+    return {
+      ...state,
+      online: action.payload.online,
+      netInfo: action.payload.netInfo
+    };
   }
 
   if (action.type === PERSIST_REHYDRATE) {
@@ -86,7 +93,11 @@ const offlineUpdater = function offlineUpdater(
     return { ...state, retryScheduled: false };
   }
 
-  if (action.type === OFFLINE_BUSY && action.payload && typeof action.payload.busy === 'boolean') {
+  if (
+    action.type === OFFLINE_BUSY &&
+    action.payload &&
+    typeof action.payload.busy === 'boolean'
+  ) {
     return { ...state, busy: action.payload.busy };
   }
 
@@ -107,18 +118,17 @@ const offlineUpdater = function offlineUpdater(
   return state;
 };
 
-export const enhanceReducer = (reducer: any) =>
-  (state: any, action: any) => {
-    let offlineState;
-    let restState;
-    if (typeof state !== 'undefined') {
-      const { offline, ...rest } = state;
-      offlineState = offline;
-      restState = rest;
-    }
+export const enhanceReducer = (reducer: any) => (state: any, action: any) => {
+  let offlineState;
+  let restState;
+  if (typeof state !== 'undefined') {
+    const { offline, ...rest } = state;
+    offlineState = offline;
+    restState = rest;
+  }
 
-    return {
-      ...reducer(restState, action),
-      offline: offlineUpdater(offlineState, action)
-    };
+  return {
+    ...reducer(restState, action),
+    offline: offlineUpdater(offlineState, action)
   };
+};

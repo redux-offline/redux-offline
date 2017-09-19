@@ -21,7 +21,7 @@ class DetectNetwork {
    * @returns {boolean} - Whether the connection reachability or the connection props have changed
    * @private
    */
-  _hasChanged = (reach) => {
+  _hasChanged = reach => {
     if (this._reach !== reach) {
       return true;
     }
@@ -29,7 +29,7 @@ class DetectNetwork {
       return true;
     }
     return false;
-  }
+  };
   /**
    * Sets the connection reachability prop
    * @param {string} reach - connection reachability.
@@ -39,10 +39,10 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _setReach = (reach) => {
+  _setReach = reach => {
     this._reach = reach;
     this._isConnected = this._getConnection(reach);
-  }
+  };
   /**
    * Gets the isConnected prop depending on the connection reachability's value
    * @param {string} reach - connection reachability.
@@ -52,7 +52,7 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _getConnection = reach => reach !== 'NONE' && reach !== 'UNKNOWN'
+  _getConnection = reach => reach !== 'NONE' && reach !== 'UNKNOWN';
   /**
    * Sets the isConnectionExpensive prop
    * @returns {Promise.<void>} Resolves to true if connection is expensive,
@@ -66,7 +66,7 @@ class DetectNetwork {
       // err means that isConnectionExpensive is not supported in iOS
       this._isConnectionExpensive = null;
     }
-  }
+  };
   /**
    * Fetches and sets the connection reachability and the isConnected props
    * @returns {Promise.<void>} Resolves when the props have been
@@ -76,7 +76,7 @@ class DetectNetwork {
   _init = async () => {
     const reach = await NetInfo.fetch();
     this._update(reach);
-  }
+  };
   /**
    * Check changes on props and store and dispatch if neccesary
    * @param {string} reach - connection reachability.
@@ -86,13 +86,13 @@ class DetectNetwork {
    * @returns {void}
    * @private
    */
-  _update = (reach) => {
+  _update = reach => {
     const normalizedReach = reach.toUpperCase();
     if (this._hasChanged(normalizedReach)) {
       this._setReach(normalizedReach);
       this._dispatch();
     }
-  }
+  };
 
   /**
    * Adds listeners for when connection reachability and app state changes to update props
@@ -100,7 +100,7 @@ class DetectNetwork {
    * @private
    */
   _addListeners() {
-    NetInfo.addEventListener('change', (reach) => {
+    NetInfo.addEventListener('change', reach => {
       this._update(reach);
     });
     AppState.addEventListener('change', this._init);
@@ -121,7 +121,7 @@ class DetectNetwork {
         reach: this._reach
       }
     });
-  }
+  };
 }
 
 export default callback => new DetectNetwork(callback);
