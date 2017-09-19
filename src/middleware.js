@@ -8,10 +8,11 @@ import send from './send';
 const after = (timeout = 0) =>
   new Promise(resolve => setTimeout(resolve, timeout));
 
-export const createOfflineMiddleware = (config: Config) =>
-  (store: any) => (next: any) => (action: any) => {
-    // allow other middleware to do their things
-    const result = next(action);
+export const createOfflineMiddleware = (config: Config) => (store: any) => (
+  next: any
+) => (action: any) => {
+  // allow other middleware to do their things
+  const result = next(action);
 
   // find any actions to send, if any
   const state: AppState = store.getState();
