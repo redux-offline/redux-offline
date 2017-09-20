@@ -1,5 +1,5 @@
 import { busy, scheduleRetry } from './actions';
-import { JS_ERROR } from './constants';
+import { DEFAULT_COMMIT, JS_ERROR } from './constants';
 import type { Config, OfflineAction, ResultAction } from './types';
 
 const complete = (
@@ -12,17 +12,19 @@ const complete = (
   meta: { ...action.meta, success, completed: true }
 });
 
+export const defaultCommitAction = {
+  type: DEFAULT_COMMIT
+};
+
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
     .then(result => {
+      const commitAction = metadata.commit || defaultCommitAction;
       try {
-        if (metadata.commit) {
-          dispatch(complete(metadata.commit, true, result));
-          return;
-        }
+        dispatch(complete(commitAction, true, result));
       } catch (e) {
         console.error(e);
         dispatch(complete({ type: JS_ERROR, payload: e }, false));
@@ -32,7 +34,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       // discard
       if (config.discard(error, action, retries)) {
         console.info('Discarding action', action.type);
-        if (metadata.commit) {
+        if (metadata.rollback) {
           dispatch(complete(metadata.rollback, false, error));
           return;
         }

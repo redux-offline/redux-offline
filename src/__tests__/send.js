@@ -1,4 +1,4 @@
-import send from '../send';
+import send, { defaultCommitAction } from '../send';
 import { busy, scheduleRetry } from '../actions';
 
 const DELAY = 1000;
@@ -73,6 +73,27 @@ describe('when request fails', () => {
     expect.assertions(1);
     return promise.then(() => {
       expect(dispatch).toBeCalledWith(expect.objectContaining(rollback));
+    });
+  });
+});
+
+describe('when request succeeds without commit defined', () => {
+  test('dispatches default commit action', () => {
+    const action = {
+      type: 'REQUEST',
+      meta: {
+        offline: {
+          effect: { type: 'MOCK' },
+        },
+      },
+    };
+
+    const { config, dispatch } = setup();
+
+    const promise = send(action, dispatch, config)
+
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(expect.objectContaining(defaultCommitAction));
     });
   });
 });
