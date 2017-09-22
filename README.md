@@ -500,6 +500,10 @@ Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
 
+#### Chain behavior off offline actions
+
+`store.dispatch()` returns a promise that you can use to chain behavior off offline actions, but be careful! A chief benefit of this library is that requests are tried across sessions, but promises do not last that long. So if you use this feature, know that your promise might not get resolved, even if the associated request is eventually delivered.
+
 #### Synchronise my state while the app is not open
 
 Background sync is not yet supported. Coming soon.
