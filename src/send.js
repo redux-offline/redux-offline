@@ -22,7 +22,6 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       try {
         dispatch(complete(commitAction, true, result));
       } catch (e) {
-        console.error(e);
         dispatch(complete({ type: JS_ERROR, payload: e }, false));
       }
     })
@@ -31,7 +30,6 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
 
       // discard
       if (config.discard(error, action, retries)) {
-        console.info('Discarding action', action.type);
         if (rollbackAction) {
           dispatch(complete(rollbackAction, false, error));
           return;
@@ -39,15 +37,9 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
-        console.info('Retrying action', action.type, 'with delay', delay);
         dispatch(scheduleRetry(delay));
         return;
       }
-      console.info(
-        'Discarding action',
-        action.type,
-        'because retry did not return a delay'
-      );
       if (rollbackAction) {
         dispatch(complete(rollbackAction, false, error));
       }
