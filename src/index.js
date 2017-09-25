@@ -16,10 +16,7 @@ let persistor;
 export const offline = (userConfig: $Shape<Config> = {}) => (
   createStore: any
 ) => (reducer: any, preloadedState: any, enhancer: any = x => x) => {
-  console.info('user config', userConfig);
   const config = applyDefaults(userConfig);
-
-  console.info('Creating offline store', config);
 
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
