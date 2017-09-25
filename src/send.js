@@ -1,5 +1,5 @@
 import { busy, scheduleRetry } from './actions';
-import { DEFAULT_COMMIT, JS_ERROR } from './constants';
+import { JS_ERROR } from './constants';
 import type { Config, OfflineAction, ResultAction } from './types';
 
 const complete = (
@@ -12,17 +12,13 @@ const complete = (
   meta: { ...action.meta, success, completed: true }
 });
 
-export const defaultCommitAction = {
-  type: DEFAULT_COMMIT
-};
-
 const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   const metadata = action.meta.offline;
   dispatch(busy(true));
   return config
     .effect(metadata.effect, action)
     .then(result => {
-      const commitAction = metadata.commit || defaultCommitAction;
+      const commitAction = metadata.commit || config.defaultCommit;
       try {
         dispatch(complete(commitAction, true, result));
       } catch (e) {
@@ -31,11 +27,13 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       }
     })
     .catch(error => {
+      const rollbackAction = metadata.rollback || config.defaultRollback;
+
       // discard
       if (config.discard(error, action, retries)) {
         console.info('Discarding action', action.type);
-        if (metadata.rollback) {
-          dispatch(complete(metadata.rollback, false, error));
+        if (rollbackAction) {
+          dispatch(complete(rollbackAction, false, error));
           return;
         }
       }
@@ -50,8 +48,8 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         action.type,
         'because retry did not return a delay'
       );
-      if (metadata.rollback) {
-        dispatch(complete(metadata.rollback, false, error));
+      if (rollbackAction) {
+        dispatch(complete(rollbackAction, false, error));
       }
     });
 };

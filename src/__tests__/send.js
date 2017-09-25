@@ -1,5 +1,7 @@
-import send, { defaultCommitAction } from '../send';
+import send from '../send';
 import { busy, scheduleRetry } from '../actions';
+import defaultCommitAction from '../defaults/defaultCommit';
+import defaultRollbackAction from '../defaults/defaultRollback';
 
 const DELAY = 1000;
 
@@ -7,8 +9,11 @@ function setup(partialConfig) {
   const defaultConfig = {
     effect: jest.fn(() => Promise.resolve()),
     discard: () => false,
-    retry: () => DELAY
+    retry: () => DELAY,
+    defaultCommit: defaultCommitAction,
+    defaultRollback: defaultRollbackAction,
   };
+
   return {
     action: {
       type: 'REQUEST',
@@ -77,8 +82,10 @@ describe('when request fails', () => {
   });
 });
 
-describe('when request succeeds without commit defined', () => {
+describe('when request succeeds and commit is undefined', () => {
   test('dispatches default commit action', () => {
+    const effect = () => Promise.resolve();
+
     const action = {
       type: 'REQUEST',
       meta: {
@@ -88,12 +95,36 @@ describe('when request succeeds without commit defined', () => {
       },
     };
 
-    const { config, dispatch } = setup();
+    const { config, dispatch } = setup({ effect });
 
     const promise = send(action, dispatch, config)
 
     return promise.then(() => {
       expect(dispatch).toBeCalledWith(expect.objectContaining(defaultCommitAction));
+    });
+  });
+});
+
+describe('when request is to be discarded and rollback is undefined', () => {
+  test('dispatches default rollback action', () => {
+    const effect = () => Promise.reject();
+    const discard = () => true;
+
+    const action = {
+      type: 'REQUEST',
+      meta: {
+        offline: {
+          effect: { type: 'MOCK' },
+        },
+      },
+    };
+
+    const { config, dispatch } = setup({ effect, discard });
+
+    const promise = send(action, dispatch, config)
+
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(expect.objectContaining(defaultRollbackAction));
     });
   });
 });

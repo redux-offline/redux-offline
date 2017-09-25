@@ -47,5 +47,7 @@ export type Config = {
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
-  persistCallback: (callback: any) => any
+  persistCallback: (callback: any) => any,
+  defaultCommit: { type: string },
+  defaultRollback: { type: string }
 };
