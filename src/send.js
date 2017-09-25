@@ -30,19 +30,15 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
 
       // discard
       if (config.discard(error, action, retries)) {
-        if (rollbackAction) {
-          dispatch(complete(rollbackAction, false, error));
-          return;
-        }
+        dispatch(complete(rollbackAction, false, error));
+        return;
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
         dispatch(scheduleRetry(delay));
         return;
       }
-      if (rollbackAction) {
-        dispatch(complete(rollbackAction, false, error));
-      }
+      dispatch(complete(rollbackAction, false, error));
     });
 };
 
