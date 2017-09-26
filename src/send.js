@@ -18,7 +18,10 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   return config
     .effect(metadata.effect, action)
     .then(result => {
-      const commitAction = metadata.commit || config.defaultCommit;
+      const commitAction = metadata.commit || {
+        ...config.defaultCommit,
+        meta: { ...config.defaultCommit.meta, offlineAction: action }
+      };
       try {
         dispatch(complete(commitAction, true, result));
       } catch (e) {
@@ -26,7 +29,10 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       }
     })
     .catch(error => {
-      const rollbackAction = metadata.rollback || config.defaultRollback;
+      const rollbackAction = metadata.rollback || {
+        ...config.defaultRollback,
+        meta: { ...config.defaultRollback.meta, offlineAction: action }
+      };
 
       // discard
       if (config.discard(error, action, retries)) {
