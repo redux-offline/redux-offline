@@ -18,22 +18,33 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
   return config
     .effect(metadata.effect, action)
     .then(result => {
+      const commitAction = metadata.commit || {
+        ...config.defaultCommit,
+        meta: { ...config.defaultCommit.meta, offlineAction: action }
+      };
       try {
-        return dispatch(complete(metadata.commit, true, result));
+        dispatch(complete(commitAction, true, result));
       } catch (e) {
-        return dispatch(complete({ type: JS_ERROR, payload: e }, false));
+        dispatch(complete({ type: JS_ERROR, payload: e }, false));
       }
     })
     .catch(error => {
+      const rollbackAction = metadata.rollback || {
+        ...config.defaultRollback,
+        meta: { ...config.defaultRollback.meta, offlineAction: action }
+      };
+
       // discard
       if (config.discard(error, action, retries)) {
-        return dispatch(complete(metadata.rollback, false, error));
+        dispatch(complete(rollbackAction, false, error));
+        return;
       }
       const delay = config.retry(action, retries);
       if (delay != null) {
-        return dispatch(scheduleRetry(delay));
+        dispatch(scheduleRetry(delay));
+        return;
       }
-      return dispatch(complete(metadata.rollback, false, error));
+      dispatch(complete(rollbackAction, false, error));
     });
 };
 

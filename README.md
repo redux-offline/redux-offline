@@ -150,7 +150,7 @@ const action = userId => ({
   meta: {
     offline: {
       effect: //...,
-      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}
      }
   }
 });
@@ -180,7 +180,7 @@ const completeOrder = (orderId, lineItems) => ({
     offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}
      }
   }
 });
@@ -200,7 +200,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state,   
+        ...state,
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -302,7 +302,9 @@ export type Config = {
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  persistOptions: {},
+  defaultCommit: { type: string },
+  defaultRollback: { type: string }
 };
 ```
 
@@ -360,7 +362,7 @@ const store = createStore(
   preloadedState,
 -  middleware
 +  compose(middleware, offline(myConfig))
- myConfig  
+ myConfig
 );
 ```
 

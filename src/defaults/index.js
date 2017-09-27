@@ -3,6 +3,8 @@ import detectNetwork from './detectNetwork';
 import effect from './effect';
 import retry from './retry';
 import discard from './discard';
+import defaultCommit from './defaultCommit';
+import defaultRollback from './defaultRollback';
 
 export default {
   rehydrate: true,
@@ -10,5 +12,7 @@ export default {
   detectNetwork,
   effect,
   retry,
-  discard
+  discard,
+  defaultCommit,
+  defaultRollback
 };
