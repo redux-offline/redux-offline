@@ -6,6 +6,7 @@ module.exports = {
     Promise: true
   },
   env: {
+    jest: true,  // https://stackoverflow.com/a/40265356/586382
     node: true
   },
   rules: {
