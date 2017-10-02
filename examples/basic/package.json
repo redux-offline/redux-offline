@@ -1,0 +1,13 @@
+{
+  "name": "basic-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  },
+  "main": "index.js",
+  "license": "MIT"
+}
