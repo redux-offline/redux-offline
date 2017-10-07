@@ -7,6 +7,25 @@ import { applyDefaults } from "../config";
 
 beforeEach(() => storage.removeItem(storageKey, noop) );
 
+const defaultOfflineState = {
+  busy: false,
+  lastTransaction: 0,
+  online: true,
+  outbox: [],
+  receipts: [],
+  retryToken: 0,
+  retryCount: 0,
+  retryScheduled: false,
+  netInfo: {
+    isConnectionExpensive: null,
+    reach: 'NONE'
+  }
+};
+
+const state = {
+  offline: defaultOfflineState
+};
+
 test("creates storeEnhancer", () => {
   const reducer = noop;
   const storeEnhancer = offline(defaultConfig);
@@ -55,4 +74,6 @@ test("works with devtools store enhancer", () => {
 const storage = new AsyncNodeStorage("/tmp/storageDir");
 const defaultConfig = applyDefaults({ persistOptions: { storage } });
 const storageKey = `${KEY_PREFIX}offline`;
-function noop() {}
+function noop() {
+  return state;
+}

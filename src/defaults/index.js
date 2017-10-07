@@ -5,14 +5,18 @@ import retry from './retry';
 import discard from './discard';
 import defaultCommit from './defaultCommit';
 import defaultRollback from './defaultRollback';
+import persistAutoRehydrate from './persistAutoRehydrate';
+import offlineStateLens from './offlineStateLens';
 
 export default {
-  rehydrate: true,
+  rehydrate: true, // backward compatibility, TODO remove in the next breaking change version
   persist,
   detectNetwork,
   effect,
   retry,
   discard,
   defaultCommit,
-  defaultRollback
+  defaultRollback,
+  persistAutoRehydrate,
+  offlineStateLens
 };
