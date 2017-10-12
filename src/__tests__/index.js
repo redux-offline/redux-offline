@@ -37,7 +37,8 @@ test("creates storeEnhancer", () => {
 
 // see https://github.com/redux-offline/redux-offline/issues/4
 test("restores offline outbox when rehydrates", () => {
-  const actions = [{ type: "SOME_OFFLINE_ACTION" }];
+  const meta = { offline: { effect: {} } };
+  const actions = [{ type: "SOME_OFFLINE_ACTION", meta }];
   storage.setItem(
     storageKey,
     JSON.stringify({ outbox: actions }),
