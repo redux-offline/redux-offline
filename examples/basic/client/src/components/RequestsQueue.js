@@ -1,23 +1,19 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
 function RequestsQueue({ actions }) {
   if (actions.length === 0) {
-    return (
-      <p>There are no requests</p>
-    )
+    return <p>There are no requests</p>;
   }
 
   return (
     <ul>
-      {actions.map((action, i) => {
-        return (
-          <li key={action.meta.transaction}>
-            <span>{action.type}</span>
-            <span>#{action.meta.transaction}</span>
-          </li>
-        )
-      })}
+      {actions.map(action => (
+        <li key={action.meta.transaction}>
+          <span>{action.type}</span>
+          <span>#{action.meta.transaction}</span>
+        </li>
+      ))}
     </ul>
   );
 }

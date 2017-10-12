@@ -1,11 +1,7 @@
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import {
-  succeedAlways,
-  succeedSometimes,
-  failSometimes
-} from "../actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 
 function MakeRequests({ succeedAlways, succeedSometimes, failSometimes }) {
   return (
@@ -18,11 +14,14 @@ function MakeRequests({ succeedAlways, succeedSometimes, failSometimes }) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    succeedAlways,
-    succeedSometimes,
-    failSometimes
-  }, dispatch);
+  return bindActionCreators(
+    {
+      succeedAlways,
+      succeedSometimes,
+      failSometimes
+    },
+    dispatch
+  );
 }
 
 const ConnectedComponent = connect(null, mapDispatchToProps)(MakeRequests);

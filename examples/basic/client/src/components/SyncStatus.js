@@ -1,14 +1,17 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import { connect } from 'react-redux';
 
 function SyncStatus({ timer, busy, retryScheduled, attempt }) {
   if (!busy && !retryScheduled) {
     return <p>Synced</p>;
   } else if (busy) {
     return <p>Waiting on request - Attempt #{attempt}</p>;
-  } else {
-    return <p>Waiting on retry: {timer}s - Attempt #{attempt}</p>
   }
+  return (
+    <p>
+      Waiting on retry: {timer}s - Attempt #{attempt}
+    </p>
+  );
 }
 
 function mapStateToProps(state) {
