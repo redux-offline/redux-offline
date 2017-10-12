@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-function RawComponent({ timer, busy, retryScheduled, attempt }) {
+function SyncStatus({ timer, busy, retryScheduled, attempt }) {
   if (!busy && !retryScheduled) {
     return <p>Synced</p>;
   } else if (busy) {
@@ -20,7 +20,7 @@ function mapStateToProps(state) {
   };
 }
 
-const SyncStatus = connect(mapStateToProps)(RawComponent);
+const ConnectedComponent = connect(mapStateToProps)(SyncStatus);
 
-export { RawComponent };
-export default SyncStatus;
+export { SyncStatus as RawComponent };
+export default ConnectedComponent;

@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-function RawComponent({ actions }) {
+function RequestsQueue({ actions }) {
   if (actions.length === 0) {
     return (
       <p>There are no requests</p>
@@ -28,7 +28,7 @@ function mapStateToProps(state) {
   };
 }
 
-const RequestsQueue = connect(mapStateToProps)(RawComponent);
+const ConnectedComponent = connect(mapStateToProps)(RequestsQueue);
 
-export { RawComponent };
-export default RequestsQueue;
+export { RequestsQueue as RawComponent };
+export default ConnectedComponent;

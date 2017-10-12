@@ -7,7 +7,7 @@ import {
   failSometimes
 } from "../actions";
 
-function RawComponent({ succeedAlways, succeedSometimes, failSometimes }) {
+function MakeRequests({ succeedAlways, succeedSometimes, failSometimes }) {
   return (
     <div>
       <button onClick={succeedAlways}>Succeed Always</button>
@@ -25,7 +25,7 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-const MakeRequests = connect(null, mapDispatchToProps)(RawComponent);
+const ConnectedComponent = connect(null, mapDispatchToProps)(MakeRequests);
 
-export { RawComponent };
-export default MakeRequests;
+export { MakeRequests as RawComponent };
+export default ConnectedComponent;
