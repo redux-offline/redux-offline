@@ -56,6 +56,11 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
     enhancer
   );
 
+  const baseReplaceReducer = store.replaceReducer.bind(store);
+  store.replaceReducer = function replaceReducer(nextReducer) {
+    return baseReplaceReducer(enhanceReducer(nextReducer, config));
+  };
+
   // launch store persistor
   if (config.persist) {
     persistor = config.persist(
