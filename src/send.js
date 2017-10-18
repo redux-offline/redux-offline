@@ -35,11 +35,11 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       };
 
       // discard
-      let mustDiscard = true
+      let mustDiscard = true;
       try {
-        mustDiscard = await config.discard(error, action, retries)
-      } catch(e) {
-        console.warn(e)
+        mustDiscard = await config.discard(error, action, retries);
+      } catch (e) {
+        console.warn(e);
       }
 
       if (!mustDiscard) {
