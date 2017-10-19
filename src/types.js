@@ -53,6 +53,7 @@ export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
   persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
+  effectResultMiddleware: [],
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
