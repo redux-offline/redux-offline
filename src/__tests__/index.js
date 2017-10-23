@@ -28,7 +28,7 @@ function defaultReducer(state = {
     retryScheduled: false,
     netInfo: {
       isConnectionExpensive: null,
-      reach: 'NONE'
+      reach: 'none'
     }
   }
 }) {
