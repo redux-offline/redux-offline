@@ -85,6 +85,34 @@ describe('when request fails', () => {
       expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
     });
   });
+
+  test('dispatches complete action with promised discard', () => {
+    const effect = () => Promise.reject();
+    const discard = () => Promise.resolve(true);
+    const { action, config, dispatch } = setup({ effect, discard });
+    const promise = send(action, dispatch, config);
+
+    const { rollback } = action.meta.offline;
+    expect.assertions(2);
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(expect.objectContaining(rollback));
+      expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
+    });
+  });
+
+  test('dispatches complete action when discard throw an exception', () => {
+    const effect = () => Promise.reject();
+    const discard = () => {throw new Error};
+    const { action, config, dispatch } = setup({ effect, discard });
+    const promise = send(action, dispatch, config);
+
+    const { rollback } = action.meta.offline;
+    expect.assertions(2);
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(expect.objectContaining(rollback));
+      expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
+    });
+  });
 });
 
 describe('when request succeeds and commit is undefined', () => {

@@ -28,22 +28,28 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         dispatch(complete({ type: JS_ERROR, payload: e }, false));
       }
     })
-    .catch(error => {
+    .catch(async error => {
       const rollbackAction = metadata.rollback || {
         ...config.defaultRollback,
         meta: { ...config.defaultRollback.meta, offlineAction: action }
       };
 
       // discard
-      if (config.discard(error, action, retries)) {
-        dispatch(complete(rollbackAction, false, error));
-        return;
+      let mustDiscard = true;
+      try {
+        mustDiscard = await config.discard(error, action, retries);
+      } catch (e) {
+        console.warn(e);
       }
-      const delay = config.retry(action, retries);
-      if (delay != null) {
-        dispatch(scheduleRetry(delay));
-        return;
+
+      if (!mustDiscard) {
+        const delay = config.retry(action, retries);
+        if (delay != null) {
+          dispatch(scheduleRetry(delay));
+          return;
+        }
       }
+
       dispatch(complete(rollbackAction, false, error));
     });
 };
