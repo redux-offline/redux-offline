@@ -446,14 +446,7 @@ const config = {
 }
 ```
 
-The method receives the Error returned by the effect reconciler, the action
-being processed, and a number representing how many times the action has been
-retried. If the method returns `true`, the action will be discarded; `false`,
-and it will be retried. The full signature of the method is `(error: any,
-action: OfflineAction, retries: number) => boolean`. Alternatively, you can
-return a Promise object that resolve to a boolean, allowing you to detect when
-to discard asynchronously (for example, doing a request to a server to refresh a
-token and try again).
+The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`. Alternatively, you can return a Promise object that resolve to a boolean, allowing you to detect when to discard asynchronously (for example, doing a request to a server to refresh a token and try again).
 
 #### Change how network requests are retried
 
