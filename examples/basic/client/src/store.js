@@ -1,5 +1,5 @@
 import { applyMiddleware, compose, createStore } from 'redux';
-import { offline } from '@redux-offline/redux-offline';
+import { offline, createOffline } from '@redux-offline/redux-offline';
 import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 
 const initialState = {
@@ -28,7 +28,7 @@ const config = {
   }
 };
 
-function middleware(store) {
+function tickMiddleware(store) {
   return next => action => {
     if (action.type === 'Offline/SCHEDULE_RETRY') {
       const intervalId = setInterval(() => {
@@ -40,9 +40,20 @@ function middleware(store) {
   };
 }
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-  reducer,
-  composeEnhancers(offline(config), applyMiddleware(middleware))
-);
+
+let store;
+if (process.env.REACT_APP_OFFLINE_API === 'alternative') {
+  const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
+  store = createStore(
+    enhanceReducer(reducer),
+    undefined,
+    composeEnhancers(applyMiddleware(middleware, tickMiddleware), enhanceStore)
+  );
+} else {
+  store = createStore(
+    reducer,
+    composeEnhancers(offline(config), applyMiddleware(tickMiddleware))
+  );
+}
 
 export default store;
