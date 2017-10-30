@@ -12,6 +12,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "alternative": "REACT_APP_OFFLINE_API=alternative react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
