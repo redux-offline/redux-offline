@@ -13,7 +13,7 @@ const offlineUpdater = function offlineUpdater(
   const newState =
     reducers[action.type] && reducers[action.type](state, action);
 
-  if (newState !== null) {
+  if (newState !== null && typeof newState !== 'undefined') {
     return newState;
   }
 
@@ -27,7 +27,7 @@ const offlineUpdater = function offlineUpdater(
     return dequeue(state);
   }
 
-  return state;
+  return newState || state;
 };
 
 export const enhanceReducer = (reducer: any, config: $Shape<Config>) => (
