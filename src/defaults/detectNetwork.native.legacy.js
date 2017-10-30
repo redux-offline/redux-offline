@@ -7,6 +7,7 @@ class LegacyDetectNetwork {
     this._isConnected = null;
     this._isConnectionExpensive = null;
     this._callback = callback;
+    this._shouldInitUpdateReach = true;
 
     this._init();
     this._addListeners();
@@ -68,14 +69,26 @@ class LegacyDetectNetwork {
     }
   };
   /**
-   * Fetches and sets the connection reachability and the isConnected props
+   * Sets the shouldInitUpdateReach flag
+   * @param {boolean} shouldUpdate - Whether the init method should update the reach prop
+   * @returns {void}
+   * @private
+   */
+  _setShouldInitUpdateReach = shouldUpdate => {
+    this._shouldInitUpdateReach = shouldUpdate;
+  };
+  /**
+   * Fetches and sets the connection reachability and the isConnected props,
+   * if neither of the AppState and NetInfo event listeners have been called
    * @returns {Promise.<void>} Resolves when the props have been
    * initialized and update.
    * @private
    */
   _init = async () => {
     const reach = await NetInfo.fetch();
-    this._update(reach);
+    if (this._shouldInitUpdateReach) {
+      this._update(reach);
+    }
   };
   /**
    * Check changes on props and store and dispatch if neccesary
@@ -101,9 +114,14 @@ class LegacyDetectNetwork {
    */
   _addListeners() {
     NetInfo.addEventListener('change', reach => {
+      this._setShouldInitUpdateReach(false);
       this._update(reach);
     });
-    AppState.addEventListener('change', this._init);
+    AppState.addEventListener('change', async () => {
+      this._setShouldInitUpdateReach(false);
+      const reach = await NetInfo.fetch();
+      this._update(reach);
+    });
   }
 
   /**
