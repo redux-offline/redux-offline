@@ -52,7 +52,7 @@ export const dequeue = (state: OfflineState): OfflineState => {
 
 export default {
   [OFFLINE_STATUS_CHANGED](state: OfflineState, action: Action): ?OfflineState {
-    if (!action.payload || typeof action.payload.online === 'boolean') {
+    if (!action.payload || typeof action.payload.online !== 'boolean') {
       return null;
     }
     return {

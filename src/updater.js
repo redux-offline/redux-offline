@@ -13,6 +13,10 @@ const offlineUpdater = function offlineUpdater(
   const newState =
     reducers[action.type] && reducers[action.type](state, action);
 
+  if (newState !== null) {
+    return newState;
+  }
+
   // Add offline actions to queue
   if (action.meta && action.meta.offline) {
     return enqueue(state, action);
@@ -23,7 +27,7 @@ const offlineUpdater = function offlineUpdater(
     return dequeue(state);
   }
 
-  return newState || state;
+  return state;
 };
 
 export const enhanceReducer = (reducer: any, config: $Shape<Config>) => (
