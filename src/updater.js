@@ -2,7 +2,8 @@
 /* global $Shape */
 
 import type { OfflineState, Config } from './types';
-import reducers, { initialState, enqueue, dequeue, Action } from './reducers';
+import type { Action } from './reducers';
+import reducers, { initialState, enqueue, dequeue } from './reducers';
 
 const offlineUpdater = function offlineUpdater(
   state: OfflineState = initialState,
