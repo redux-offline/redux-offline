@@ -308,7 +308,12 @@ export type Config = {
   persistOptions: {},
   persistCallback: (callback: any) => any,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
-  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  queue: {
+    enqueue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    dequeue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    peek: (outbox: Array<OfflineAction>) => OfflineAction
+  }
 };
 ```
 
@@ -499,6 +504,27 @@ online, is started, or you manually fire an `Offline/SEND` action.
 Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
+
+#### Provide your own queue implementation
+
+Provide your own `enqueue()`, `dequeue()` and `peek()` implementations to `config.queue` to alter how the queue is processed.
+
+```js
+// Last Value Queue
+// Only keep the last action for each URL-method pair.
+const config = {
+  queue: {
+    ...defaultQueue,
+    enqueue(array, action) {
+      const newArray = array.filter(item =>
+        !(item.method === action.method && item.url === action.url)
+      );
+      newArray.push(action);
+      return newArray;
+    }
+  }
+};
+```
 
 #### Synchronise my state while the app is not open
 

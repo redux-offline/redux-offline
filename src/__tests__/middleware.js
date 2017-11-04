@@ -1,9 +1,8 @@
 import { createOfflineMiddleware } from '../middleware';
 import { completeRetry, scheduleRetry } from '../actions';
+import defaultConfig from '../defaults';
 import { OFFLINE_SEND } from '../constants';
 import send from '../send';
-
-import offlineStateLens from '../defaults/offlineStateLens'
 
 const offlineAction = {
   type: 'OFFLINE_ACTION_REQUEST',
@@ -37,6 +36,7 @@ function setup(offlineState = {}) {
   };
   return {
     config: {
+      ...defaultConfig,
       rehydrate: false,
       persist: null,
       detectNetwork: null,
@@ -44,7 +44,6 @@ function setup(offlineState = {}) {
       effect: jest.fn(),
       retry: jest.fn(),
       discard: jest.fn(),
-      offlineStateLens,
     },
     store: {
       getState: jest.fn(() => state),
