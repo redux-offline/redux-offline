@@ -8,6 +8,7 @@ class DetectNetwork {
     this._isConnected = null;
     this._isConnectionExpensive = null;
     this._callback = callback;
+    this._shouldInitUpdateReach = true;
 
     this._init();
     this._addListeners();
@@ -66,14 +67,26 @@ class DetectNetwork {
     }
   };
   /**
-   * Fetches and sets the connection reachability and the isConnected props
+   * Sets the shouldInitUpdateReach flag
+   * @param {boolean} shouldUpdate - Whether the init method should update the reach prop
+   * @returns {void}
+   * @private
+   */
+  _setShouldInitUpdateReach = shouldUpdate => {
+    this._shouldInitUpdateReach = shouldUpdate;
+  };
+  /**
+   * Fetches and sets the connection reachability and the isConnected props,
+   * if neither of the AppState and NetInfo event listeners have been called
    * @returns {Promise.<void>} Resolves when the props have been
    * initialized and update.
    * @private
    */
   _init = async () => {
     const connectionInfo = await NetInfo.getConnectionInfo();
-    this._update(connectionInfo.type);
+    if (this._shouldInitUpdateReach) {
+      this._update(connectionInfo.type);
+    }
   };
   /**
    * Check changes on props and store and dispatch if neccesary
@@ -97,9 +110,14 @@ class DetectNetwork {
    */
   _addListeners() {
     NetInfo.addEventListener('connectionChange', connectionInfo => {
+      this._setShouldInitUpdateReach(false);
       this._update(connectionInfo.type);
     });
-    AppState.addEventListener('change', this._init);
+    AppState.addEventListener('change', async () => {
+      this._setShouldInitUpdateReach(false);
+      const connectionInfo = await NetInfo.getConnectionInfo();
+      this._update(connectionInfo.type);
+    });
   }
 
   /**
