@@ -14,4 +14,5 @@ const decaySchedule = [
   1000 * 60 * 60 // After 1 hour
 ];
 
-export default (action: OfflineAction, retries: number): ?number => decaySchedule[retries] || null;
+export default (action: OfflineAction, retries: number): ?number =>
+  decaySchedule[retries] || null;

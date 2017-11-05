@@ -150,7 +150,7 @@ const action = userId => ({
   meta: {
     offline: {
       effect: //...,
-      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}
      }
   }
 });
@@ -161,7 +161,7 @@ const followingUsersReducer = (state, action) {
     case 'FOLLOW_USER':
       return { ...state, [action.payload.userId]: true };
     case 'FOLLOW_USER_ROLLBACK':
-      return omit(state, [action.payload.userId]);
+      return omit(state, [action.meta.userId]);
     default:
       return state;
   }
@@ -180,7 +180,7 @@ const completeOrder = (orderId, lineItems) => ({
     offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}
      }
   }
 });
@@ -200,7 +200,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state,   
+        ...state,
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -298,11 +298,16 @@ Redux Offline supports the following configuration properties:
 ```js
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
-  discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
+  defaultCommit: { type: string },
+  defaultRollback: { type: string },
+  persist: (store: any) => any,
+  persistOptions: {},
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
 ```
 
@@ -360,7 +365,7 @@ const store = createStore(
   preloadedState,
 -  middleware
 +  compose(middleware, offline(myConfig))
- myConfig  
+ myConfig
 );
 ```
 
@@ -400,6 +405,15 @@ const config = {
 };
 ```
 
+You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+```js
+import { autoRehydrate } from 'redux-persist';
+
+const config = {
+  persistAutoRehydrate: () => autoRehydrate({log: true})
+};
+```
+
 If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsible for setting any subscribers to listen for store changes to persist it.
 ```js
 const config = {
@@ -432,7 +446,7 @@ const config = {
 }
 ```
 
-The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`.
+The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`. Alternatively, you can return a Promise object that resolve to a boolean, allowing you to detect when to discard asynchronously (for example, doing a request to a server to refresh a token and try again).
 
 #### Change how network requests are retried
 
@@ -463,9 +477,25 @@ Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
+The `offline` state branch created by Redux Offline needs to be a vanilla JavaScript object.
+If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
+If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
 [Contributions welcome](#contributing).
+
+#### Choose where the offline middleware is added
+
+By default, the offline middleware is inserted right before the offline store enhancer as part of its own middleware chain. If you want more control over where the middleware is inserted, consider using the alternative api, `createOffline()`.
+
+```js
+import { createOffline } from "@redux-offline/redux-offline";
+const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
+const store = createStore(
+  enhanceReducer(rootReducer),
+  initialStore,
+  compose(applyMiddleware(middleware), enhanceStore)
+);
+```
 
 
 ## Contributing
