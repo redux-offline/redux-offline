@@ -2,14 +2,14 @@
   <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 </p>
 <p>
-  <a title='License' href="https://raw.githubusercontent.com/redux-offline/redux-offline/master/LICENSE" height="18">
+  <a title='License' href="https://raw.githubusercontent.com/redux-offline-team/redux-offline/master/LICENSE" height="18">
     <img src='https://img.shields.io/badge/license-MIT-blue.svg' />
   </a>
   <a href="https://badge.fury.io/js/redux-offline">
     <img src="https://badge.fury.io/js/redux-offline.svg" alt="npm version" height="18">
   </a>
-  <a href="https://travis-ci.org/redux-offline/redux-offline">
-    <img src="https://travis-ci.org/redux-offline/redux-offline.svg?branch=master" alt="travis" height="18">
+  <a href="https://travis-ci.org/redux-offline-team/redux-offline">
+    <img src="https://travis-ci.org/redux-offline-team/redux-offline.svg?branch=master" alt="travis" height="18">
   </a>
 </p>
 
@@ -27,15 +27,14 @@ _To get started, take a moment to read through the **[Offline Guide](#offline-gu
 
 ## Full disclosure
 
-This is a community maintained fork. The original repo can be found in [here](https://github.com/jevakallio/redux-offline).
-
-Redux Offline is very, very new. If you find a bug, good job for being an early adopter! (And there will be issues.) If you find a problem, please submit an issue and I will get to them. 😇
+Redux Offline is now being maintained by a community driven team. The new versions of the library will now be available under the npm organization `@redux-offline`. Big thank you to [@jevakallio](https://github.com/jevakallio) for creating this amazing library in the first place.
 
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
-```sh
-npm install --save @redux-offline/redux-offline
+```diff
+- npm install --save redux-offline
++ npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
@@ -43,8 +42,10 @@ npm install --save @redux-offline/redux-offline
 
 - import { applyMiddleware, createStore } from 'redux';
 + import { applyMiddleware, createStore, compose } from 'redux';
-+ import { offline } from 'redux-offline';
-+ import offlineConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import offlineConfig from 'redux-offline/lib/defaults';
++ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
 // ...
 
@@ -61,7 +62,7 @@ const store = createStore(
 
 See [Configuration](#configuration) for overriding default configurations.
 
-Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/redux-offline/redux-offline/releases/tag/v2.0.0).
+Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/redux-offline-team/redux-offline/releases/tag/v2.0.0).
 
 ##### 3. Decorate actions with offline metadata
 
@@ -314,8 +315,10 @@ export type Config = {
 #### Passing configuration to the enhancer
 The `offline` store enhancer takes the [configuration object](#configuration-object) as a final parameter:
 ```diff
-+ import { offline } from 'redux-offline';
-+ import defaultConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import defaultConfig from 'redux-offline/lib/defaults';
++ import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 
 const store = createStore(
   reducer,
@@ -328,8 +331,10 @@ const store = createStore(
 #### Overriding default properties
 You can override any individual property in the default configuration:
 ```diff
-import { offline } from 'redux-offline';
-import defaultConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import defaultConfig from 'redux-offline/lib/defaults';
++ import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 
 const customConfig = {
   ...defaultConfig,
@@ -348,9 +353,12 @@ const store = createStore(
 The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
-import { offline } from 'redux-offline';
-import retry from 'redux-offline/lib/defaults/retry';
-import discard from 'redux-offline/lib/defaults/discard';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import retry from 'redux-offline/lib/defaults/retry';
++ import retry from '@redux-offline/redux-offline/lib/defaults/retry';
+- import discard from 'redux-offline/lib/defaults/discard';
++ import discard from '@redux-offline/redux-offline/lib/defaults/discard';
 
 const myConfig = {
   retry,
