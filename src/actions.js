@@ -5,10 +5,11 @@ import {
   OFFLINE_BUSY
 } from './constants';
 
-export const networkStatusChanged = online => ({
+export const networkStatusChanged = ({ online, netInfo }) => ({
   type: OFFLINE_STATUS_CHANGED,
   payload: {
-    online
+    online,
+    netInfo
   }
 });
 
@@ -19,10 +20,9 @@ export const scheduleRetry = (delay = 0) => ({
   }
 });
 
-export const completeRetry = (action, retryToken) => ({
+export const completeRetry = action => ({
   type: OFFLINE_COMPLETE_RETRY,
-  payload: action,
-  meta: { retryToken }
+  payload: action
 });
 
 export const busy = isBusy => ({

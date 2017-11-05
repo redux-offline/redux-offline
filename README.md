@@ -2,14 +2,14 @@
   <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 </p>
 <p>
-  <a title='License' href="https://raw.githubusercontent.com/jevakallio/redux-offline/master/LICENSE" height="18">
+  <a title='License' href="https://raw.githubusercontent.com/redux-offline/redux-offline/master/LICENSE" height="18">
     <img src='https://img.shields.io/badge/license-MIT-blue.svg' />
   </a>
   <a href="https://badge.fury.io/js/redux-offline">
     <img src="https://badge.fury.io/js/redux-offline.svg" alt="npm version" height="18">
   </a>
-  <a href="https://travis-ci.org/jevakallio/redux-offline">
-    <img src="https://travis-ci.org/jevakallio/redux-offline.svg?branch=master" alt="travis" height="18">
+  <a href="https://travis-ci.org/redux-offline/redux-offline">
+    <img src="https://travis-ci.org/redux-offline/redux-offline.svg?branch=master" alt="travis" height="18">
   </a>
 </p>
 
@@ -27,13 +27,15 @@ _To get started, take a moment to read through the **[Offline Guide](#offline-gu
 
 ## Full disclosure
 
+This is a community maintained fork. The original repo can be found in [here](https://github.com/jevakallio/redux-offline).
+
 Redux Offline is very, very new. If you find a bug, good job for being an early adopter! (And there will be issues.) If you find a problem, please submit an issue and I will get to them. 😇
 
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
 ```sh
-npm install --save redux-offline
+npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
@@ -59,7 +61,7 @@ const store = createStore(
 
 See [Configuration](#configuration) for overriding default configurations.
 
-Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/jevakallio/redux-offline/releases/tag/v2.0.0).
+Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/redux-offline/redux-offline/releases/tag/v2.0.0).
 
 ##### 3. Decorate actions with offline metadata
 
@@ -148,7 +150,7 @@ const action = userId => ({
   meta: {
     offline: {
       effect: //...,
-      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}
      }
   }
 });
@@ -159,7 +161,7 @@ const followingUsersReducer = (state, action) {
     case 'FOLLOW_USER':
       return { ...state, [action.payload.userId]: true };
     case 'FOLLOW_USER_ROLLBACK':
-      return omit(state, [action.payload.userId]);
+      return omit(state, [action.meta.userId]);
     default:
       return state;
   }
@@ -178,7 +180,7 @@ const completeOrder = (orderId, lineItems) => ({
     offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}
      }
   }
 });
@@ -198,7 +200,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state,   
+        ...state,
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -296,11 +298,16 @@ Redux Offline supports the following configuration properties:
 ```js
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
-  discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
+  defaultCommit: { type: string },
+  defaultRollback: { type: string },
+  persist: (store: any) => any,
+  persistOptions: {},
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
 ```
 
@@ -342,7 +349,6 @@ The reason for default config is defined as a separate import is, that it pulls 
 
 ```diff
 import { offline } from 'redux-offline';
-import batch from 'redux-offline/lib/defaults/batch';
 import retry from 'redux-offline/lib/defaults/retry';
 import discard from 'redux-offline/lib/defaults/discard';
 
@@ -359,7 +365,7 @@ const store = createStore(
   preloadedState,
 -  middleware
 +  compose(middleware, offline(myConfig))
- myConfig  
+ myConfig
 );
 ```
 
@@ -399,6 +405,15 @@ const config = {
 };
 ```
 
+You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+```js
+import { autoRehydrate } from 'redux-persist';
+
+const config = {
+  persistAutoRehydrate: () => autoRehydrate({log: true})
+};
+```
+
 If you want to replace redux-persist entirely **(not recommended)**, you can override `config.persist`. The function receives the store instance as a first parameter, and is responsible for setting any subscribers to listen for store changes to persist it.
 ```js
 const config = {
@@ -431,7 +446,7 @@ const config = {
 }
 ```
 
-The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`.
+The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`. Alternatively, you can return a Promise object that resolve to a boolean, allowing you to detect when to discard asynchronously (for example, doing a request to a server to refresh a token and try again).
 
 #### Change how network requests are retried
 
@@ -456,19 +471,31 @@ Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
 
-#### Change how queue processing is batched
-
-Currently messages are sent one by one, in serial. Customization support coming soon.
-
 #### Synchronise my state while the app is not open
 
 Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
+The `offline` state branch created by Redux Offline needs to be a vanilla JavaScript object.
+If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
+If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
 [Contributions welcome](#contributing).
+
+#### Choose where the offline middleware is added
+
+By default, the offline middleware is inserted right before the offline store enhancer as part of its own middleware chain. If you want more control over where the middleware is inserted, consider using the alternative api, `createOffline()`.
+
+```js
+import { createOffline } from "@redux-offline/redux-offline";
+const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
+const store = createStore(
+  enhanceReducer(rootReducer),
+  initialStore,
+  compose(applyMiddleware(middleware), enhanceStore)
+);
+```
 
 
 ## Contributing

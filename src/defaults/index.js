@@ -1,16 +1,22 @@
 import persist from './persist';
 import detectNetwork from './detectNetwork';
 import effect from './effect';
-import batch from './batch';
 import retry from './retry';
 import discard from './discard';
+import defaultCommit from './defaultCommit';
+import defaultRollback from './defaultRollback';
+import persistAutoRehydrate from './persistAutoRehydrate';
+import offlineStateLens from './offlineStateLens';
 
 export default {
-  rehydrate: true,
+  rehydrate: true, // backward compatibility, TODO remove in the next breaking change version
   persist,
   detectNetwork,
-  batch,
   effect,
   retry,
-  discard
+  discard,
+  defaultCommit,
+  defaultRollback,
+  persistAutoRehydrate,
+  offlineStateLens
 };

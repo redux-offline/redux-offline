@@ -1,5 +1,5 @@
 // @flow
-/*global fetch*/
+/* global fetch */
 
 import type { OfflineAction } from '../types';
 
@@ -9,7 +9,7 @@ export function NetworkError(response: {} | string, status: number) {
   this.response = response;
 }
 
-//$FlowFixMe
+// $FlowFixMe
 NetworkError.prototype = Error.prototype;
 NetworkError.prototype.status = null;
 
@@ -25,20 +25,23 @@ const tryParseJSON = (json: string): ?{} => {
 };
 
 const getResponseBody = (res: any): Promise<{} | string> => {
-  const contentType = res.headers.get('content-type');
-  return contentType.indexOf('json') >= 0 ? res.text().then(tryParseJSON) : res.text();
+  const contentType = res.headers.get('content-type') || false;
+  if (contentType && contentType.indexOf('json') >= 0) {
+    return res.text().then(tryParseJSON);
+  }
+  return res.text();
 };
 
+// eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
   const { url, ...options } = effect;
   const headers = { 'content-type': 'application/json', ...options.headers };
   return fetch(url, { ...options, headers }).then(res => {
     if (res.ok) {
       return getResponseBody(res);
-    } else {
-      return getResponseBody(res).then(body => {
-        throw new NetworkError(body || '', res.status);
-      });
     }
+    return getResponseBody(res).then(body => {
+      throw new NetworkError(body || '', res.status);
+    });
   });
 };
