@@ -435,6 +435,27 @@ const config = {
 ```
 
 The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline.
+Additionally you can call it with an object containing as props `online` and `netInfo`. The `online` is a boolean that defines whether there's connection or not,
+the `netInfo` is an optional object containing details about the current network.
+ 
+The default detectNetwork.js provides an object with `online` as the only property.
+
+The default detectNetwork.native.js provides both the `online` and the `netInfo` props following `react-native` netInfo possible values.
+The payload object would follow the following example:
+```js
+/**
+* netInfo reach values follow react-native's NetInfo values
+* Cross-platform: ['none', 'wifi', 'cellular', 'unknown']
+* Android: ['bluetooth', 'ethernet', 'wimax']
+*/
+const payload = {
+  online: true, // determines the connection status
+  netInfo: {
+    reach: 'wifi', // network reach as provided by react native
+    isConnectionExpensive: false // whether connection is metered (only supported by android)
+  }
+};
+```
 
 #### Change how irreconcilable errors are detected
 
