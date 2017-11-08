@@ -7,7 +7,7 @@ import {
 
 export const networkStatusChanged = params => {
   let payload;
-  if (typeof payload === 'object') {
+  if (typeof params === 'object') {
     payload = params;
   } else {
     payload = { online: params };
