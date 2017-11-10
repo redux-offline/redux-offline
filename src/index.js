@@ -26,9 +26,6 @@ const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-let persistor;
-
 export const offline = (userConfig: $Shape<Config> = {}) => (
   createStore: any
 ) => (reducer: any, preloadedState: any, enhancer: any = x => x) => {
@@ -63,11 +60,7 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
 
   // launch store persistor
   if (config.persist) {
-    persistor = config.persist(
-      store,
-      config.persistOptions,
-      config.persistCallback
-    );
+    config.persist(store, config.persistOptions, config.persistCallback);
   }
 
   // launch network detector
@@ -107,11 +100,7 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
 
     // launch store persistor
     if (config.persist) {
-      persistor = config.persist(
-        store,
-        config.persistOptions,
-        config.persistCallback
-      );
+      config.persist(store, config.persistOptions, config.persistCallback);
     }
 
     // launch network detector
