@@ -489,8 +489,6 @@ The `offline` state branch created by Redux Offline needs to be a vanilla JavaSc
 If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
 If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
-[Contributions welcome](#contributing).
-
 #### Choose where the offline middleware is added
 
 By default, the offline middleware is inserted right before the offline store enhancer as part of its own middleware chain. If you want more control over where the middleware is inserted, consider using the alternative api, `createOffline()`.
