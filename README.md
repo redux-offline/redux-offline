@@ -413,7 +413,7 @@ const config = {
 };
 ```
 
-You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+You can pass your persistAutoRehydrate method. For example in this way you can use the default rehydrator in debug mode, logging all actions before the rehydrate event.
 ```js
 import { autoRehydrate } from 'redux-persist';
 
