@@ -507,6 +507,14 @@ const store = createStore(
 );
 ```
 
+#### Empty the outbox
+
+If you want to drop any unresolved offline actions, when a user logs off for instance, dispatch a reset state event as follows:
+
+```js
+import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+store.dispatch({ type: RESET_STATE });
+```
 
 ## Contributing
 
