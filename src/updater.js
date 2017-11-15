@@ -2,8 +2,10 @@
 /* global $Shape */
 
 import type {
+  OfflineStatusChangeAction,
+  OfflineScheduleRetryAction,
   OfflineState,
-  OfflineAction,
+  PersistRehydrateAction,
   ResultAction,
   Config
 } from './types';
@@ -15,10 +17,6 @@ import {
   RESET_STATE,
   PERSIST_REHYDRATE
 } from './constants';
-
-type ControlAction =
-  | { type: OFFLINE_STATUS_CHANGED, payload: { online: boolean } }
-  | { type: OFFLINE_SCHEDULE_RETRY };
 
 const enqueue = (state: OfflineState, action: any): OfflineState => {
   const transaction = state.lastTransaction + 1;
@@ -54,18 +52,16 @@ const initialState: OfflineState = {
   }
 };
 
-// @TODO: the typing of this is all kinds of wack
-
 const offlineUpdater = function offlineUpdater(
   state: OfflineState = initialState,
-  action: ControlAction | OfflineAction | ResultAction
+  action:
+    | OfflineStatusChangeAction
+    | OfflineScheduleRetryAction
+    | ResultAction
+    | PersistRehydrateAction
 ): OfflineState {
   // Update online/offline status
-  if (
-    action.type === OFFLINE_STATUS_CHANGED &&
-    action.payload &&
-    typeof action.payload.online === 'boolean'
-  ) {
+  if (action.type === OFFLINE_STATUS_CHANGED) {
     return {
       ...state,
       online: action.payload.online,
@@ -117,7 +113,11 @@ const offlineUpdater = function offlineUpdater(
   }
 
   if (action.type === RESET_STATE) {
-    return { ...initialState, online: state.online, netInfo: state.netInfo };
+    return {
+      ...initialState,
+      online: state.online,
+      netInfo: state.netInfo
+    };
   }
 
   return state;
@@ -126,7 +126,7 @@ const offlineUpdater = function offlineUpdater(
 export const enhanceReducer = (reducer: any, config: $Shape<Config>) => (
   state: any,
   action: any
-) => {
+): any => {
   let offlineState;
   let restState;
   if (typeof state !== 'undefined') {
