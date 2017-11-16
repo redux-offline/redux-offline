@@ -72,8 +72,8 @@ const offlineUpdater = function offlineUpdater(
       netInfo: action.payload.netInfo
     };
   }
-
-  if (action.type === PERSIST_REHYDRATE) {
+  
+  if (action.type === PERSIST_REHYDRATE && action.payload) {
     return {
       ...state,
       ...action.payload.offline,
