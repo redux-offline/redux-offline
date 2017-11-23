@@ -413,7 +413,7 @@ const config = {
 };
 ```
 
-You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+You can pass your persistAutoRehydrate method. For example in this way you can use the default rehydrator in debug mode, logging all actions before the rehydrate event.
 ```js
 import { autoRehydrate } from 'redux-persist';
 
@@ -510,7 +510,9 @@ The `offline` state branch created by Redux Offline needs to be a vanilla JavaSc
 If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
 If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
-[Contributions welcome](#contributing).
+#### Change where the offline state is stored
+
+By default the offline state is stored in `state.offline`. This can be changed using `config.offlineStateLens()`. Refer to the [default implementation](https://github.com/redux-offline-team/redux-offline/blob/master/src/defaults/offlineStateLens.js) for how this might be done.
 
 #### Choose where the offline middleware is added
 
@@ -526,6 +528,14 @@ const store = createStore(
 );
 ```
 
+#### Empty the outbox
+
+If you want to drop any unresolved offline actions, when a user logs off for instance, dispatch a reset state event as follows:
+
+```js
+import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+store.dispatch({ type: RESET_STATE });
+```
 
 ## Contributing
 
