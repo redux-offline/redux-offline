@@ -5,13 +5,18 @@ import {
   OFFLINE_BUSY
 } from './constants';
 
-export const networkStatusChanged = ({ online, netInfo }) => ({
-  type: OFFLINE_STATUS_CHANGED,
-  payload: {
-    online,
-    netInfo
+export const networkStatusChanged = params => {
+  let payload;
+  if (typeof params === 'object') {
+    payload = params;
+  } else {
+    payload = { online: params };
   }
-});
+  return {
+    type: OFFLINE_STATUS_CHANGED,
+    payload
+  };
+};
 
 export const scheduleRetry = (delay = 0) => ({
   type: OFFLINE_SCHEDULE_RETRY,

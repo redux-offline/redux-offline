@@ -1,3 +1,16 @@
+<a name="2.2.1"></a>
+# [2.2.1](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.1) (2017-11-26)
+
+### Bug Fixes
+
+* Adds backwards compatibility for network status reducer (@sorodrigo in #147 )
+* Removes unused variable persistor (@wacii in #139 )
+* Includes polyfills (@wacii in #144 )
+
+### Features
+
+* Improves docs in README (@wacii in #138 )
+
 <a name="2.2.0"></a>
 # [2.2.0](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.0) (2017-11-06)
 

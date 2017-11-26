@@ -226,7 +226,7 @@ The default reconciler is simply a paper-thin wrapper around [fetch](https://dev
   const effectReconciler = ({url, ...opts}) =>
     fetch(url, opts).then(res => res.ok
       ? res.json()
-      : Promise.reject(res.text().then(msg => new Error(msg)));
+      : Promise.reject(res.text().then(msg => new Error(msg))));
 ```
 So the default effect format expected by the reconciler is something like:
 ```js
@@ -413,7 +413,7 @@ const config = {
 };
 ```
 
-You can pass your persistAutoRehydrate method. For example in this way you can add a logger to the persistor.
+You can pass your persistAutoRehydrate method. For example in this way you can use the default rehydrator in debug mode, logging all actions before the rehydrate event.
 ```js
 import { autoRehydrate } from 'redux-persist';
 
@@ -443,6 +443,27 @@ const config = {
 ```
 
 The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline.
+Additionally you can call it with an object containing as props `online` and `netInfo`. The `online` is a boolean that defines whether there's connection or not,
+the `netInfo` is an optional object containing details about the current network.
+ 
+The default detectNetwork.js provides an object with `online` as the only property.
+
+The default detectNetwork.native.js provides both the `online` and the `netInfo` props following `react-native` netInfo possible values.
+The payload object would follow the following example:
+```js
+/**
+* netInfo reach values follow react-native's NetInfo values
+* Cross-platform: ['none', 'wifi', 'cellular', 'unknown']
+* Android: ['bluetooth', 'ethernet', 'wimax']
+*/
+const payload = {
+  online: true, // determines the connection status
+  netInfo: {
+    reach: 'wifi', // network reach as provided by react native
+    isConnectionExpensive: false // whether connection is metered (only supported by android)
+  }
+};
+```
 
 #### Change how irreconcilable errors are detected
 
@@ -489,7 +510,9 @@ The `offline` state branch created by Redux Offline needs to be a vanilla JavaSc
 If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
 If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
-[Contributions welcome](#contributing).
+#### Change where the offline state is stored
+
+By default the offline state is stored in `state.offline`. This can be changed using `config.offlineStateLens()`. Refer to the [default implementation](https://github.com/redux-offline-team/redux-offline/blob/master/src/defaults/offlineStateLens.js) for how this might be done.
 
 #### Choose where the offline middleware is added
 
@@ -505,6 +528,14 @@ const store = createStore(
 );
 ```
 
+#### Empty the outbox
+
+If you want to drop any unresolved offline actions, when a user logs off for instance, dispatch a reset state event as follows:
+
+```js
+import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+store.dispatch({ type: RESET_STATE });
+```
 
 ## Contributing
 
