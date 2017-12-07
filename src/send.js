@@ -25,7 +25,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       try {
         dispatch(complete(commitAction, true, result));
       } catch (e) {
-        dispatch(complete({ type: JS_ERROR, payload: e }, false));
+        dispatch(complete({ type: JS_ERROR, error: e }, false));
       }
     })
     .catch(async error => {
