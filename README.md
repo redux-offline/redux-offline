@@ -107,7 +107,7 @@ Redux Offline helps you with offline state management, but it **does not** autom
 ### Persistence is key
 In order to be able to render meaningful content when the user opens your application offline, your application state needs to be persisted to disk.
 
-Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
+Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
 
 You can [configure every aspect of how your state is persisted](#configuration).
 
@@ -350,7 +350,7 @@ const store = createStore(
 ```
 
 #### Only import what you need
-The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
+The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
 - import { offline } from 'redux-offline';
@@ -397,7 +397,7 @@ The first parameter is whatever value is set in `action.meta.offline.effect`. Th
 
 #### Change how state is saved to disk
 
-By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist). The recommended way of customizing
+By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4). The recommended way of customizing
 persistence is to configure redux-persist. You can pass any valid configuration
 to redux-persist by defining it `config.persistOptions`:
 ```js
@@ -550,7 +550,7 @@ In lieu of a formal style guide, follow the included eslint rules, and use Prett
 Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
 
 * Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
-* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist)
+* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4)
 
 Without their work, Redux Offline wouldn't exist. If you like the ideas behind Redux Offline, but want to build your own stack from lower-level components, these are good places to start.
 
