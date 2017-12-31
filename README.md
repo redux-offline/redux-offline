@@ -141,7 +141,7 @@ When the initial action has been dispatched, you can update your application sta
 
 A common pattern for offline-friendly apps is to *optimistically update  UI state*. In practice, this means that as soon as user performs an action, we update the UI to look as if the action had already succeeded. This makes our applications resilient to network latency, and improves the perceived performance of our app.
 
-When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. If the rollback action does not have a payload, an error object returned by the effects reconciler will be set as the payload.
+When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. The error object returned by the effects reconciler will be set as the payload.
 
 An example of an optimistic update:
 ```js
