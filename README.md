@@ -2,14 +2,14 @@
   <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 </p>
 <p>
-  <a title='License' href="https://raw.githubusercontent.com/jevakallio/redux-offline/master/LICENSE" height="18">
+  <a title='License' href="https://raw.githubusercontent.com/redux-offline-team/redux-offline/master/LICENSE" height="18">
     <img src='https://img.shields.io/badge/license-MIT-blue.svg' />
   </a>
   <a href="https://badge.fury.io/js/redux-offline">
     <img src="https://badge.fury.io/js/redux-offline.svg" alt="npm version" height="18">
   </a>
-  <a href="https://travis-ci.org/jevakallio/redux-offline">
-    <img src="https://travis-ci.org/jevakallio/redux-offline.svg?branch=master" alt="travis" height="18">
+  <a href="https://travis-ci.org/redux-offline-team/redux-offline">
+    <img src="https://travis-ci.org/redux-offline-team/redux-offline.svg?branch=master" alt="travis" height="18">
   </a>
 </p>
 
@@ -27,13 +27,14 @@ _To get started, take a moment to read through the **[Offline Guide](#offline-gu
 
 ## Full disclosure
 
-Redux Offline is very, very new. If you find a bug, good job for being an early adopter! (And there will be issues.) If you find a problem, please submit an issue and I will get to them. 😇
+Redux Offline is now being maintained by a community driven team. The new versions of the library will now be available under the npm organization `@redux-offline`. Big thank you to [@jevakallio](https://github.com/jevakallio) for creating this amazing library in the first place.
 
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
-```sh
-npm install --save redux-offline
+```diff
+- npm install --save redux-offline
++ npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
@@ -41,8 +42,10 @@ npm install --save redux-offline
 
 - import { applyMiddleware, createStore } from 'redux';
 + import { applyMiddleware, createStore, compose } from 'redux';
-+ import { offline } from 'redux-offline';
-+ import offlineConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import offlineConfig from 'redux-offline/lib/defaults';
++ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
 // ...
 
@@ -59,7 +62,7 @@ const store = createStore(
 
 See [Configuration](#configuration) for overriding default configurations.
 
-Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/jevakallio/redux-offline/releases/tag/v2.0.0).
+Looking for `createOfflineStore` from redux-offline 1.x? See migration instructions in the [2.0.0 release notes](https://github.com/redux-offline-team/redux-offline/releases/tag/v2.0.0).
 
 ##### 3. Decorate actions with offline metadata
 
@@ -104,7 +107,7 @@ Redux Offline helps you with offline state management, but it **does not** autom
 ### Persistence is key
 In order to be able to render meaningful content when the user opens your application offline, your application state needs to be persisted to disk.
 
-Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
+Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
 
 You can [configure every aspect of how your state is persisted](#configuration).
 
@@ -138,7 +141,7 @@ When the initial action has been dispatched, you can update your application sta
 
 A common pattern for offline-friendly apps is to *optimistically update  UI state*. In practice, this means that as soon as user performs an action, we update the UI to look as if the action had already succeeded. This makes our applications resilient to network latency, and improves the perceived performance of our app.
 
-When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. If the rollback action does not have a payload, an error object returned by the effects reconciler will be set as the payload.
+When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. The error object returned by the effects reconciler will be set as the payload.
 
 An example of an optimistic update:
 ```js
@@ -148,7 +151,7 @@ const action = userId => ({
   meta: {
     offline: {
       effect: //...,
-      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}  
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId }}
      }
   }
 });
@@ -159,7 +162,7 @@ const followingUsersReducer = (state, action) {
     case 'FOLLOW_USER':
       return { ...state, [action.payload.userId]: true };
     case 'FOLLOW_USER_ROLLBACK':
-      return omit(state, [action.payload.userId]);
+      return omit(state, [action.meta.userId]);
     default:
       return state;
   }
@@ -178,7 +181,7 @@ const completeOrder = (orderId, lineItems) => ({
     offline: {
       effect: //...,
       commit: { type: 'COMPLETE_ORDER_COMMIT', meta: { orderId }},
-      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}  
+      rollback: { type: 'COMPLETE_ORDER_ROLLBACK', meta: { orderId }}
      }
   }
 });
@@ -198,7 +201,7 @@ const ordersReducer = (state, action) {
       };
     case 'COMPLETE_ORDER_ROLLBACK':
       return {
-        ...state,   
+        ...state,
         error: action.payload,
         submitting: omit(state.submitting, [action.meta.orderId])
       };
@@ -223,7 +226,7 @@ The default reconciler is simply a paper-thin wrapper around [fetch](https://dev
   const effectReconciler = ({url, ...opts}) =>
     fetch(url, opts).then(res => res.ok
       ? res.json()
-      : Promise.reject(res.text().then(msg => new Error(msg)));
+      : Promise.reject(res.text().then(msg => new Error(msg))));
 ```
 So the default effect format expected by the reconciler is something like:
 ```js
@@ -296,19 +299,26 @@ Redux Offline supports the following configuration properties:
 ```js
 export type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
-  discard: (error: any, action: OfflineAction, retries: number) => boolean,
-  persistOptions: {}
+  discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
+  defaultCommit: { type: string },
+  defaultRollback: { type: string },
+  persist: (store: any) => any,
+  persistOptions: {},
+  persistCallback: (callback: any) => any,
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
 ```
 
 #### Passing configuration to the enhancer
 The `offline` store enhancer takes the [configuration object](#configuration-object) as a final parameter:
 ```diff
-+ import { offline } from 'redux-offline';
-+ import defaultConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import defaultConfig from 'redux-offline/lib/defaults';
++ import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 
 const store = createStore(
   reducer,
@@ -321,8 +331,10 @@ const store = createStore(
 #### Overriding default properties
 You can override any individual property in the default configuration:
 ```diff
-import { offline } from 'redux-offline';
-import defaultConfig from 'redux-offline/lib/defaults';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import defaultConfig from 'redux-offline/lib/defaults';
++ import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 
 const customConfig = {
   ...defaultConfig,
@@ -338,13 +350,15 @@ const store = createStore(
 ```
 
 #### Only import what you need
-The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
+The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
-import { offline } from 'redux-offline';
-import batch from 'redux-offline/lib/defaults/batch';
-import retry from 'redux-offline/lib/defaults/retry';
-import discard from 'redux-offline/lib/defaults/discard';
+- import { offline } from 'redux-offline';
++ import { offline } from '@redux-offline/redux-offline';
+- import retry from 'redux-offline/lib/defaults/retry';
++ import retry from '@redux-offline/redux-offline/lib/defaults/retry';
+- import discard from 'redux-offline/lib/defaults/discard';
++ import discard from '@redux-offline/redux-offline/lib/defaults/discard';
 
 const myConfig = {
   retry,
@@ -359,7 +373,7 @@ const store = createStore(
   preloadedState,
 -  middleware
 +  compose(middleware, offline(myConfig))
- myConfig  
+ myConfig
 );
 ```
 
@@ -383,7 +397,7 @@ The first parameter is whatever value is set in `action.meta.offline.effect`. Th
 
 #### Change how state is saved to disk
 
-By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist). The recommended way of customizing
+By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4). The recommended way of customizing
 persistence is to configure redux-persist. You can pass any valid configuration
 to redux-persist by defining it `config.persistOptions`:
 ```js
@@ -396,6 +410,15 @@ You can pass the callback for redux-persist as well. This function would be call
 ```js
 const config = {
   persistCallback: () => { /*...*/ }
+};
+```
+
+You can pass your persistAutoRehydrate method. For example in this way you can use the default rehydrator in debug mode, logging all actions before the rehydrate event.
+```js
+import { autoRehydrate } from 'redux-persist';
+
+const config = {
+  persistAutoRehydrate: () => autoRehydrate({log: true})
 };
 ```
 
@@ -420,6 +443,27 @@ const config = {
 ```
 
 The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline.
+Additionally you can call it with an object containing as props `online` and `netInfo`. The `online` is a boolean that defines whether there's connection or not,
+the `netInfo` is an optional object containing details about the current network.
+ 
+The default detectNetwork.js provides an object with `online` as the only property.
+
+The default detectNetwork.native.js provides both the `online` and the `netInfo` props following `react-native` netInfo possible values.
+The payload object would follow the following example:
+```js
+/**
+* netInfo reach values follow react-native's NetInfo values
+* Cross-platform: ['none', 'wifi', 'cellular', 'unknown']
+* Android: ['bluetooth', 'ethernet', 'wimax']
+*/
+const payload = {
+  online: true, // determines the connection status
+  netInfo: {
+    reach: 'wifi', // network reach as provided by react native
+    isConnectionExpensive: false // whether connection is metered (only supported by android)
+  }
+};
+```
 
 #### Change how irreconcilable errors are detected
 
@@ -431,7 +475,7 @@ const config = {
 }
 ```
 
-The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`.
+The method receives the Error returned by the effect reconciler, the action being processed, and a number representing how many times the action has been retried. If the method returns `true`, the action will be discarded; `false`, and it will be retried. The full signature of the method is `(error: any, action: OfflineAction, retries: number) => boolean`. Alternatively, you can return a Promise object that resolve to a boolean, allowing you to detect when to discard asynchronously (for example, doing a request to a server to refresh a token and try again).
 
 #### Change how network requests are retried
 
@@ -456,20 +500,42 @@ Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
 
-#### Change how queue processing is batched
-
-Currently messages are sent one by one, in serial. Customization support coming soon.
-
 #### Synchronise my state while the app is not open
 
 Background sync is not yet supported. Coming soon.
 
 #### Use an [Immutable](https://facebook.github.io/immutable-js/) store
 
-Stores that implement the entire store as an Immutable.js structure are currently not supported. You can use Immutable in the rest of your store, but the root object and the `offline` state branch created by Redux Offline currently needs to be vanilla JavaScript objects.
+The `offline` state branch created by Redux Offline needs to be a vanilla JavaScript object.
+If your entire store is immutable you should check out [`redux-offline-immutable-config`](https://github.com/anyjunk/redux-offline-immutable-config) which provides drop-in configurations using immutable counterparts and code examples.
+If you use Immutable in the rest of your store, but the root object, you should not need extra configurations.
 
-[Contributions welcome](#contributing).
+#### Change where the offline state is stored
 
+By default the offline state is stored in `state.offline`. This can be changed using `config.offlineStateLens()`. Refer to the [default implementation](https://github.com/redux-offline-team/redux-offline/blob/master/src/defaults/offlineStateLens.js) for how this might be done.
+
+#### Choose where the offline middleware is added
+
+By default, the offline middleware is inserted right before the offline store enhancer as part of its own middleware chain. If you want more control over where the middleware is inserted, consider using the alternative api, `createOffline()`.
+
+```js
+import { createOffline } from "@redux-offline/redux-offline";
+const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
+const store = createStore(
+  enhanceReducer(rootReducer),
+  initialStore,
+  compose(applyMiddleware(middleware), enhanceStore)
+);
+```
+
+#### Empty the outbox
+
+If you want to drop any unresolved offline actions, when a user logs off for instance, dispatch a reset state event as follows:
+
+```js
+import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+store.dispatch({ type: RESET_STATE });
+```
 
 ## Contributing
 
@@ -484,7 +550,7 @@ In lieu of a formal style guide, follow the included eslint rules, and use Prett
 Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
 
 * Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
-* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist)
+* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4)
 
 Without their work, Redux Offline wouldn't exist. If you like the ideas behind Redux Offline, but want to build your own stack from lower-level components, these are good places to start.
 

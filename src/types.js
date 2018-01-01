@@ -1,7 +1,14 @@
 // @flow
+import {
+  DEFAULT_COMMIT,
+  DEFAULT_ROLLBACK,
+  OFFLINE_STATUS_CHANGED,
+  OFFLINE_SCHEDULE_RETRY,
+  PERSIST_REHYDRATE
+} from './constants';
 
 export type ResultAction = {
-  type: string,
+  type: typeof DEFAULT_COMMIT | typeof DEFAULT_ROLLBACK,
   payload: ?{},
   meta: {
     success: boolean,
@@ -11,16 +18,13 @@ export type ResultAction = {
 
 export type OfflineMetadata = {
   effect: {},
-  commit: ResultAction,
-  rollback: ResultAction
+  commit?: ResultAction,
+  rollback?: ResultAction
 };
 
-export type Receipt = {
-  message: OfflineMetadata,
-  success: boolean,
-  result: {}
-};
-
+// User passed action
+// it is impossible to use a type literal for it,
+// since it can be any user passed string
 export type OfflineAction = {
   type: string,
   payload?: {},
@@ -30,16 +34,40 @@ export type OfflineAction = {
   }
 };
 
+export type NetInfo = {
+  isConnectionExpensive: ?boolean,
+  reach: string
+};
+
+export type OfflineStatusChangeAction = {
+  type: typeof OFFLINE_STATUS_CHANGED,
+  payload: {
+    online: boolean,
+    netInfo?: NetInfo
+  }
+};
+
+export type OfflineScheduleRetryAction = {
+  type: typeof OFFLINE_SCHEDULE_RETRY
+};
+
 export type Outbox = Array<OfflineAction>;
 
 export type OfflineState = {
+  busy: boolean,
   lastTransaction: number,
   online: boolean,
   outbox: Outbox,
-  receipts: Array<Receipt>,
+  netInfo?: NetInfo,
   retryCount: number,
-  retryToken: number,
   retryScheduled: boolean
+};
+
+export type PersistRehydrateAction = {
+  type: typeof PERSIST_REHYDRATE,
+  payload: {
+    offline: OfflineState
+  }
 };
 
 export type AppState = {
@@ -49,12 +77,17 @@ export type AppState = {
 type NetworkCallback = (result: boolean) => void;
 
 export type Config = {
-  batch: (outbox: Outbox) => Outbox,
   detectNetwork: (callback: NetworkCallback) => void,
-  persist: (store: any) => any,
+  persist: (store: any, options: {}, callback: () => void) => any,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
-  persistCallback: (callback: any) => any
+  persistCallback: (callback: any) => any,
+  defaultCommit: { type: string },
+  defaultRollback: { type: string },
+  persistAutoRehydrate: (config: ?{}) => (next: any) => any,
+  offlineStateLens: (
+    state: any
+  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
 };
