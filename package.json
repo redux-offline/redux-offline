@@ -3,6 +3,7 @@
   "version": "2.2.1",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
+  "types": "./typings.d.ts",
   "scripts": {
     "build": "babel src --out-dir lib --ignore '**/__tests__/**'",
     "flow:start": "flow server",
@@ -29,6 +30,7 @@
   },
   "homepage": "https://github.com/redux-offline/redux-offline#readme",
   "devDependencies": {
+    "@types/redux": "^3.6.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
