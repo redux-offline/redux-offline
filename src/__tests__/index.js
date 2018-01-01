@@ -17,22 +17,7 @@ const defaultConfig = applyDefaults({
   persistOptions: { storage }
 });
 
-function defaultReducer(state = {
-  offline: {
-    busy: false,
-    lastTransaction: 0,
-    online: true,
-    outbox: [],
-    receipts: [],
-    retryToken: 0,
-    retryCount: 0,
-    retryScheduled: false,
-    netInfo: {
-      isConnectionExpensive: null,
-      reach: 'none'
-    }
-  }
-}) {
+function defaultReducer(state = {}) {
   return state;
 }
 
