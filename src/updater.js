@@ -70,9 +70,10 @@ const offlineUpdater = function offlineUpdater(
   }
 
   if (action.type === PERSIST_REHYDRATE) {
+    const payload = action.payload ? action.payload.offline : {};
     return {
       ...state,
-      ...action.payload.offline,
+      ...payload,
       online: state.online,
       netInfo: state.netInfo,
       retryScheduled: initialState.retryScheduled,
