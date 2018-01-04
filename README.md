@@ -241,6 +241,11 @@ So the default effect format expected by the reconciler is something like:
 ```
 
 That said, you'll probably want to [use your own method](#change-how-network-requests-are-made) - it can be anything, as long as it returns a Promise.
+It's important to note that if the promise rejects the default discard is expecting a status property inside the error object. If no response status is provided, the effect will be automatically discarded.
+A quick way out of this is throwing a NetworkError, just like the default effector does! To achieve this, you'll need to import it in the following way:
+```js
+import { NetworkError } from '@redux-offline/redux-offline/lib/defaults/effect';
+```
 
 ### Is this thing even on?
 
