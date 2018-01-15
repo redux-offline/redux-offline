@@ -7,6 +7,7 @@ import defaultCommit from './defaultCommit';
 import defaultRollback from './defaultRollback';
 import persistAutoRehydrate from './persistAutoRehydrate';
 import offlineStateLens from './offlineStateLens';
+import queue from './queue';
 
 export default {
   rehydrate: true, // backward compatibility, TODO remove in the next breaking change version
@@ -18,5 +19,6 @@ export default {
   defaultCommit,
   defaultRollback,
   persistAutoRehydrate,
-  offlineStateLens
+  offlineStateLens,
+  queue
 };

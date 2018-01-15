@@ -4,6 +4,7 @@ import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
 import { createOffline, offline } from "../index";
 import { applyDefaults } from "../config";
+import { networkStatusChanged } from "../actions";
 
 const storage = new AsyncNodeStorage("/tmp/storageDir");
 const storageKey = `${KEY_PREFIX}offline`;
@@ -16,22 +17,7 @@ const defaultConfig = applyDefaults({
   persistOptions: { storage }
 });
 
-function defaultReducer(state = {
-  offline: {
-    busy: false,
-    lastTransaction: 0,
-    online: true,
-    outbox: [],
-    receipts: [],
-    retryToken: 0,
-    retryCount: 0,
-    retryScheduled: false,
-    netInfo: {
-      isConnectionExpensive: null,
-      reach: 'none'
-    }
-  }
-}) {
+function defaultReducer(state = {}) {
   return state;
 }
 
@@ -99,4 +85,20 @@ test("works with devtools store enhancer", () => {
   expect(() => {
     store.dispatch({ type: "SOME_ACTION" });
   }).not.toThrow();
+});
+
+// there were some reports that this might not be working correctly
+test("coming online processes outbox", () => {
+  const { middleware, enhanceReducer } = createOffline(defaultConfig);
+  const reducer = enhanceReducer(defaultReducer);
+  const store = createStore(reducer, applyMiddleware(middleware));
+
+  expect(store.getState().offline.online).toBe(false);
+  const action = { type: "REQUEST", meta: { offline: { effect: {} } } };
+  store.dispatch(action);
+  expect(defaultConfig.effect).not.toBeCalled();
+
+  store.dispatch(networkStatusChanged(true));
+  expect(store.getState().offline.online).toBe(true);
+  expect(defaultConfig.effect).toBeCalled();
 });

@@ -241,6 +241,11 @@ So the default effect format expected by the reconciler is something like:
 ```
 
 That said, you'll probably want to [use your own method](#change-how-network-requests-are-made) - it can be anything, as long as it returns a Promise.
+It's important to note that if the promise rejects the default discard is expecting a status property inside the error object. If no response status is provided, the effect will be automatically discarded.
+A quick way out of this is throwing a NetworkError, just like the default effector does! To achieve this, you'll need to import it in the following way:
+```js
+import { NetworkError } from '@redux-offline/redux-offline/lib/defaults/effect';
+```
 
 ### Is this thing even on?
 
@@ -308,7 +313,12 @@ export type Config = {
   persistOptions: {},
   persistCallback: (callback: any) => any,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
-  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  queue: {
+    enqueue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    dequeue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    peek: (outbox: Array<OfflineAction>) => OfflineAction
+  }
 };
 ```
 
@@ -499,6 +509,27 @@ online, is started, or you manually fire an `Offline/SEND` action.
 Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
+
+#### Provide your own queue implementation
+
+Provide your own `enqueue()`, `dequeue()` and `peek()` implementations to `config.queue` to alter how the queue is processed.
+
+```js
+// Last Value Queue
+// Only keep the last action for each URL-method pair.
+const config = {
+  queue: {
+    ...defaultQueue,
+    enqueue(array, action) {
+      const newArray = array.filter(item =>
+        !(item.method === action.method && item.url === action.url)
+      );
+      newArray.push(action);
+      return newArray;
+    }
+  }
+};
+```
 
 #### Chain behavior off offline actions
 
