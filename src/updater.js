@@ -1,6 +1,8 @@
 // @flow
 /* global $Shape */
 
+import _ from 'lodash'
+
 import type {
   OfflineState,
   OfflineAction,
@@ -13,7 +15,8 @@ import {
   OFFLINE_COMPLETE_RETRY,
   OFFLINE_BUSY,
   RESET_STATE,
-  PERSIST_REHYDRATE
+  PERSIST_REHYDRATE,
+  DEQUEUE_ACTION
 } from './constants';
 
 type ControlAction =
@@ -36,6 +39,24 @@ const dequeue = (state: OfflineState): OfflineState => {
   return {
     ...state,
     outbox: rest,
+    retryCount: 0,
+    busy: false
+  };
+};
+
+const dequeueAction = (state: OfflineState, dequeueAction): OfflineState => {
+  const newOutbox = [];
+  for (const action of state.outbox) {
+    if (action.type === dequeueAction.payload.type) {
+      if (_.isEqual(action.payload, dequeueAction.payload.payload)) {
+        continue;
+      }
+      newOutbox.push(action);
+    }
+  }
+  return {
+    ...state,
+    outbox: newOutbox,
     retryCount: 0,
     busy: false
   };
@@ -118,6 +139,10 @@ const offlineUpdater = function offlineUpdater(
 
   if (action.type === RESET_STATE) {
     return { ...initialState, online: state.online, netInfo: state.netInfo };
+  }
+
+  if (action.type === DEQUEUE_ACTION) {
+    return dequeueAction(state, action);
   }
 
   return state;
