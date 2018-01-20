@@ -3,22 +3,43 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 
-function MakeRequests({ succeedAlways, succeedSometimes, failSometimes }) {
-  return (
-    <div>
-      <button onClick={succeedAlways}>Succeed Always</button>
-      <button onClick={succeedSometimes}>Succeed Sometimes</button>
-      <button onClick={failSometimes}>Fail Sometimes</button>
-    </div>
-  );
+class MakeRequests extends React.Component {
+
+  buildHandler = (handler) => {
+    const { successCallback, errorCallback } = this.props;
+    let promise;
+    if (successCallback) {
+      promise = handler().then(successCallback);
+    }
+    if (errorCallback) {
+      promise.catch(errorCallback);
+    }
+    return promise || handler();
+  }
+
+  onSucceedAlways = () => this.buildHandler(this.props.onSucceedAlways)
+
+  onSucceedSometimes = () => this.buildHandler(this.props.onSucceedSometimes)
+
+  onFailSometimes = () => this.buildHandler(this.props.onFailSometimes)
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.onSucceedAlways}>Succeed Always</button>
+        <button onClick={this.onSucceedSometimes}>Succeed Sometimes</button>
+        <button onClick={this.onFailSometimes}>Fail Sometimes</button>
+      </div>
+    );
+  }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      succeedAlways,
-      succeedSometimes,
-      failSometimes
+      onSucceedAlways: succeedAlways,
+      onSucceedSometimes: succeedSometimes,
+      onFailSometimes: failSometimes
     },
     dispatch
   );

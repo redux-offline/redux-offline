@@ -5,6 +5,7 @@ import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
 const initialState = {
   timer: 0
 };
+
 function reducer(state = initialState, action) {
   if (action.type === 'Offline/SCHEDULE_RETRY') {
     return {
