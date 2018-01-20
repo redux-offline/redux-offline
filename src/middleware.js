@@ -23,10 +23,10 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
 
   // create promise to return on enqueue offline action
   if (action.meta && action.meta.offline) {
-    promise = registerAction(action.meta.transaction);
+    promise = registerAction(offlineAction.meta.transaction);
   }
 
-  // if the are any actions in the queue that we are not
+  // if there are any actions in the queue that we are not
   // yet processing, send those actions
   if (
     offlineAction &&
