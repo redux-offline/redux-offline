@@ -10,28 +10,37 @@ class App extends React.Component {
   state = {
     page: 'home',
     status: '',
+    time: null,
     payload: '--null--'
   };
 
-  onSuccess = payload => this.setState({
+  pages = {
+    home: { page: 'home', status: '', payload: '--null--', time: null },
+    basic: { page: 'basic', status: '', payload: '--null--', time: null },
+    promise: { page: 'promise' }
+  }
+
+  onSuccess = payload => this.setState(() => ({
+    time: Date.now(),
     status: 'success',
     payload: JSON.stringify(payload, null, '  ')
-  })
+  }))
 
-  onError = payload => this.setState({
+  onError = payload => this.setState(() => ({
+    time: Date.now(),
     status: 'error',
     payload: JSON.stringify(payload, null, '  ')
-  })
+  }))
 
   render() {
-    const { page, status, payload } = this.state;
+    const { page, status, payload, time } = this.state;
     if (page === 'home') {
       return (
         <div>
-          <button onClick={() => this.setState({ page: 'basic' })}>
+          <button onClick={() => this.setState(this.pages.basic)}>
             basic
           </button>
-          <button onClick={() => this.setState({ page: 'promise' })}>
+          <button onClick={() => this.setState(this.pages.promise)}>
             promise
           </button>
         </div>
@@ -48,12 +57,14 @@ class App extends React.Component {
               successCallback={page === 'promise' && this.onSuccess}
               errorCallback={page === 'promise' && this.onError}
             />
-            <button onClick={() => this.setState({ page: 'home' })}>
+            <button
+              onClick={() => this.setState(this.pages.home)}>
               home
             </button>
           </div>
           {page === 'promise' &&
             <pre className={`promise-box ${status}`}>
+              <p>{status} {time}</p>
               <code>{payload}</code>
             </pre>
           }
