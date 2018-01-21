@@ -4,7 +4,8 @@
     "stage-3"
   ],
   "plugins": [
+    ["transform-class-properties", { "spec": true }],
     "transform-flow-strip-types",
-    ["transform-class-properties", { "spec": true }]
+    "transform-runtime"
   ]
 }

@@ -26,9 +26,6 @@ const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-let persistor;
-
 export const offline = (userConfig: $Shape<Config> = {}) => (
   createStore: any
 ) => (reducer: any, preloadedState: any, enhancer: any = x => x) => {
@@ -50,24 +47,24 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
       : offlineMiddleware;
 
   // create store
-  const store = offlineEnhancer(createStore)(
+  const initialStore = offlineEnhancer(createStore)(
     offlineReducer,
     preloadedState,
     enhancer
   );
 
-  const baseReplaceReducer = store.replaceReducer.bind(store);
-  store.replaceReducer = function replaceReducer(nextReducer) {
+  const baseReplaceReducer = initialStore.replaceReducer.bind(initialStore);
+  const replaceReducer = function replaceReducer(nextReducer) {
     return baseReplaceReducer(enhanceReducer(nextReducer, config));
+  };
+  const store = {
+    replaceReducer,
+    ...initialStore
   };
 
   // launch store persistor
   if (config.persist) {
-    persistor = config.persist(
-      store,
-      config.persistOptions,
-      config.persistCallback
-    );
+    config.persist(store, config.persistOptions, config.persistCallback);
   }
 
   // launch network detector
@@ -107,11 +104,7 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
 
     // launch store persistor
     if (config.persist) {
-      persistor = config.persist(
-        store,
-        config.persistOptions,
-        config.persistCallback
-      );
+      config.persist(store, config.persistOptions, config.persistCallback);
     }
 
     // launch network detector
@@ -126,7 +119,7 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
 
   return {
     middleware: createOfflineMiddleware(config),
-    enhanceReducer(reducer) {
+    enhanceReducer(reducer: any) {
       return enhanceReducer(reducer, config);
     },
     enhanceStore

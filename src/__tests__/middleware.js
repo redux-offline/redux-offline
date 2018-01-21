@@ -1,9 +1,9 @@
 import { createOfflineMiddleware } from '../middleware';
 import { completeRetry, scheduleRetry } from '../actions';
+import defaultConfig from '../defaults';
 import { OFFLINE_SEND } from '../constants';
 import send from '../send';
-
-import offlineStateLens from '../defaults/offlineStateLens'
+import { rejectAction, resolveAction } from '../offlineActionTracker';
 
 const offlineAction = {
   type: 'OFFLINE_ACTION_REQUEST',
@@ -12,7 +12,8 @@ const offlineAction = {
       effect: { url: '/api/endpoint', method: 'POST' },
       commit: { type: 'OFFLINE_ACTION_COMMIT' },
       rollback: { type: 'OFFLINE_ACTION_ROLLBACK' }
-    }
+    },
+    transaction: 0
   }
 };
 
@@ -37,6 +38,7 @@ function setup(offlineState = {}) {
   };
   return {
     config: {
+      ...defaultConfig,
       rehydrate: false,
       persist: null,
       detectNetwork: null,
@@ -44,7 +46,6 @@ function setup(offlineState = {}) {
       effect: jest.fn(),
       retry: jest.fn(),
       discard: jest.fn(),
-      offlineStateLens,
     },
     store: {
       getState: jest.fn(() => state),
@@ -125,7 +126,6 @@ describe('on OFFLINE_SEND', () => {
   });
 });
 
-// FIXME: completeRetry is supposed to be called with an action
 // TODO: wrapping `setTimeout()` in a promise in `after()` is pointless
 describe('on OFFLINE_SCHEDULE_RETRY', () => {
   jest.useFakeTimers();
@@ -140,5 +140,31 @@ describe('on OFFLINE_SCHEDULE_RETRY', () => {
     const nextAction = store.getState().offline.outbox[0];
     return Promise.resolve().then(() =>
       expect(store.dispatch).toBeCalledWith(completeRetry(nextAction)));
+  });
+});
+
+describe('offlineActionTracker integration', () => {
+  test('returns a promise that can be resolved', () => {
+    const { config, store, next } = setup();
+    const promise = createOfflineMiddleware(config)(store)(next)(offlineAction);
+
+    const transaction = 0;
+    const data = { some: "data" };
+    resolveAction(transaction, data);
+
+    expect.assertions(1);
+    return promise.then(value => expect(value).toEqual(data));
+  });
+
+  test('returns a promise that can be rejected', () => {
+    const { config, store, next, action } = setup();
+    const promise = createOfflineMiddleware(config)(store)(next)(offlineAction);
+
+    const transaction = 0;
+    const data = { some: 'data' };
+    rejectAction(transaction, data);
+
+    expect.assertions(1);
+    return promise.catch(error => expect(error).toEqual(data));
   });
 });
