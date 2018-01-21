@@ -576,6 +576,8 @@ store.dispatch({ type: RESET_STATE });
 
 Improvements and additions welcome. For large changes, please submit a discussion issue before jumping to coding; we'd hate you to waste the effort.
 
+If you are reporting a bug, please include code that reproduces the error. Here is a starting application on [CodeSandbox](https://codesandbox.io/s/8xml9l1r0j).
+
 In lieu of a formal style guide, follow the included eslint rules, and use Prettier to format your code.
 
 ## Miscellanea
