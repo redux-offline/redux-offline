@@ -13,6 +13,7 @@ function noop() {}
 beforeEach(() => storage.removeItem(storageKey, noop) );
 
 const defaultConfig = applyDefaults({
+  observerList: {},
   effect: jest.fn(() => Promise.resolve()),
   persistOptions: { storage }
 });

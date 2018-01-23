@@ -1,39 +1,24 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import MakeRequests from './MakeRequests';
-import RequestsQueue from './RequestsQueue';
-import SyncStatus from './SyncStatus';
+import Basic from '../pages/Basic';
+import Promise from '../pages/Promise';
+import Observer from '../pages/Observer';
 import store from '../store';
 
 class App extends React.Component {
-
   state = {
-    page: 'home',
-    status: '',
-    time: null,
-    payload: '--null--'
+    page: 'home'
   };
 
   pages = {
-    home: { page: 'home', status: '', payload: '--null--', time: null },
-    basic: { page: 'basic', status: '', payload: '--null--', time: null },
-    promise: { page: 'promise' }
-  }
-
-  onSuccess = payload => this.setState(() => ({
-    time: Date.now(),
-    status: 'success',
-    payload: JSON.stringify(payload, null, '  ')
-  }))
-
-  onError = payload => this.setState(() => ({
-    time: Date.now(),
-    status: 'error',
-    payload: JSON.stringify(payload, null, '  ')
-  }))
+    home: { page: 'home' },
+    basic: { page: 'basic' },
+    promise: { page: 'promise' },
+    observer: { page: 'observer' }
+  };
 
   render() {
-    const { page, status, payload, time } = this.state;
+    const { page } = this.state;
     if (page === 'home') {
       return (
         <div>
@@ -43,6 +28,9 @@ class App extends React.Component {
           <button onClick={() => this.setState(this.pages.promise)}>
             promise
           </button>
+          <button onClick={() => this.setState(this.pages.observer)}>
+            observer
+          </button>
         </div>
       );
     }
@@ -50,23 +38,14 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <div className="container">
-          <div>
-            <SyncStatus />
-            <RequestsQueue />
-            <MakeRequests
-              successCallback={page === 'promise' && this.onSuccess}
-              errorCallback={page === 'promise' && this.onError}
-            />
-            <button
-              onClick={() => this.setState(this.pages.home)}>
-              home
-            </button>
-          </div>
+          {page === 'basic' &&
+            <Basic goBack={() => this.setState(this.pages.home)} />
+          }
           {page === 'promise' &&
-            <pre className={`promise-box ${status}`}>
-              <p>{status} {time}</p>
-              <code>{payload}</code>
-            </pre>
+            <Promise goBack={() => this.setState(this.pages.home)} />
+          }
+          {page === 'observer' &&
+            <Observer />
           }
         </div>
       </Provider>

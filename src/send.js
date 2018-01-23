@@ -32,7 +32,12 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         meta: { ...config.defaultCommit.meta, offlineAction: action }
       };
       try {
-        return dispatch(complete(commitAction, true, result, action));
+        dispatch(complete(commitAction, true, result, action));
+        const commitObserver =
+          commitAction.meta &&
+          commitAction.meta.observer &&
+          config.observerPool[commitAction.meta.observer];
+        return commitObserver && dispatch(commitObserver());
       } catch (error) {
         return dispatch(
           complete(
@@ -65,7 +70,12 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         }
       }
 
-      return dispatch(complete(rollbackAction, false, error, action));
+      dispatch(complete(rollbackAction, false, error, action));
+      const rollbackObserver =
+        rollbackAction.meta &&
+        rollbackAction.meta.observer &&
+        config.observerPool[rollbackAction.meta.observer];
+      return rollbackObserver && dispatch(rollbackObserver());
     });
 };
 
