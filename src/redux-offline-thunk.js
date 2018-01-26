@@ -6,7 +6,7 @@ const reduxOfflineThunk = thunks => store => next => action => {
     && action.meta && action.meta.thunk
     && typeof action.meta.thunk === 'object'
   ) {
-    store.dispatch(thunks[action.meta.thunk.func].apply(null, action.meta.thunk.params))
+    store.dispatch(thunks[action.meta.thunk.functionName].apply(null, action.meta.thunk.params))
   }
   
   return result
