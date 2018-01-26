@@ -320,7 +320,7 @@ const store = createStore(
 );
 ```
 
-Then the action that have to dispatch a thunk needs to be decorated:
+Then the action that have to dispatch a thunk needs to be decorated with `thunk`:
 
 ```js
 const followUser = userId => ({
