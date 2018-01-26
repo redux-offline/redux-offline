@@ -297,7 +297,7 @@ The reason the default behaviour is to desperately try to make the requests succ
 
 ### What about if I want to dispatch a thunk after commit or rollback is dispatched?
 
-You can do it importing redux-offline-thunk-middleware to your project:
+You can do it importing reduxOfflineThunkMiddleware to your project:
 
 ```js
 
