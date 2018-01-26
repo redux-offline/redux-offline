@@ -297,14 +297,14 @@ The reason the default behaviour is to desperately try to make the requests succ
 
 ### What about if I want to dispatch a thunk after commit or rollback is dispatched?
 
-You can do it adding redux-offline-thunk middleware to your project:
+You can do it importing redux-offline-thunk-middleware to your project:
 
 ```js
 
  import { applyMiddleware, createStore, compose } from 'redux';
  import { offline } from '@redux-offline/redux-offline';
  import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
- import reduxOfflineDispatch from '@redux-offline/redux-offline/lib/redux-offline-thunk';
+ import reduxOfflineThunkMiddleware from '@redux-offline/redux-offline/lib/thunk-middleware';
  // you have to import every thunk action that you need to dispatch after redux-offline commit or rollback
  import { thunkAction1, thunkAction2 } from 'myproject-src/redux/actions';
 
@@ -314,7 +314,7 @@ const store = createStore(
   reducer,
   preloadedState,
   compose(
-    applyMiddleware(reduxOfflineThunk({ thunkAction1, thunkAction2 })),
+    applyMiddleware(reduxOfflineThunkMiddleware({ thunkAction1, thunkAction2 })),
     offline(offlineConfig)
   )
 );
