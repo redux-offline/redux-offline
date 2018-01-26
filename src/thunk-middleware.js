@@ -1,5 +1,5 @@
 
-const reduxOfflineThunk = thunks => store => next => action => {
+const reduxOfflineThunkMiddleware = thunks => store => next => action => {
   const result = next(action)
 
   if (typeof action === 'object'
@@ -12,4 +12,4 @@ const reduxOfflineThunk = thunks => store => next => action => {
   return result
 }
 
-export default reduxOfflineThunk
+export default reduxOfflineThunkMiddleware
