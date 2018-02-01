@@ -501,8 +501,7 @@ const config = {
 The function receives the action and a number representing how many times the
 action has been retried, and should reply with a number representing the amount
 of milliseconds to wait until the next retry. If this method returns `null` or
-`undefined`, the action will not be retried until the next time the app comes
-online, is started, or you manually fire an `Offline/SEND` action.
+`undefined`, the action will be discarded.
 
 #### Change how errors are handled
 
