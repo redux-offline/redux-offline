@@ -530,7 +530,7 @@ const config = {
 };
 ```
 
-#### Chain behavior off offline actions
+#### Chain behavior off offline actions (EXPERIMENTAL & UNSTABLE)
 
 `store.dispatch()` returns a promise that you can use to chain behavior off offline actions, but be careful! A chief benefit of this library is that requests are tried across sessions, but promises do not last that long. So if you use this feature, know that your promise might not get resolved, even if the associated request is eventually delivered.
 
