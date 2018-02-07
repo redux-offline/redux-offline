@@ -27,7 +27,7 @@ export type OfflineMetadata = {
 // since it can be any user passed string
 export type OfflineAction = {
   type: string,
-  payload?: {},
+  payload: ?{},
   meta: {
     transaction?: number,
     offline: OfflineMetadata
@@ -89,5 +89,16 @@ export type Config = {
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   offlineStateLens: (
     state: any
-  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
+  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  queue: {
+    enqueue: (
+      array: Array<OfflineAction>,
+      item: OfflineAction
+    ) => Array<OfflineAction>,
+    dequeue: (
+      array: Array<OfflineAction>,
+      item: ResultAction
+    ) => Array<OfflineAction>,
+    peek: (array: Array<OfflineAction>) => OfflineAction
+  }
 };

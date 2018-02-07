@@ -4,8 +4,9 @@
 import type {
   OfflineStatusChangeAction,
   OfflineScheduleRetryAction,
-  OfflineState,
   PersistRehydrateAction,
+  OfflineAction,
+  OfflineState,
   ResultAction,
   Config
 } from './types';
@@ -85,7 +86,10 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
     // Add offline actions to queue
     if (action.meta && action.meta.offline) {
       const transaction = state.lastTransaction + 1;
-      const stamped = { ...action, meta: { ...action.meta, transaction } };
+      const stamped = (({
+        ...action,
+        meta: { ...action.meta, transaction }
+      }: any): OfflineAction);
       const { outbox } = state;
       return {
         ...state,
