@@ -11,7 +11,6 @@ export function NetworkError(response: {} | string, status: number) {
 
 // $FlowFixMe
 NetworkError.prototype = Error.prototype;
-NetworkError.prototype.status = null;
 
 const tryParseJSON = (json: string): ?{} => {
   if (!json) {
