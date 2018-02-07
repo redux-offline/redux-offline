@@ -1,5 +1,24 @@
+<a name="2.3.1"></a>
+# [2.3.1](https://github.com/redux-offline/redux-offline/releases/tag/v2.3.1) (2018-02-07)
+
+### Bug Fixes
+
+* Fixes default discard not detecting NetworkError correctly. (@jsslai in #185)
+* Error object in JS_ERROR action was being overwritten with undefined, includes it as meta.error .
+ (@jordoh in #152)
+
+### Features
+
+* New feature (EXPERIMENTAL & UNSTABLE): store.dispatch now returns a promise for offline actions. 
+This allows 
+chaining 
+actions and 
+callbacks with offline actions. Does not work after rehydration!
+* Adds test for processing outbox when coming online.
+* Improve docs in README (@wacii and @sorodrigo in #153, #160, #163, #176, #181)
+
 <a name="2.2.1"></a>
-# [2.2.1](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.1) (2017-11-26)
+## [2.2.1](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.1) (2017-11-26)
 
 ### Bug Fixes
 
@@ -12,7 +31,7 @@
 * Improves docs in README (@wacii in #138 )
 
 <a name="2.2.0"></a>
-# [2.2.0](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.0) (2017-11-06)
+## [2.2.0](https://github.com/redux-offline/redux-offline/releases/tag/v2.2.0) (2017-11-06)
 
 ### Bug Fixes
 

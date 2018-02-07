@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 600px;
+}
+
+.promise-box {
+  width: 450px;
+  overflow: auto;
+}
+
+.promise-box.success > code {
+     color: #1cbc51;
+}
+
+.promise-box.error > code {
+  color: #b11f0b;
+}

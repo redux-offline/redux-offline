@@ -107,7 +107,7 @@ Redux Offline helps you with offline state management, but it **does not** autom
 ### Persistence is key
 In order to be able to render meaningful content when the user opens your application offline, your application state needs to be persisted to disk.
 
-Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
+Instead of reinventing the wheel, Redux Offline uses the excellent [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) library. Your Redux store is saved to disk on every change, and reloaded automatically on startup. By default, browser environments will use [IndexedDB](https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API) or WebSQL/localStorage fallbacks via [localForage](https://github.com/localForage/localForage), and [AsyncStorage](https://facebook.github.io/react-native/docs/asyncstorage.html) in React Native.
 
 You can [configure every aspect of how your state is persisted](#configuration).
 
@@ -141,7 +141,7 @@ When the initial action has been dispatched, you can update your application sta
 
 A common pattern for offline-friendly apps is to *optimistically update  UI state*. In practice, this means that as soon as user performs an action, we update the UI to look as if the action had already succeeded. This makes our applications resilient to network latency, and improves the perceived performance of our app.
 
-When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. If the rollback action does not have a payload, an error object returned by the effects reconciler will be set as the payload.
+When we optimistically update state, we need to ensure that if the action does permanently fail, the user is appropriately notified and the application state is rolled back. To allow you this opportunity, Redux Offline will fire the action you specified in `meta.offline.rollback`. The error object returned by the effects reconciler will be set as the payload.
 
 An example of an optimistic update:
 ```js
@@ -241,6 +241,11 @@ So the default effect format expected by the reconciler is something like:
 ```
 
 That said, you'll probably want to [use your own method](#change-how-network-requests-are-made) - it can be anything, as long as it returns a Promise.
+It's important to note that if the promise rejects the default discard is expecting a status property inside the error object. If no response status is provided, the effect will be automatically discarded.
+A quick way out of this is throwing a NetworkError, just like the default effector does! To achieve this, you'll need to import it in the following way:
+```js
+import { NetworkError } from '@redux-offline/redux-offline/lib/defaults/effect';
+```
 
 ### Is this thing even on?
 
@@ -308,7 +313,12 @@ export type Config = {
   persistOptions: {},
   persistCallback: (callback: any) => any,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
-  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any }
+  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  queue: {
+    enqueue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    dequeue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
+    peek: (outbox: Array<OfflineAction>) => OfflineAction
+  }
 };
 ```
 
@@ -350,7 +360,7 @@ const store = createStore(
 ```
 
 #### Only import what you need
-The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
+The reason for default config is defined as a separate import is, that it pulls in the [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4) dependency and a limited, but non-negligible amount of library code. If you want to minimize your bundle size, you'll want to avoid importing any code you don't use, and bring in only the pieces you need:
 
 ```diff
 - import { offline } from 'redux-offline';
@@ -397,7 +407,7 @@ The first parameter is whatever value is set in `action.meta.offline.effect`. Th
 
 #### Change how state is saved to disk
 
-By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist). The recommended way of customizing
+By default, persistence is handled by [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4). The recommended way of customizing
 persistence is to configure redux-persist. You can pass any valid configuration
 to redux-persist by defining it `config.persistOptions`:
 ```js
@@ -491,14 +501,38 @@ const config = {
 The function receives the action and a number representing how many times the
 action has been retried, and should reply with a number representing the amount
 of milliseconds to wait until the next retry. If this method returns `null` or
-`undefined`, the action will not be retried until the next time the app comes
-online, is started, or you manually fire an `Offline/SEND` action.
+`undefined`, the action will be discarded.
 
 #### Change how errors are handled
 
 Granular error handling is not yet implemented. You can use discard/retry, and
 if necessary to purge messages from your queue, you can filter `state.offline.outbox`
 in your reducers. Official support coming soon.
+
+#### Provide your own queue implementation
+
+Provide your own `enqueue()`, `dequeue()` and `peek()` implementations to `config.queue` to alter how the queue is processed.
+
+```js
+// Last Value Queue
+// Only keep the last action for each URL-method pair.
+const config = {
+  queue: {
+    ...defaultQueue,
+    enqueue(array, action) {
+      const newArray = array.filter(item =>
+        !(item.method === action.method && item.url === action.url)
+      );
+      newArray.push(action);
+      return newArray;
+    }
+  }
+};
+```
+
+#### Chain behavior off offline actions (EXPERIMENTAL & UNSTABLE)
+
+`store.dispatch()` returns a promise that you can use to chain behavior off offline actions, but be careful! A chief benefit of this library is that requests are tried across sessions, but promises do not last that long. So if you use this feature, know that your promise might not get resolved, even if the associated request is eventually delivered.
 
 #### Synchronise my state while the app is not open
 
@@ -541,6 +575,8 @@ store.dispatch({ type: RESET_STATE });
 
 Improvements and additions welcome. For large changes, please submit a discussion issue before jumping to coding; we'd hate you to waste the effort.
 
+If you are reporting a bug, please include code that reproduces the error. Here is a starting application on [CodeSandbox](https://codesandbox.io/s/8xml9l1r0j).
+
 In lieu of a formal style guide, follow the included eslint rules, and use Prettier to format your code.
 
 ## Miscellanea
@@ -550,7 +586,7 @@ In lieu of a formal style guide, follow the included eslint rules, and use Prett
 Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
 
 * Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
-* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist)
+* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4)
 
 Without their work, Redux Offline wouldn't exist. If you like the ideas behind Redux Offline, but want to build your own stack from lower-level components, these are good places to start.
 
