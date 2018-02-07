@@ -11,7 +11,7 @@ module.exports = {
   },
   rules: {
     'comma-dangle': 'off',
-    'import/prefer-default-export': ['warn'],
+    'import/prefer-default-export': 0,
     'function-paren-newline': ['error', 'consistent'],
     'prettier/prettier': ['error', {
       'singleQuote': true,
