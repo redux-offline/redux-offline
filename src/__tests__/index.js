@@ -10,7 +10,7 @@ const storage = new AsyncNodeStorage("/tmp/storageDir");
 const storageKey = `${KEY_PREFIX}offline`;
 function noop() {}
 
-beforeEach(() => storage.removeItem(storageKey, noop) );
+beforeEach(done => storage.removeItem(storageKey, done) );
 
 const defaultConfig = applyDefaults({
   effect: jest.fn(() => Promise.resolve()),
