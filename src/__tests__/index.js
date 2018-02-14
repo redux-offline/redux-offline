@@ -11,6 +11,7 @@ const storageKey = `${KEY_PREFIX}offline`;
 function noop() {}
 
 beforeEach(done => storage.removeItem(storageKey, done) );
+afterEach(() => defaultConfig.effect.mockClear());
 
 const defaultConfig = applyDefaults({
   effect: jest.fn(() => Promise.resolve()),
