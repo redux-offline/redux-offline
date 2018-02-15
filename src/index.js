@@ -47,19 +47,15 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
       : offlineMiddleware;
 
   // create store
-  const initialStore = offlineEnhancer(createStore)(
+  const store = offlineEnhancer(createStore)(
     offlineReducer,
     preloadedState,
     enhancer
   );
 
-  const baseReplaceReducer = initialStore.replaceReducer.bind(initialStore);
-  const replaceReducer = function replaceReducer(nextReducer) {
+  const baseReplaceReducer = store.replaceReducer.bind(store);
+  store.replaceReducer = function replaceReducer(nextReducer) {
     return baseReplaceReducer(enhanceReducer(nextReducer, config));
-  };
-  const store = {
-    ...initialStore,
-    replaceReducer
   };
 
   // launch store persistor
