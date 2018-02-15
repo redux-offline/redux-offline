@@ -1,4 +1,4 @@
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { KEY_PREFIX } from "redux-persist/lib/constants"
 import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
@@ -41,16 +41,13 @@ test("createOffline() creates storeEnhancer", () => {
 });
 
 // see https://github.com/redux-offline/redux-offline/issues/31
-test("supports HMR by overriding `replaceReducer()`", done => {
-  const store = offline({
-    ...defaultConfig,
-    persistCallback() {
-      store.replaceReducer(defaultReducer);
-      store.dispatch({ type: "SOME_ACTION" });
-      expect(store.getState()).toHaveProperty("offline");
-      done();
-    }
-  })(createStore)(defaultReducer);
+test("supports HMR by overriding `replaceReducer()`", () => {
+  const store = offline(defaultConfig)(createStore)(defaultReducer);
+  store.replaceReducer(combineReducers({
+    data: defaultReducer
+  }));
+  store.dispatch({ type: "SOME_ACTION" });
+  expect(store.getState()).toHaveProperty("offline");
 });
 
 // see https://github.com/redux-offline/redux-offline/issues/4
