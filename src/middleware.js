@@ -47,5 +47,5 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
     send(offlineAction, store.dispatch, config, offline.retryCount);
   }
 
-  return promise || result;
+  return config.returnPromises ? promise || result : result;
 };
