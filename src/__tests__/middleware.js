@@ -144,8 +144,13 @@ describe('on OFFLINE_SCHEDULE_RETRY', () => {
 });
 
 describe('offlineActionTracker integration', () => {
+  let config, store, next;
+  beforeEach(() => {
+    ({ config, store, next } = setup())
+    config = { ...config, returnPromises: true };
+  });
+
   test('returns a promise that can be resolved', () => {
-    const { config, store, next } = setup();
     const promise = createOfflineMiddleware(config)(store)(next)(offlineAction);
 
     const transaction = 0;
@@ -157,7 +162,6 @@ describe('offlineActionTracker integration', () => {
   });
 
   test('returns a promise that can be rejected', () => {
-    const { config, store, next, action } = setup();
     const promise = createOfflineMiddleware(config)(store)(next)(offlineAction);
 
     const transaction = 0;
