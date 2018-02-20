@@ -16,6 +16,7 @@ function setup(partialConfig) {
     retry: () => DELAY,
     defaultCommit: defaultCommitAction,
     defaultRollback: defaultRollbackAction,
+    observerList: {}
   };
 
   return {

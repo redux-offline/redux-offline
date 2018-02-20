@@ -1,9 +1,12 @@
 import { applyMiddleware, compose, createStore } from 'redux';
+import thunk from 'redux-thunk';
 import { offline, createOffline } from '@redux-offline/redux-offline';
 import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
+import { waterfallMidway, waterfallEnd } from './actions';
 
 const initialState = {
-  timer: 0
+  timer: 0,
+  waterfallStep: 0
 };
 
 function reducer(state = initialState, action) {
@@ -19,6 +22,36 @@ function reducer(state = initialState, action) {
       timer: state.timer === 0 ? 0 : state.timer - 1
     };
   }
+  if (action.type === 'WATERFALL_START_COMMIT') {
+    return {
+      ...state,
+      waterfallStep: 1,
+      waterfallResult: {
+        meta: action.meta,
+        payload: action.payload
+      }
+    };
+  }
+  if (action.type === 'WATERFALL_MIDWAY_COMMIT') {
+    return {
+      ...state,
+      waterfallStep: 2,
+      waterfallResult: {
+        meta: action.meta,
+        payload: action.payload
+      }
+    };
+  }
+  if (action.type === 'WATERFALL_END_COMMIT') {
+    return {
+      ...state,
+      waterfallStep: 3,
+      waterfallResult: {
+        meta: action.meta,
+        payload: action.payload
+      }
+    };
+  }
   return state;
 }
 
@@ -26,6 +59,10 @@ const config = {
   ...defaultConfig,
   retry(_action, retries) {
     return (retries + 1) * 1000;
+  },
+  observerPool: {
+    waterfallMidway,
+    waterfallEnd
   }
 };
 
@@ -48,12 +85,15 @@ if (process.env.REACT_APP_OFFLINE_API === 'alternative') {
   store = createStore(
     enhanceReducer(reducer),
     undefined,
-    composeEnhancers(applyMiddleware(middleware, tickMiddleware), enhanceStore)
+    composeEnhancers(
+      applyMiddleware(thunk, middleware, tickMiddleware),
+      enhanceStore
+    )
   );
 } else {
   store = createStore(
     reducer,
-    composeEnhancers(offline(config), applyMiddleware(tickMiddleware))
+    composeEnhancers(offline(config), applyMiddleware(thunk, tickMiddleware))
   );
 }
 

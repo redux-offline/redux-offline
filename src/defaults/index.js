@@ -10,6 +10,7 @@ import offlineStateLens from './offlineStateLens';
 import queue from './queue';
 
 export default {
+  observerPool: {},
   rehydrate: true, // backward compatibility, TODO remove in the next breaking change version
   persist,
   detectNetwork,

@@ -29,7 +29,8 @@ const defaultOfflineState = {
   netInfo: {
     isConnectionExpensive: null,
     reach: 'NONE'
-  }
+  },
+  observerList: {}
 };
 
 function setup(offlineState = {}) {

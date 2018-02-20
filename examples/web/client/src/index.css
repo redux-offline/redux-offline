@@ -19,15 +19,31 @@ body {
   width: 600px;
 }
 
-.promise-box {
+.code-box {
   width: 450px;
   overflow: auto;
 }
 
-.promise-box.success > code {
+.code-box.success > code {
      color: #1cbc51;
 }
 
-.promise-box.error > code {
+.code-box.error > code {
   color: #b11f0b;
+}
+
+.code-box.auto {
+  width: 100%;
+  height: 90%;
+}
+
+.waterfall-step {
+  height: 150px;
+  width: 150px;
+  border: dashed 1px #000;
+}
+
+.waterfall-step.active {
+  border: 0;
+  background-color: #1cbc51;
 }
