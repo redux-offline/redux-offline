@@ -3,18 +3,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 
+const noop = () => {};
+
 class MakeRequests extends React.Component {
 
   buildHandler = (handler) => {
     const { successCallback, errorCallback } = this.props;
-    let promise;
-    if (successCallback) {
-      promise = handler().then(successCallback);
-    }
-    if (errorCallback) {
-      promise.catch(errorCallback);
-    }
-    return promise || handler();
+    return handler()
+      .then(successCallback || noop)
+      .catch(errorCallback || noop);
   }
 
   onSucceedAlways = () => this.buildHandler(this.props.onSucceedAlways)

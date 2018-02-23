@@ -20,5 +20,6 @@ export default {
   defaultRollback,
   persistAutoRehydrate,
   offlineStateLens,
-  queue
+  queue,
+  returnPromises: false
 };
