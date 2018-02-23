@@ -1,4 +1,4 @@
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { KEY_PREFIX } from "redux-persist/lib/constants"
 import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
@@ -6,20 +6,19 @@ import { createOffline, offline } from "../index";
 import { applyDefaults } from "../config";
 import { networkStatusChanged } from "../actions";
 
-const storage = new AsyncNodeStorage("/tmp/storageDir");
 const storageKey = `${KEY_PREFIX}offline`;
-function noop() {}
+const defaultReducer = (state = {}) => state;
+const noop = () => {};
 
-beforeEach(() => storage.removeItem(storageKey, noop) );
-
-const defaultConfig = applyDefaults({
-  effect: jest.fn(() => Promise.resolve()),
-  persistOptions: { storage }
+let defaultConfig;
+beforeEach(() => {
+  defaultConfig = applyDefaults({
+    effect: jest.fn(() => Promise.resolve()),
+    persistOptions: {
+      storage: new AsyncNodeStorage("/tmp/storageDir")
+    }
+  });
 });
-
-function defaultReducer(state = {}) {
-  return state;
-}
 
 test("offline() creates storeEnhancer", () => {
   const storeEnhancer = offline(defaultConfig);
@@ -44,34 +43,48 @@ test("createOffline() creates storeEnhancer", () => {
 // see https://github.com/redux-offline/redux-offline/issues/31
 test("supports HMR by overriding `replaceReducer()`", () => {
   const store = offline(defaultConfig)(createStore)(defaultReducer);
-  store.replaceReducer(defaultReducer);
+  store.replaceReducer(combineReducers({
+    data: defaultReducer
+  }));
+  store.dispatch({ type: "SOME_ACTION" });
+  expect(store.getState()).toHaveProperty("offline");
+});
+
+test("createOffline() supports HMR", () => {
+  const { middleware, enhanceReducer, enhanceStore } =
+    createOffline(defaultConfig);
+  const reducer = enhanceReducer(defaultReducer);
+  const store = createStore(reducer, compose(
+    applyMiddleware(middleware),
+    enhanceStore
+  ));
+  store.replaceReducer(combineReducers({
+    data: defaultReducer
+  }));
   store.dispatch({ type: "SOME_ACTION" });
   expect(store.getState()).toHaveProperty("offline");
 });
 
 // see https://github.com/redux-offline/redux-offline/issues/4
-test("restores offline outbox when rehydrates", () => {
+test("restores offline outbox when rehydrates", done => {
   const actions = [{
     type: "SOME_OFFLINE_ACTION",
     meta: { offline: { effect: {} } }
   }];
-  storage.setItem(
+  defaultConfig.persistOptions.storage.setItem(
     storageKey,
     JSON.stringify({ outbox: actions }),
     noop
   );
 
-  expect.assertions(1);
-  return new Promise(resolve => {
-    const store = offline({
-      ...defaultConfig,
-      persistCallback() {
-        const { offline: { outbox } } = store.getState();
-        expect(outbox).toEqual(actions);
-        resolve();
-      }
-    })(createStore)(defaultReducer);
-  });
+  const store = offline({
+    ...defaultConfig,
+    persistCallback() {
+      const { offline: { outbox } } = store.getState();
+      expect(outbox).toEqual(actions);
+      done();
+    }
+  })(createStore)(defaultReducer);
 });
 
 // see https://github.com/jevakallio/redux-offline/pull/91
