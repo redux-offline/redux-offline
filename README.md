@@ -515,6 +515,8 @@ in your reducers. Official support coming soon.
 Provide your own `enqueue()`, `dequeue()` and `peek()` implementations to `config.queue` to alter how the queue is processed.
 
 ```js
+import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
+
 // Last Value Queue
 // Only keep the last action for each URL-method pair.
 const config = {
