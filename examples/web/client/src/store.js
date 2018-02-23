@@ -26,7 +26,8 @@ const config = {
   ...defaultConfig,
   retry(_action, retries) {
     return (retries + 1) * 1000;
-  }
+  },
+  returnPromises: true
 };
 
 function tickMiddleware(store) {
