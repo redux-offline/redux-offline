@@ -4,3 +4,4 @@
 .travis.yml
 .idea/**
 examples/**
+docs/*
