@@ -75,7 +75,7 @@ const followUser = userId => ({
       // the network action to execute:
       effect: { url: '/api/follow', method: 'POST', body: { userId } },
       // action to dispatch when effect succeeds:
-      commit: { type: 'FOLLOW_USER_COMMIT', meta: { userId } },
+      commit: { type: 'FOLLOW_USER_COMMIT', meta: JSON.stringify({ userId }) },
       // action to dispatch if network action fails permanently:
       rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId } }
     }
