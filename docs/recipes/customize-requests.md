@@ -48,10 +48,6 @@ const discard = (error, _action, _retries) => {
 The following is a full example using axios to resolve requests.
 
 ```js
-import axios from 'axios';
-import offline from '@redux-offline/redux-offline';
-import config from '@redux-offline/redux-offline/lib/defaults';
-
 const effect = (effect, _action) => axios(effect);
 const discard = (error, _action, _retries) => {
   const { request, response } = error;
@@ -60,8 +56,7 @@ const discard = (error, _action, _retries) => {
   return 400 <= response.status && response.status < 500;
 };
 
-const reducer = (state = {}) => state;
-const store = createStore(reducer, offline({
+const store = createStore(myReducer, offline({
   ...config,
   effect,
   discard
@@ -71,17 +66,13 @@ store.dispatch({
   type: 'SOME_OFFLINE_ACTION',
   meta: {
     offline: {
-      effect: {
-        url: 'example.com',
-        method: 'GET',
-        data: {
-          some: 'data'
-        }
-      }
+      effect: { url: 'example.com' }
     }
   }
 });
 ```
+
+[Try it on CodeSandbox.](https://codesandbox.io/s/jp6zrj3pj5)
 
 ## Example: `async` discard
 
