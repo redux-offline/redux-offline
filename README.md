@@ -73,7 +73,7 @@ const followUser = userId => ({
   meta: {
     offline: {
       // the network action to execute:
-      effect: { url: '/api/follow', method: 'POST', body: { userId } },
+      effect: { url: '/api/follow', method: 'POST', body: JSON.stringify({ userId }) },
       // action to dispatch when effect succeeds:
       commit: { type: 'FOLLOW_USER_COMMIT', meta: { userId } },
       // action to dispatch if network action fails permanently:
