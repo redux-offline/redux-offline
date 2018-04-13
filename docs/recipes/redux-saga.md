@@ -1,4 +1,4 @@
-## Use with Redux-Saga
+# Use with Redux-Saga
 
 There are currently no examples for this integration. If you have successfully used these libraries together, please consider contributing your approach here!
 

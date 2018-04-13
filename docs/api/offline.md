@@ -7,9 +7,7 @@ import { createStore } from 'redux';
 import { offline } from '@redux-offline/redux-offline';
 import config from '@redux-offline/redux-offline/lib/defaults';
 
-import myReducer from './myReducer';
-
 const store = createStore(myReducer, offline(config));
 ```
 
-See [config documentation](api/config) for information on customizing the returned store enhancer.
+See [config documentation](./config.md) for information on customizing the returned store enhancer.

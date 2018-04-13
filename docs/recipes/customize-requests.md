@@ -80,7 +80,7 @@ The discard function can return a promise. This can be useful if you need to mak
 
 In the following example, when we receive a `401 Unauthorized` response, we call `refreshAccessToken()`, update _localStorage_, and then return `false` if we received a new access token.
 
-The code checking for `status` on error then checking that `status` represents a client error is taken from the default implementation.
+Both the code checking for `status` on error and the code checking that `status` represents a client error is taken from the default implementation.
 
 ```js
 const discard = async (error, _action, _retries) => {

@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The recommended Redux wrapper, [next-redux-wrapper](https://github.com/kirill-konshin/next-redux-wrapper), does not work with [Redux Persist](https://github.com/rt2zz/redux-persist). At least not by the default.
+The recommended Redux wrapper, [next-redux-wrapper](https://github.com/kirill-konshin/next-redux-wrapper), does not work with [Redux Persist](https://github.com/rt2zz/redux-persist). At least not by default.
 
-This is because both libraries aim to replace the state entirely, so unless merge the two state manually when Redux Persist rehydrates the state, this is not going to work.
+This is because both libraries aim to replace the state entirely, so unless two states are merged manually when Redux Persist rehydrates the state, this is not going to work.
 
 A more general solution is to import the state from the server as a series of actions and replay those on top of the rehydrated state. This is what [next-redux-replay](https://github.com/wacii/next-redux-replay) does.
 
@@ -16,7 +16,7 @@ First, the store is not going to be truly ready until the state has been rehydra
 
 Second, because _Next.js_ controls the rendering of your component, you cannot wait until after rehydration to render your app; instead display a loading state, then trigger the rendering of the actual content once the server actions have been replayed.
 
-> With care, you can display your app immediately, but because the server will not know what a particular client has saved to storage, the initial render will generally not be accurate. The [with-redux-offline example](https://github.com/wacii/next-redux-replay/tree/master/examples/with-redux-offline) demonstrates this.
+> With care, you can display your app immediately, but because the server will not know what a particular client has saved to storage, the initial render will generally not be accurate. The [with-redux-offline example](https://github.com/wacii/next-redux-replay/tree/master/examples/with-redux-offline) demonstrates both these approaches.
 
 ```js
 const makeStore = (actions, middleware) => {
@@ -46,8 +46,9 @@ const initStore = store => {
   store.dispatch(someOfflineAction());
 
   return new Promise(resolve => {
-    store.subscribe(state => {
-      if (state.offline.outbox.length === 0) {
+    const unsubscribe = store.subscribe(() => {
+      if (store.getState().offline.outbox.length === 0) {
+        unsubscribe();
         resolve(null);
       }
     });
@@ -57,7 +58,7 @@ const initStore = store => {
 
 ## `withRedux()`
 
-With both these functions defined, use the `withRedux()` HOC to decorate your Page Component. `next-redux-replay` does not connect the Page Component, so you will still have to connect any components that need to access the state.
+With both these functions defined, use the `withRedux()` HOC to decorate your Page Component. `next-redux-replay` does not connect the Page Component, so you will still have to connect any components that need access to the state.
 
 ```js
 const MyPage = () => null;
