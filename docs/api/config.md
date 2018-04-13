@@ -42,9 +42,9 @@ Responsible for communicating network status changes to Redux Offline through th
 
 The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline. Additionally you can call it with an object containing as props `online` and `netInfo`. The `online` is a boolean that defines whether there's connection or not, the `netInfo` is an optional object containing details about the current network.
  
-The default detectNetwork.js provides an object with `online` as the only property.
+The default _detectNetwork.js_ provides an object with `online` as the only property.
 
-The default detectNetwork.native.js provides both the `online` and the `netInfo` props following `react-native` netInfo possible values. The payload object would follow the following example:
+The default _detectNetwork.native.js_ provides both the `online` and the `netInfo` props following `react-native` netInfo possible values. The payload object would follow the following example:
 
 ```js
 /**
@@ -69,7 +69,7 @@ Receives the rejection error from `config.effect`, the related offline action, a
 
 The default implementation discards only on client errors.
 
-See [Customize Requests](recipes/customize-requests) for more details.
+See [Customize Requests](../recipes/customize-requests.md) for more details.
 
 ## effect
 
@@ -77,7 +77,7 @@ The effect reconciler resolves offline actions to network requests.
 
 Called with `action.meta.offline.effect` and the action itself, this method must return a Promise. Resolve the promise if the request is a success and reject otherwise. If rejected, the error will be used by `config.discard` to decide whether to attempt the request again.
 
-See [Customize Requests](recipes/customize-requests) for more details.
+See [Customize Requests](../recipes/customize-requests.md) for more details.
 
 ## offlineStateLens
 
@@ -108,7 +108,7 @@ Redux Offline uses [Redux Persist v4](https://github.com/rt2zz/redux-persist/tre
 
 Store enhancer that loads persisted state.
 
-Redux Offline uses the default implementation from [Redux Persist v4](https://github.com/rt2zz/redux-persist/tree/v4). It is not suggested that you replace this function.
+Redux Offline uses the default implementation from [Redux Persist v4](https://github.com/rt2zz/redux-persist/tree/v4). It is not recommended that you replace this function.
 
 ## persistCallback
 
@@ -120,14 +120,16 @@ Rehydration is fast but not instantaneous, so it is a good idea to delay renderi
 const persistCallback = () => {
   ReactDOM.render(
     document.getElementById('root'),
-    <MyApp />
+    <Provider store={store}>
+      <MyApp />
+    </Provider>
   );
 }
 ```
 
 ## persistOptions
 
-Config object provided to `config.persist`.
+Config object provided to `config.persist` as follows:
 
 ```js
 config.persist(store, config.persistOptions, config.persistCallback);

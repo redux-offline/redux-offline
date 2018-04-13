@@ -7,8 +7,6 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import { createOffline } from '@redux-offline/redux-offline';
 import config from '@redux-offline/redux-offline/lib/defaults';
 
-import myReducer from './myReducer';
-
 const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
 const store = createStore(
   enhanceReducer(myReducer),
