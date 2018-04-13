@@ -145,6 +145,25 @@ Configure how offline actions are stored, accessed, and discarded.
 
 Save an offline action when it is first dispatched.
 
+```js
+import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
+
+// Last Value Queue
+// Only keep the last action for each URL-method pair.
+const config = {
+  queue: {
+    ...defaultQueue,
+    enqueue(array, action) {
+      const newArray = array.filter(item =>
+        !(item.method === action.method && item.url === action.url)
+      );
+      newArray.push(action);
+      return newArray;
+    }
+  }
+};
+```
+
 ### queue.dequeue
 
 Remove an offline action when it has been successfully resolved or discarded.
