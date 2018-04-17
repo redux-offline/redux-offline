@@ -22,4 +22,19 @@ function rejectAction(transaction, error) {
   }
 }
 
-export { registerAction, resolveAction, rejectAction };
+const withPromises = {
+  registerAction,
+  resolveAction,
+  rejectAction
+};
+
+const withoutPromises = {
+  registerAction() {},
+  resolveAction() {},
+  rejectAction() {}
+};
+
+export default {
+  withPromises,
+  withoutPromises
+};

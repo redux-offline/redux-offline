@@ -2,7 +2,7 @@ import send from '../send';
 import { busy, scheduleRetry } from '../actions';
 import defaultCommitAction from '../defaults/defaultCommit';
 import defaultRollbackAction from '../defaults/defaultRollback';
-import { resolveAction, rejectAction } from '../offlineActionTracker';
+import offlineActionTracker from '../offlineActionTracker';
 
 const DELAY = 1000;
 const completedMeta = {
@@ -16,6 +16,7 @@ function setup(partialConfig) {
     retry: () => DELAY,
     defaultCommit: defaultCommitAction,
     defaultRollback: defaultRollbackAction,
+    offlineActionTracker: offlineActionTracker.withoutPromises
   };
 
   return {
@@ -166,33 +167,37 @@ describe('when request is to be discarded and rollback is undefined', () => {
   });
 });
 
-jest.mock('../offlineActionTracker', () => ({
-  resolveAction: jest.fn(),
-  rejectAction: jest.fn()
-}));
-
 describe('offlineActionTracker', () => {
+  let trackerMock;
   beforeEach(() => {
-    resolveAction.mockClear();
-    rejectAction.mockClear();
-  });
-
+    trackerMock = {
+      registerAction: () => {},
+      resolveAction: jest.fn(),
+      rejectAction: jest.fn()
+    }
+  })
   test('resolves action on successful complete', () => {
     const effect = () => Promise.resolve();
     const { action, config, dispatch } = setup({ effect });
-    const promise = send(action, dispatch, config);
+    const promise = send(action, dispatch, {
+      ...config,
+      offlineActionTracker: trackerMock
+    });
 
     expect.assertions(1);
-    return promise.then(() => expect(resolveAction).toBeCalled());
+    return promise.then(() => expect(trackerMock.resolveAction).toBeCalled());
   });
 
   test('rejects action on failed complete', () => {
     const effect = () => Promise.reject();
     const discard = () => true;
     const { action, config, dispatch } = setup({ effect, discard });
-    const promise = send(action, dispatch, config);
+    const promise = send(action, dispatch, {
+      ...config,
+      offlineActionTracker: trackerMock
+    });
 
     expect.assertions(1);
-    return promise.then(() => expect(rejectAction).toBeCalled());
+    return promise.then(() => expect(trackerMock.rejectAction).toBeCalled());
   });
 });
