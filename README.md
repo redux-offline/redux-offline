@@ -295,6 +295,59 @@ Retrying a request for this long may seem excessive, and for some use cases it c
 The reason the default behaviour is to desperately try to make the requests succeed is that we really, really want to avoid having to deal with conflict resolution...
 
 
+### What about if I want to dispatch a thunk after commit or rollback is dispatched?
+
+You can do it importing reduxOfflineThunkMiddleware to your project:
+
+```js
+
+ import { applyMiddleware, createStore, compose } from 'redux';
+ import { offline } from '@redux-offline/redux-offline';
+ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
+ import reduxOfflineThunkMiddleware from '@redux-offline/redux-offline/lib/thunk-middleware';
+ // you have to import every thunk action that you need to dispatch after redux-offline commit or rollback
+ import { thunkAction1, thunkAction2 } from 'myproject-src/redux/actions';
+
+// ...
+
+const store = createStore(
+  reducer,
+  preloadedState,
+  compose(
+    applyMiddleware(reduxOfflineThunkMiddleware({ thunkAction1, thunkAction2 })),
+    offline(offlineConfig)
+  )
+);
+```
+
+Then the action that have to dispatch a thunk needs to be decorated with `thunk`:
+
+```js
+const followUser = userId => ({
+  type: 'FOLLOW_USER_REQUEST',
+  payload: { userId },
+  meta: {
+    offline: {
+      // the network action to execute:
+      effect: { url: '/api/follow', method: 'POST', body: { userId } },
+      // action to dispatch when effect succeeds:
+      commit: { 
+        type: 'FOLLOW_USER_COMMIT', 
+        meta: { 
+          userId,
+          thunk: {
+            functionName: 'thunkAction1',
+            params: [userId, 'some needed data']
+          }
+        } 
+      },
+      // action to dispatch if network action fails permanently:
+      rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId } }
+    }
+  }
+});
+```
+
 ## Configuration
 
 
