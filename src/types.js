@@ -100,5 +100,10 @@ export type Config = {
       item: ResultAction
     ) => Array<OfflineAction>,
     peek: (array: Array<OfflineAction>) => OfflineAction
+  },
+  offlineActionTracker: {
+    registerAction: number => Promise<*> | () => void,
+    resolveAction: (number, any) => void | () => void,
+    rejectAction: (number, Error) => void | () => void
   }
 };

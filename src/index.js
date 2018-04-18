@@ -45,6 +45,7 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
   // reducer that handles offline state updating
   const offlineReducer = enhanceReducer(reducer, config);
 
+  // $FlowFixMe
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
@@ -61,6 +62,7 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
   );
 
   const baseReplaceReducer = store.replaceReducer.bind(store);
+  // $FlowFixMe
   store.replaceReducer = function replaceReducer(nextReducer) {
     return baseReplaceReducer(enhanceReducer(nextReducer, config));
   };
