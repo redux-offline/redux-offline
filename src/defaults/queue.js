@@ -8,7 +8,8 @@ function dequeue(array, _item) {
   return rest;
 }
 
-function peek(array) {
+// eslint-disable-next-line no-unused-vars
+function peek(array, action) {
   return array[0];
 }
 
