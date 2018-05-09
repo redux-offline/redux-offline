@@ -32,7 +32,7 @@ const {
     middleware: offlineMiddleware,
     enhanceReducer,
     enhanceStore
-  } = offline(offlineConfig);
+  } = createOffline(offlineConfig);
 const middleware = applyMiddleware(...middlewareList, offlineMiddleware);
 
 const store = createStore(enhanceReducer(reducer), compose(middleware, enhanceStore));
