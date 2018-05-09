@@ -23,7 +23,10 @@ import { helloSaga } from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers(reducers);
-const middlewareList = [authMiddleware, sagaMiddleware];
+const middlewareList = [
+  /* other middleware here */
+  sagaMiddleware
+];
 
 const {
     middleware: offlineMiddleware,
