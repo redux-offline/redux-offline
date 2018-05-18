@@ -35,7 +35,7 @@ const {
   } = createOffline(offlineConfig);
 const middleware = applyMiddleware(...middlewareList, offlineMiddleware);
 
-const store = createStore(enhanceReducer(reducer), compose(middleware, enhanceStore));
+const store = createStore(enhanceReducer(reducer), compose(enhanceStore, middleware));
 sagaMiddleware.run(helloSaga);
 ```
 
