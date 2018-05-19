@@ -1,14 +1,15 @@
-function enqueue(array, item) {
+/* eslint-disable no-unused-vars */
+
+function enqueue(array, item, context) {
   return [...array, item];
 }
 
-// eslint-disable-next-line no-unused-vars
-function dequeue(array, _item) {
+function dequeue(array, item, context) {
   const [, ...rest] = array;
   return rest;
 }
 
-function peek(array) {
+function peek(array, item, context) {
   return array[0];
 }
 
