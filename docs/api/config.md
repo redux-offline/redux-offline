@@ -9,15 +9,29 @@ type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
   discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
-  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
-  persist: (store: any) => any,
+  offlineStateLens: (
+    state: any
+  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  persist: (store: any, options: {}, callback: () => void) => any,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   persistCallback: (callback: any) => any,
   persistOptions: {},
   queue: {
-    enqueue: (outbox: Array<OfflineAction>, action: OfflineAction, context: { offline: OfflineState }) => Array<OfflineAction>,
-    dequeue: (outbox: Array<OfflineAction>, action: OfflineAction, context: { offline: OfflineState }) => Array<OfflineAction>,
-    peek: (outbox: Array<OfflineAction>, action: OfflineAction, context: { offline: OfflineState }) => OfflineAction
+    enqueue: (
+      array: Array<OfflineAction>,
+      item: OfflineAction,
+      context: { offline: OfflineState }
+    ) => Array<OfflineAction>,
+    dequeue: (
+      array: Array<OfflineAction>,
+      item: ResultAction,
+      context: { offline: OfflineState }
+    ) => Array<OfflineAction>,
+    peek: (
+      array: Array<OfflineAction>,
+      item: any,
+      context: { offline: OfflineState }
+    ) => OfflineAction
   },
   retry: (action: OfflineAction, retries: number) => ?number,
   returnPromises: boolean
