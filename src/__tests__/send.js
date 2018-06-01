@@ -38,8 +38,13 @@ function setup(partialConfig) {
 
 test('dispatches busy action', () => {
   const { action, config, dispatch } = setup();
-  send(action, dispatch, config);
-  expect(dispatch).toBeCalledWith(busy(true));
+  const promise = send(action, dispatch, config);
+
+  expect.assertions(2);
+  return promise.then(() => {
+    expect(dispatch).toBeCalledWith(busy(true));
+    expect(dispatch).toHaveBeenLastCalledWith(busy(false));
+  });
 });
 
 test('requests resource using effects reconciler', () => {
