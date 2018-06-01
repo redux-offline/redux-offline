@@ -65,7 +65,6 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
     if (action.type === OFFLINE_SCHEDULE_RETRY) {
       return {
         ...state,
-        busy: false,
         retryScheduled: true,
         retryCount: state.retryCount + 1
       };
@@ -104,8 +103,7 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
       return {
         ...state,
         outbox: dequeue(outbox, action, { offline }),
-        retryCount: 0,
-        busy: false
+        retryCount: 0
       };
     }
 
