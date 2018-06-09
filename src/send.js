@@ -68,7 +68,8 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
       }
 
       return dispatch(complete(rollbackAction, false, error, action, config));
-    });
+    })
+    .finally(() => dispatch(busy(false)));
 };
 
 export default send;

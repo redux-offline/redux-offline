@@ -65,7 +65,6 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
     if (action.type === OFFLINE_SCHEDULE_RETRY) {
       return {
         ...state,
-        busy: false,
         retryScheduled: true,
         retryCount: state.retryCount + 1
       };
@@ -90,22 +89,21 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
         ...action,
         meta: { ...action.meta, transaction }
       }: any): OfflineAction);
-      const { outbox } = state;
+      const { outbox, ...offline } = state;
       return {
         ...state,
         lastTransaction: transaction,
-        outbox: enqueue(outbox, stamped)
+        outbox: enqueue(outbox, stamped, { offline })
       };
     }
 
     // Remove completed actions from queue (success or fail)
     if (action.meta && action.meta.completed === true) {
-      const { outbox } = state;
+      const { outbox, ...offline } = state;
       return {
         ...state,
-        outbox: dequeue(outbox, action),
-        retryCount: 0,
-        busy: false
+        outbox: dequeue(outbox, action, { offline }),
+        retryCount: 0
       };
     }
 

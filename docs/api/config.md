@@ -9,15 +9,29 @@ type Config = {
   detectNetwork: (callback: NetworkCallback) => void,
   discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
-  offlineStateLens: (state: any) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
-  persist: (store: any) => any,
+  offlineStateLens: (
+    state: any
+  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  persist: (store: any, options: {}, callback: () => void) => any,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   persistCallback: (callback: any) => any,
   persistOptions: {},
   queue: {
-    enqueue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
-    dequeue: (outbox: Array<OfflineAction>, action: OfflineAction) => Array<OfflineAction>,
-    peek: (outbox: Array<OfflineAction>) => OfflineAction
+    enqueue: (
+      array: Array<OfflineAction>,
+      item: OfflineAction,
+      context: { offline: OfflineState }
+    ) => Array<OfflineAction>,
+    dequeue: (
+      array: Array<OfflineAction>,
+      item: ResultAction,
+      context: { offline: OfflineState }
+    ) => Array<OfflineAction>,
+    peek: (
+      array: Array<OfflineAction>,
+      item: any,
+      context: { offline: OfflineState }
+    ) => OfflineAction
   },
   retry: (action: OfflineAction, retries: number) => ?number,
   returnPromises: boolean
@@ -41,7 +55,7 @@ The default action has its payload set to the error thrown by the effects reconc
 Responsible for communicating network status changes to Redux Offline through the provided callback.
 
 The function is passed a callback, which you should call with boolean `true` when the app gets back online, and `false` when it goes offline. Additionally you can call it with an object containing as props `online` and `netInfo`. The `online` is a boolean that defines whether there's connection or not, the `netInfo` is an optional object containing details about the current network.
- 
+
 The default _detectNetwork.js_ provides an object with `online` as the only property.
 
 The default _detectNetwork.native.js_ provides both the `online` and the `netInfo` props following `react-native` netInfo possible values. The payload object would follow the following example:
