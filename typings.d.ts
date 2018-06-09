@@ -16,9 +16,9 @@ declare module '@redux-offline/redux-offline/lib/types' {
   }
 
   export interface OfflineMetadata {
-    commit: ResultAction;
+    commit?: ResultAction;
     effect: object;
-    rollback: ResultAction;
+    rollback?: ResultAction;
   }
 
   export interface OfflineAction {
@@ -86,6 +86,28 @@ declare module '@redux-offline/redux-offline/lib/types' {
     persistCallback: (callback?: any) => any;
     persistOptions: { [key: string]: any };
     retry: (action: OfflineAction, retries: number) => number | void;
+    queue: {
+      enqueue: (
+        array: Array<OfflineAction>,
+        item: OfflineAction,
+        context: { offline: OfflineState }
+      ) => Array<OfflineAction>,
+      dequeue: (
+        array: Array<OfflineAction>,
+        item: ResultAction,
+        context: { offline: OfflineState }
+      ) => Array<OfflineAction>,
+      peek: (
+        array: Array<OfflineAction>,
+        item: any,
+        context: { offline: OfflineState }
+      ) => OfflineAction
+    };
+    offlineActionTracker: {
+      registerAction: (number) => Promise<any> | (() => void),
+      resolveAction: (number, any) => void | (() => void),
+      rejectAction: (number, Error) => void | (() => void)
+    }
   }
 }
 
