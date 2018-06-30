@@ -76,7 +76,7 @@ If writing a native app for Android, you'll need to make sure to request the per
 ```
 * * *
 
-See [Documentation](docs/README) for configuration options, the full API, and common recipes.
+See [Documentation](docs/README.md) for configuration options, the full API, and common recipes.
 
 ## Contributing
 
