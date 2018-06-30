@@ -3,7 +3,7 @@ import { completeRetry, scheduleRetry } from '../actions';
 import defaultConfig from '../defaults';
 import { OFFLINE_SEND } from '../constants';
 import send from '../send';
-import { rejectAction, resolveAction } from '../offlineActionTracker';
+import offlineActionTracker from '../offlineActionTracker';
 
 const offlineAction = {
   type: 'OFFLINE_ACTION_REQUEST',
@@ -46,6 +46,7 @@ function setup(offlineState = {}) {
       effect: jest.fn(),
       retry: jest.fn(),
       discard: jest.fn(),
+      offlineActionTracker: offlineActionTracker.withoutPromises
     },
     store: {
       getState: jest.fn(() => state),
@@ -143,11 +144,21 @@ describe('on OFFLINE_SCHEDULE_RETRY', () => {
   });
 });
 
+test('offlineActionTracker without promises', () => {
+  const { config, store, next } = setup();
+
+  const value = createOfflineMiddleware(config)(store)(next)(offlineAction);
+  expect(value).not.toHaveProperty('then');
+});
+
 describe('offlineActionTracker integration', () => {
   let config, store, next;
   beforeEach(() => {
     ({ config, store, next } = setup())
-    config = { ...config, returnPromises: true };
+    config = {
+      ...config,
+      offlineActionTracker: offlineActionTracker.withPromises 
+    };
   });
 
   test('returns a promise that can be resolved', () => {
@@ -155,7 +166,7 @@ describe('offlineActionTracker integration', () => {
 
     const transaction = 0;
     const data = { some: "data" };
-    resolveAction(transaction, data);
+    config.offlineActionTracker.resolveAction(transaction, data);
 
     expect.assertions(1);
     return promise.then(value => expect(value).toEqual(data));
@@ -166,7 +177,7 @@ describe('offlineActionTracker integration', () => {
 
     const transaction = 0;
     const data = { some: 'data' };
-    rejectAction(transaction, data);
+    config.offlineActionTracker.rejectAction(transaction, data);
 
     expect.assertions(1);
     return promise.catch(error => expect(error).toEqual(data));

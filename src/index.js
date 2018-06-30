@@ -6,6 +6,7 @@ import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
 import { networkStatusChanged } from './actions';
+import offlineActionTracker from './offlineActionTracker';
 
 // @TODO: Take createStore as config?
 const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
@@ -34,10 +35,17 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
   warnIfNotReduxAction(config, 'defaultCommit');
   warnIfNotReduxAction(config, 'defaultRollback');
 
+  // toggle experimental returned promises
+  config.offlineActionTracker = config.returnPromises
+    ? offlineActionTracker.withPromises
+    : offlineActionTracker.withoutPromises;
+  delete config.returnPromises;
+
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
   const offlineReducer = enhanceReducer(reducer, config);
 
+  // $FlowFixMe
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
@@ -54,6 +62,7 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
   );
 
   const baseReplaceReducer = store.replaceReducer.bind(store);
+  // $FlowFixMe
   store.replaceReducer = function replaceReducer(nextReducer) {
     return baseReplaceReducer(enhanceReducer(nextReducer, config));
   };
@@ -75,6 +84,12 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
 
 export const createOffline = (userConfig: $Shape<Config> = {}) => {
   const config = applyDefaults(userConfig);
+
+  // toggle experimental returned promises
+  config.offlineActionTracker = config.returnPromises
+    ? offlineActionTracker.withPromises
+    : offlineActionTracker.withoutPromises;
+  delete config.returnPromises;
 
   warnIfNotReduxAction(config, 'defaultCommit');
   warnIfNotReduxAction(config, 'defaultRollback');

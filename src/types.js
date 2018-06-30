@@ -93,12 +93,23 @@ export type Config = {
   queue: {
     enqueue: (
       array: Array<OfflineAction>,
-      item: OfflineAction
+      item: OfflineAction,
+      context: { offline: OfflineState }
     ) => Array<OfflineAction>,
     dequeue: (
       array: Array<OfflineAction>,
-      item: ResultAction
+      item: ResultAction,
+      context: { offline: OfflineState }
     ) => Array<OfflineAction>,
-    peek: (array: Array<OfflineAction>) => OfflineAction
+    peek: (
+      array: Array<OfflineAction>,
+      item: any,
+      context: { offline: OfflineState }
+    ) => OfflineAction
+  },
+  offlineActionTracker: {
+    registerAction: number => Promise<*> | (() => void),
+    resolveAction: (number, any) => void | (() => void),
+    rejectAction: (number, Error) => void | (() => void)
   }
 };

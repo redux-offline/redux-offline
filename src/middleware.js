@@ -4,7 +4,6 @@ import type { AppState, Config } from './types';
 import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
 import { completeRetry } from './actions';
 import send from './send';
-import { registerAction } from './offlineActionTracker';
 
 const after = (timeout = 0) =>
   new Promise(resolve => setTimeout(resolve, timeout));
@@ -19,10 +18,12 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
   // find any actions to send, if any
   const state: AppState = store.getState();
   const offline = config.offlineStateLens(state).get;
-  const offlineAction = config.queue.peek(offline.outbox);
+  const context = { offline };
+  const offlineAction = config.queue.peek(offline.outbox, action, context);
 
   // create promise to return on enqueue offline action
   if (action.meta && action.meta.offline) {
+    const { registerAction } = config.offlineActionTracker;
     promise = registerAction(offline.lastTransaction);
   }
 
@@ -47,5 +48,5 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
     send(offlineAction, store.dispatch, config, offline.retryCount);
   }
 
-  return config.returnPromises ? promise || result : result;
+  return promise || result;
 };

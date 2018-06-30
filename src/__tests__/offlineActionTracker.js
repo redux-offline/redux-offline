@@ -1,4 +1,9 @@
-import { registerAction, resolveAction, rejectAction } from '../offlineActionTracker.js';
+import offlineActionTracker from '../offlineActionTracker.js';
+const {
+  registerAction,
+  resolveAction,
+  rejectAction
+} = offlineActionTracker.withPromises;
 
 test('resolves first action with correct transaction', () => {
   const transaction = 0;

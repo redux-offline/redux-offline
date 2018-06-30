@@ -3,15 +3,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 
-const noop = () => {};
-
 class MakeRequests extends React.Component {
 
   buildHandler = (handler) => {
     const { successCallback, errorCallback } = this.props;
-    return handler()
-      .then(successCallback || noop)
-      .catch(errorCallback || noop);
+    const result = handler();
+    if (!result.then) {
+      if (successCallback || errorCallback) alert('Offline config returnPromises is false!');
+      return result;
+    }
+    return result.then(successCallback).catch(errorCallback);
   }
 
   onSucceedAlways = () => this.buildHandler(this.props.onSucceedAlways)

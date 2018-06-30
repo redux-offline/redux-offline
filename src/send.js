@@ -1,14 +1,15 @@
 import { busy, scheduleRetry } from './actions';
 import { JS_ERROR } from './constants';
-import { resolveAction, rejectAction } from './offlineActionTracker';
 import type { Config, OfflineAction, ResultAction } from './types';
 
 const complete = (
   action: ResultAction,
   success: boolean,
   payload: {},
-  offlineAction: OfflineAction
+  offlineAction: OfflineAction,
+  config: Config
 ): ResultAction => {
+  const { resolveAction, rejectAction } = config.offlineActionTracker;
   if (success) {
     resolveAction(offlineAction.meta.transaction, payload);
   } else {
@@ -32,14 +33,15 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         meta: { ...config.defaultCommit.meta, offlineAction: action }
       };
       try {
-        return dispatch(complete(commitAction, true, result, action));
+        return dispatch(complete(commitAction, true, result, action, config));
       } catch (error) {
         return dispatch(
           complete(
             { type: JS_ERROR, meta: { error } },
             false,
             undefined,
-            action
+            action,
+            config
           )
         );
       }
@@ -65,8 +67,9 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
         }
       }
 
-      return dispatch(complete(rollbackAction, false, error, action));
-    });
+      return dispatch(complete(rollbackAction, false, error, action, config));
+    })
+    .finally(() => dispatch(busy(false)));
 };
 
 export default send;
