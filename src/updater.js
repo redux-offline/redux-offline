@@ -89,20 +89,20 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
         ...action,
         meta: { ...action.meta, transaction }
       }: any): OfflineAction);
-      const { outbox, ...offline } = state;
+      const offline = state;
       return {
         ...state,
         lastTransaction: transaction,
-        outbox: enqueue(outbox, stamped, { offline })
+        outbox: enqueue(offline.outbox, stamped, { offline })
       };
     }
 
     // Remove completed actions from queue (success or fail)
     if (action.meta && action.meta.completed === true) {
-      const { outbox, ...offline } = state;
+      const offline = state;
       return {
         ...state,
-        outbox: dequeue(outbox, action, { offline }),
+        outbox: dequeue(offline.outbox, action, { offline }),
         retryCount: 0
       };
     }
