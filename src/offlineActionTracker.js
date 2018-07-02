@@ -1,24 +1,24 @@
-const subscriptions = [];
+const subscriptions = {};
 
 function registerAction(transaction) {
   return new Promise((resolve, reject) => {
-    subscriptions.push({ transaction, resolve, reject });
+    subscriptions[transaction] = { resolve, reject };
   });
 }
 
 function resolveAction(transaction, value) {
-  const subscription = subscriptions[0];
-  if (subscription && subscription.transaction === transaction) {
+  const subscription = subscriptions[transaction];
+  if (subscription) {
     subscription.resolve(value);
-    subscriptions.shift();
+    delete subscriptions[transaction];
   }
 }
 
 function rejectAction(transaction, error) {
-  const subscription = subscriptions[0];
-  if (subscription && subscription.transaction === transaction) {
+  const subscription = subscriptions[transaction];
+  if (subscription) {
     subscription.reject(error);
-    subscriptions.shift();
+    delete subscriptions[transaction];
   }
 }
 
