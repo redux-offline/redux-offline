@@ -104,9 +104,9 @@ declare module '@redux-offline/redux-offline/lib/types' {
       ) => OfflineAction
     };
     offlineActionTracker: {
-      registerAction: (number) => Promise<any> | (() => void),
-      resolveAction: (number, any) => void | (() => void),
-      rejectAction: (number, Error) => void | (() => void)
+      registerAction: (transaction: number) => Promise<any> | (() => void),
+      resolveAction: (transaction: number, value: any) => void | (() => void),
+      rejectAction: (transaction: number, error: Error) => void | (() => void)
     }
   }
 }
