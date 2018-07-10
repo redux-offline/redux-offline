@@ -50,5 +50,5 @@ test('resolves second action with correct transaction', () => {
   resolveAction(0);
 
   expect.assertions(1);
-  return promise.then(() => expect(array).toEqual([0, 1]));
+  return promise.then(() => expect(array).toEqual([1, 0]));
 });
