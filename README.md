@@ -20,9 +20,8 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
-```diff
-- npm install --save redux-offline
-+ npm install --save @redux-offline/redux-offline
+```shell
+npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
