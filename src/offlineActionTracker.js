@@ -7,18 +7,24 @@ function registerAction(transaction) {
 }
 
 function resolveAction(transaction, value) {
-  const subscription = subscriptions[0];
-  if (subscription && subscription.transaction === transaction) {
+  const idx = subscriptions.findIndex(
+    sub => sub && sub.transaction === transaction
+  );
+  const subscription = subscriptions[idx];
+  if (subscription) {
     subscription.resolve(value);
-    subscriptions.shift();
+    delete subscriptions[idx];
   }
 }
 
 function rejectAction(transaction, error) {
-  const subscription = subscriptions[0];
-  if (subscription && subscription.transaction === transaction) {
+  const idx = subscriptions.findIndex(
+    sub => sub && sub.transaction === transaction
+  );
+  const subscription = subscriptions[idx];
+  if (subscriptions) {
     subscription.reject(error);
-    subscriptions.shift();
+    delete subscriptions[idx];
   }
 }
 
