@@ -1,6 +1,6 @@
 # Table of Contents
 
-* [Readme](../README)
+* [Readme](../README.md)
 * Basics
   * [Getting Started](basics/getting-started.md)
   * [Read Resilience](basics/read-resilience.md)
