@@ -52,11 +52,30 @@ const followUser = userId => ({
   meta: {
     offline: {
       // the network action to execute:
-      effect: { url: '/api/follow', method: 'POST', body: JSON.stringify({ userId }) },
+      effect: { url: '/api/follow', method: 'POST', json: { userId } },
       // action to dispatch when effect succeeds:
       commit: { type: 'FOLLOW_USER_COMMIT', meta: { userId } },
       // action to dispatch if network action fails permanently:
       rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId } }
+    }
+  }
+});
+```
+
+If the effect payload is something other than JSON you can pass the body and headers:
+
+```js
+const followUser = userId => ({
+  type: 'REGISTER_USER',
+  payload: { name, email },
+  meta: {
+    offline: {
+      // the network action to execute:
+      effect: { url: '/api/register', method: 'POST', body: `name=${name}&email=${email}`, headers: { 'content-type': 'application/x-www-form-urlencoded' } },
+      // action to dispatch when effect succeeds:
+      commit: { type: 'REGISTER_USER_COMMIT', meta: { name, email } },
+      // action to dispatch if network action fails permanently:
+      rollback: { type: 'REGISTER_USER_ROLLBACK', meta: { name, email } }
     }
   }
 });
