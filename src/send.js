@@ -1,3 +1,4 @@
+// @flow
 import { busy, scheduleRetry } from './actions';
 import { JS_ERROR } from './constants';
 import type { Config, OfflineAction, ResultAction } from './types';

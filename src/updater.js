@@ -19,7 +19,7 @@ import {
   PERSIST_REHYDRATE
 } from './constants';
 
-const initialState: OfflineState = {
+export const initialState: OfflineState = {
   busy: false,
   lastTransaction: 0,
   online: false,
@@ -32,7 +32,10 @@ const initialState: OfflineState = {
   }
 };
 
-const buildOfflineUpdater = (dequeue, enqueue) =>
+type Dequeue = $PropertyType<$PropertyType<Config, 'queue'>, 'dequeue'>;
+type Enqueue = $PropertyType<$PropertyType<Config, 'queue'>, 'enqueue'>;
+
+export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
   function offlineUpdater(
     state: OfflineState = initialState,
     action:

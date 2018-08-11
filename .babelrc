@@ -1,11 +1,15 @@
 {
   "presets": [
-    "latest",
-    "stage-3"
+    ["env", {
+      "targets": {
+        "browsers": [">0.25%", "not op_mini all"]
+      }
+    }]
   ],
   "plugins": [
     ["transform-class-properties", { "spec": true }],
     "transform-flow-strip-types",
-    "transform-runtime"
+    "transform-runtime",
+    "transform-object-rest-spread"
   ]
 }
