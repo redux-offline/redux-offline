@@ -21,9 +21,9 @@ composeEnhancers(
 The offline queue will now dispatch immediatly when going online.
 
 ### Full story
-Sometimes you can experience the offline queue not triggering immediatly when coming back online. However it does trigger, as soon you do dispatch some other redux action.
+Sometimes you can experience the offline queue not triggering immediatly when coming back online. However it does trigger, as soon you dispatch some other redux action.
 
-This problem is caused by the your redux configuration not being set up 100% correctly. The good news is the fix is very simple.
+This problem is caused by your redux configuration not being set up 100% correctly. The good news is the fix is very simple.
 
 Below is a working redux configuration (but!)
 
@@ -55,7 +55,7 @@ export const configureRedux = (ngRedux: NgRedux<IAppState>, ngReduxRouter: NgRed
 };
 ```
 
-This configuration will *NOT* have its offline queue dispatched immediatly when coming online. The reason is the order the functions gets composed. The faulty order can be seen below.
+This configuration will *NOT* have its offline queue dispatched immediatly when coming online. The reason is the order the functions get composed. The faulty order can be seen below.
 
 ```typescript
 composeEnhancers(
