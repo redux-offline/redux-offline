@@ -11,6 +11,8 @@
   * [Customize Requests](recipes/customize-requests.md)
   * [Immutable.js](recipes/immutable.md)
   * [Redux-Saga](recipes/redux-saga.md)
+* Troubleshooting
+  * [Offline queue doesn't trigger on network status change](recipes/troubleshooting/offline-queue-trigger.md)
 * API Reference
   * [offline()](api/offline.md)
   * [createOffline()](api/createOffline.md)
