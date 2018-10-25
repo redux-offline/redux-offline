@@ -102,6 +102,10 @@ In lieu of a formal style guide, follow the included eslint rules, and use Prett
 
 ## Miscellanea
 
+### Usage with Redux Persist v5
+
+In case you want to use a custom [redux-persist](https://github.com/rt2zz/redux-persist) version, there is an [example] (https://gist.github.com/jarvisluong/f14872b9c7ed00bc2afc89c4622e3b55) configuration.
+
 ### Prior art
 
 Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
