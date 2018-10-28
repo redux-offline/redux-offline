@@ -19,7 +19,7 @@ import {
   PERSIST_REHYDRATE
 } from './constants';
 
-const initialState: OfflineState = {
+export const initialState: OfflineState = {
   busy: false,
   lastTransaction: 0,
   online: false,
@@ -32,7 +32,10 @@ const initialState: OfflineState = {
   }
 };
 
-const buildOfflineUpdater = (dequeue, enqueue) =>
+type Dequeue = $PropertyType<$PropertyType<Config, 'queue'>, 'dequeue'>;
+type Enqueue = $PropertyType<$PropertyType<Config, 'queue'>, 'enqueue'>;
+
+export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
   function offlineUpdater(
     state: OfflineState = initialState,
     action:
@@ -42,7 +45,7 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
       | PersistRehydrateAction
   ): OfflineState {
     // Update online/offline status
-    if (action.type === OFFLINE_STATUS_CHANGED) {
+    if (action.type === OFFLINE_STATUS_CHANGED && !action.meta) {
       return {
         ...state,
         online: action.payload.online,
@@ -53,7 +56,7 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
     if (action.type === PERSIST_REHYDRATE && action.payload) {
       return {
         ...state,
-        ...action.payload.offline,
+        ...(action.payload.offline || {}),
         online: state.online,
         netInfo: state.netInfo,
         retryScheduled: initialState.retryScheduled,
@@ -76,6 +79,7 @@ const buildOfflineUpdater = (dequeue, enqueue) =>
 
     if (
       action.type === OFFLINE_BUSY &&
+      !action.meta &&
       action.payload &&
       typeof action.payload.busy === 'boolean'
     ) {

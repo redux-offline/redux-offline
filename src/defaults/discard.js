@@ -4,7 +4,7 @@ import type { OfflineAction } from '../types';
 import { NetworkError } from './effect';
 
 export default (
-  error: NetworkError,
+  error: typeof NetworkError,
   action: OfflineAction,
   _retries: number = 0 // eslint-disable-line no-unused-vars
 ): boolean => {

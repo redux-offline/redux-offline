@@ -194,7 +194,7 @@ describe('offlineActionTracker', () => {
   });
 
   test('rejects action on failed complete', () => {
-    const effect = () => Promise.reject();
+    const effect = () => Promise.reject(new Error());
     const discard = () => true;
     const { action, config, dispatch } = setup({ effect, discard });
     const promise = send(action, dispatch, {
