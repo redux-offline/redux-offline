@@ -1,6 +1,6 @@
 # Table of Contents
 
-* [Readme](../README)
+* [Readme](../README.md)
 * Basics
   * [Getting Started](basics/getting-started.md)
   * [Read Resilience](basics/read-resilience.md)
@@ -13,8 +13,8 @@
   * [Redux-Saga](recipes/redux-saga.md)
 * API Reference
   * [offline()](api/offline.md)
-  * [createOffline()](api/create-offline.md)
-  * [config](api/config/README.md)
+  * [createOffline()](api/createOffline.md)
+  * [config](api/config.md)
     * [defaultCommit](api/config.md#defaultcommit)
     * [defaultRollback](api/config.md#defaultrollback)
     * [detectNetwork](api/config.md#detectnetwork)

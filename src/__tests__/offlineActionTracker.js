@@ -41,15 +41,14 @@ test('does not resolve first action with incorrect transaction', () => {
   return promise.then(value => expect(value).toEqual(correctData));
 });
 
-test('does not resolve second action with correct transaction', () => {
+test('resolves second action with correct transaction', () => {
   const array = [];
 
   registerAction(0).then(() => array.push(0));
   const promise = registerAction(1).then(() => array.push(1));
   resolveAction(1);
   resolveAction(0);
-  resolveAction(1);
 
   expect.assertions(1);
-  return promise.then(() => expect(array).toEqual([0, 1]));
+  return promise.then(() => expect(array).toEqual([1, 0]));
 });

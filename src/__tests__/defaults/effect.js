@@ -35,6 +35,33 @@ test('effector accept JSON stringified object', () => {
   });
 });
 
+test('effector accept JSON object', () => {
+  const json = {
+    email: 'email@example.com',
+    password: 'p4ssw0rd'
+  };
+
+  global.fetch = jest.fn((url, options) => {
+    expect(options.headers['content-type']).toEqual('application/json');
+    expect(JSON.parse(options.body)).toEqual(json);
+
+    return fetch('');
+  });
+
+  return effectReconciler({ json }).then(body2 => {
+    expect(body2).toEqual(null);
+  });
+});
+
+test('effector rejects invalid JSON object', () => {
+  const circularObject = {};
+  circularObject.self = circularObject;
+
+  return effectReconciler({ json: circularObject }).catch(error => {
+    expect(error).toBeInstanceOf(TypeError);
+  });
+});
+
 test('effector receive JSON and response objects', () => {
   const body = { id: 1234 };
 

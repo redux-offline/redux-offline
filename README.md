@@ -20,31 +20,26 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
-```diff
-- npm install --save redux-offline
-+ npm install --save @redux-offline/redux-offline
+```shell
+npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
-```diff
+```js
 
-- import { applyMiddleware, createStore } from 'redux';
-+ import { applyMiddleware, createStore, compose } from 'redux';
-- import { offline } from 'redux-offline';
-+ import { offline } from '@redux-offline/redux-offline';
-- import offlineConfig from 'redux-offline/lib/defaults';
-+ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
+import { applyMiddleware, createStore, compose } from 'redux';
+import { offline } from '@redux-offline/redux-offline';
+import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
 // ...
 
 const store = createStore(
   reducer,
   preloadedState,
--  applyMiddleware(middleware)
-+  compose(
-+    applyMiddleware(middleware),
-+    offline(offlineConfig)
-+  )
+  compose(
+    applyMiddleware(middleware),
+    offline(offlineConfig)
+  )
 );
 ```
 
@@ -57,11 +52,30 @@ const followUser = userId => ({
   meta: {
     offline: {
       // the network action to execute:
-      effect: { url: '/api/follow', method: 'POST', body: JSON.stringify({ userId }) },
+      effect: { url: '/api/follow', method: 'POST', json: { userId } },
       // action to dispatch when effect succeeds:
       commit: { type: 'FOLLOW_USER_COMMIT', meta: { userId } },
       // action to dispatch if network action fails permanently:
       rollback: { type: 'FOLLOW_USER_ROLLBACK', meta: { userId } }
+    }
+  }
+});
+```
+
+If the effect payload is something other than JSON you can pass the body and headers:
+
+```js
+const followUser = userId => ({
+  type: 'REGISTER_USER',
+  payload: { name, email },
+  meta: {
+    offline: {
+      // the network action to execute:
+      effect: { url: '/api/register', method: 'POST', body: `name=${name}&email=${email}`, headers: { 'content-type': 'application/x-www-form-urlencoded' } },
+      // action to dispatch when effect succeeds:
+      commit: { type: 'REGISTER_USER_COMMIT', meta: { name, email } },
+      // action to dispatch if network action fails permanently:
+      rollback: { type: 'REGISTER_USER_ROLLBACK', meta: { name, email } }
     }
   }
 });
@@ -87,6 +101,11 @@ If you are reporting a bug, please include code that reproduces the error. Here 
 In lieu of a formal style guide, follow the included eslint rules, and use Prettier to format your code.
 
 ## Miscellanea
+
+### Usage with Redux Persist v5
+
+In case you want to use a custom [redux-persist](https://github.com/rt2zz/redux-persist) version, there is an
+[example](https://gist.github.com/jarvisluong/f14872b9c7ed00bc2afc89c4622e3b55) configuration.
 
 ### Prior art
 

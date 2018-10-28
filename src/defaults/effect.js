@@ -33,8 +33,15 @@ const getResponseBody = (res: any): Promise<{} | string> => {
 
 // eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
-  const { url, ...options } = effect;
+  const { url, json, ...options } = effect;
   const headers = { 'content-type': 'application/json', ...options.headers };
+  if (json !== null && json !== undefined) {
+    try {
+      options.body = JSON.stringify(json);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
   return fetch(url, { ...options, headers }).then(res => {
     if (res.ok) {
       return getResponseBody(res);

@@ -31,6 +31,7 @@ class DetectNetwork {
     }
     return false;
   };
+
   /**
    * Sets the connection reachability prop
    * @param {string} reach - connection reachability.
@@ -43,6 +44,7 @@ class DetectNetwork {
     this._reach = reach;
     this._isConnected = this._getConnection(reach);
   };
+
   /**
    * Gets the isConnected prop depending on the connection reachability's value
    * @param {string} reach - connection reachability.
@@ -52,6 +54,7 @@ class DetectNetwork {
    * @private
    */
   _getConnection = reach => reach !== 'none' && reach !== 'unknown';
+
   /**
    * Sets the isConnectionExpensive prop
    * @returns {Promise.<void>} Resolves to true if connection is expensive,
@@ -66,6 +69,7 @@ class DetectNetwork {
       this._isConnectionExpensive = null;
     }
   };
+
   /**
    * Sets the shouldInitUpdateReach flag
    * @param {boolean} shouldUpdate - Whether the init method should update the reach prop
@@ -75,6 +79,7 @@ class DetectNetwork {
   _setShouldInitUpdateReach = shouldUpdate => {
     this._shouldInitUpdateReach = shouldUpdate;
   };
+
   /**
    * Fetches and sets the connection reachability and the isConnected props,
    * if neither of the AppState and NetInfo event listeners have been called
@@ -88,6 +93,7 @@ class DetectNetwork {
       this._update(connectionInfo.type);
     }
   };
+
   /**
    * Check changes on props and store and dispatch if neccesary
    * @param {string} reach - connection reachability.
