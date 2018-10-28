@@ -1,18 +1,18 @@
 // @flow
 import {
-  DEFAULT_COMMIT,
-  DEFAULT_ROLLBACK,
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
   PERSIST_REHYDRATE
 } from './constants';
 
 export type ResultAction = {
-  type: typeof DEFAULT_COMMIT | typeof DEFAULT_ROLLBACK,
-  payload: ?{},
+  type: string,
+  payload?: {},
   meta: {
+    offline?: {},
     success: boolean,
-    completed: boolean
+    completed: boolean,
+    error?: Error
   }
 };
 
@@ -27,9 +27,9 @@ export type OfflineMetadata = {
 // since it can be any user passed string
 export type OfflineAction = {
   type: string,
-  payload: ?{},
+  payload?: any,
   meta: {
-    transaction?: number,
+    transaction: number,
     offline: OfflineMetadata
   }
 };
@@ -44,7 +44,8 @@ export type OfflineStatusChangeAction = {
   payload: {
     online: boolean,
     netInfo?: NetInfo
-  }
+  },
+  meta: typeof undefined
 };
 
 export type OfflineScheduleRetryAction = {
@@ -67,6 +68,15 @@ export type PersistRehydrateAction = {
   type: typeof PERSIST_REHYDRATE,
   payload: {
     offline: OfflineState
+  },
+  meta: typeof undefined
+};
+
+export type DefaultAction = {
+  type: string,
+  meta: {
+    offline: typeof undefined,
+    offlineAction: { type: string }
   }
 };
 
@@ -84,8 +94,8 @@ export type Config = {
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
   persistOptions: {},
   persistCallback: (callback: any) => any,
-  defaultCommit: { type: string },
-  defaultRollback: { type: string },
+  defaultCommit: DefaultAction,
+  defaultRollback: DefaultAction,
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   offlineStateLens: (
     state: any
@@ -111,5 +121,7 @@ export type Config = {
     registerAction: number => Promise<*> | (() => void),
     resolveAction: (number, any) => void | (() => void),
     rejectAction: (number, Error) => void | (() => void)
-  }
+  },
+  returnPromises?: boolean,
+  rehydrate?: boolean
 };

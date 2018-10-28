@@ -52,7 +52,7 @@
     "redux": "^4.0.0",
     "redux-devtools-instrument": "^1.9.0",
     "redux-logger": "^3.0.6",
-    "redux-persist-node-storage": "^2.0.0",
+    "redux-persist-node-storage": "^1.0.2",
     "release": "^4.0.2"
   },
   "dependencies": {

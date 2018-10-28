@@ -45,7 +45,7 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
       | PersistRehydrateAction
   ): OfflineState {
     // Update online/offline status
-    if (action.type === OFFLINE_STATUS_CHANGED) {
+    if (action.type === OFFLINE_STATUS_CHANGED && !action.meta) {
       return {
         ...state,
         online: action.payload.online,
@@ -56,7 +56,7 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
     if (action.type === PERSIST_REHYDRATE && action.payload) {
       return {
         ...state,
-        ...action.payload.offline,
+        ...(action.payload.offline || {}),
         online: state.online,
         netInfo: state.netInfo,
         retryScheduled: initialState.retryScheduled,
@@ -79,6 +79,7 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
 
     if (
       action.type === OFFLINE_BUSY &&
+      !action.meta &&
       action.payload &&
       typeof action.payload.busy === 'boolean'
     ) {
