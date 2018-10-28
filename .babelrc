@@ -1,15 +1,15 @@
 {
   "presets": [
-    ["env", {
+    ["@babel/env", {
       "targets": {
         "browsers": [">0.25%", "not op_mini all"]
       }
     }]
   ],
   "plugins": [
-    ["transform-class-properties", { "spec": true }],
-    "transform-flow-strip-types",
-    "transform-runtime",
-    "transform-object-rest-spread"
+    ["@babel/plugin-syntax-class-properties", { "spec": true }],
+    "@babel/plugin-transform-flow-strip-types",
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-syntax-object-rest-spread"
   ]
 }
