@@ -112,7 +112,7 @@ declare module '@redux-offline/redux-offline/lib/types' {
 }
 
 declare module '@redux-offline/redux-offline' {
-  import { createStore as createReduxStore, Store, StoreEnhancer, Dispatch, MiddlewareAPI } from 'redux';
+  import { createStore as createReduxStore, Store, StoreEnhancer, Dispatch, Middleware } from 'redux';
 
   import { Config } from '@redux-offline/redux-offline/lib/types';
 
@@ -130,6 +130,6 @@ declare module '@redux-offline/redux-offline' {
       preloadedState: T,
       enhancer: StoreEnhancer<T>,
     ) => Store<T>,
-    middleware: (api: MiddlewareAPI<any>) => (next: Dispatch<any>) => Dispatch<any>,
+    middleware: Middleware
   });
 }
