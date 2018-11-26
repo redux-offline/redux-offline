@@ -74,13 +74,45 @@ describe('buildOfflineUpdater updates for all action',()=>{
         expect(reducerVal.offline.online).toBe(false)
         
     });
+
+    test('test for action type: PERSIST_REHYDRATE', ()=>{
+        const persistRehydrate = () =>({
+            type: PERSIST_REHYDRATE,
+            payload:{}
+        })
+       const reducerVal = enReducer({...initialState, offline:{...initialState}}, persistRehydrate);
+        expect(reducerVal.retryScheduled).toBe(initialState.busy)
+        expect(reducerVal.retryScheduled).toBe(initialState.retryScheduled)
+        expect(reducerVal.retryCount).toBe(initialState.retryCount)
+    });
+    test('test for action type: OFFLINE_SCHEDULE_RETRY', ()=>{
+        const sheduleRetry = () =>({
+            type: OFFLINE_SCHEDULE_RETRY,
+            
+        })
+       const reducerVal = enReducer({...initialState, offline:{...initialState}}, sheduleRetry());
+       debugger
+        expect(reducerVal.retryScheduled).toBe(true)
+        // expect(reducerVal.retryCount).toBe(initialState.retryCount + 1)
+    });
+
     test('test for action with meta property', ()=>{
         const succeedSomeTime = ()=>({
                 type: "SUCCEED_SOMETIMES",
                 meta: {offline:{}}
                 })
         const reducerVal = enReducer(initialState, succeedSomeTime())
-        console.log(config.queue.enqueue)
         expect(config.queue.enqueue).toHaveBeenCalled();
+    })
+
+    test('test for action with meta property with complete to be true', ()=>{
+        const succeedSomeTimeO = ()=>({
+                type: "SUCCEED_SOMETIMES",
+                meta: {
+                    completed: true
+                },
+                })
+        const reducerVal = enReducer(initialState, succeedSomeTimeO())
+        expect(config.queue.dequeue).toHaveBeenCalled();
     })
 })
