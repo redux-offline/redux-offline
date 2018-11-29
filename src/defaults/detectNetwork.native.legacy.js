@@ -31,6 +31,7 @@ class LegacyDetectNetwork {
     }
     return false;
   };
+
   /**
    * Sets the connection reachability prop
    * @param {string} reach - connection reachability.
@@ -44,6 +45,7 @@ class LegacyDetectNetwork {
     this._reach = reach;
     this._isConnected = this._getConnection(reach);
   };
+
   /**
    * Gets the isConnected prop depending on the connection reachability's value
    * @param {string} reach - connection reachability.
@@ -54,6 +56,7 @@ class LegacyDetectNetwork {
    * @private
    */
   _getConnection = reach => reach !== 'NONE' && reach !== 'UNKNOWN';
+
   /**
    * Sets the isConnectionExpensive prop
    * @returns {Promise.<void>} Resolves to true if connection is expensive,
@@ -68,6 +71,7 @@ class LegacyDetectNetwork {
       this._isConnectionExpensive = null;
     }
   };
+
   /**
    * Sets the shouldInitUpdateReach flag
    * @param {boolean} shouldUpdate - Whether the init method should update the reach prop
@@ -77,6 +81,7 @@ class LegacyDetectNetwork {
   _setShouldInitUpdateReach = shouldUpdate => {
     this._shouldInitUpdateReach = shouldUpdate;
   };
+
   /**
    * Fetches and sets the connection reachability and the isConnected props,
    * if neither of the AppState and NetInfo event listeners have been called
@@ -90,6 +95,7 @@ class LegacyDetectNetwork {
       this._update(reach);
     }
   };
+
   /**
    * Check changes on props and store and dispatch if neccesary
    * @param {string} reach - connection reachability.

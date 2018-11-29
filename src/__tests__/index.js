@@ -12,11 +12,10 @@ const noop = () => {};
 
 let defaultConfig;
 beforeEach(() => {
+  const storage = new AsyncNodeStorage("/tmp/storageDir");
   defaultConfig = applyDefaults({
     effect: jest.fn(() => Promise.resolve()),
-    persistOptions: {
-      storage: new AsyncNodeStorage("/tmp/storageDir")
-    }
+    persistOptions: { storage }
   });
 });
 
