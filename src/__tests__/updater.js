@@ -1,20 +1,11 @@
 import { enhanceReducer } from "../updater";
+import { OFFLINE_STATUS_CHANGED, RESET_STATE } from "../types";
 import {
   OFFLINE_COMPLETE_RETRY,
-  OFFLINE_STATUS_CHANGED,
-  OFFLINE_BUSY,
-  RESET_STATE
-} from "../types";
-import { OFFLINE_SCHEDULE_RETRY, PERSIST_REHYDRATE } from "../constants";
-
-//actions to test  OFFLINE_STATUS_CHANGED,
-//   OFFLINE_SCHEDULE_RETRY,
-//   OFFLINE_COMPLETE_RETRY,
-//   OFFLINE_BUSY,
-//   RESET_STATE,
-//   PERSIST_REHYDRATE
-
-// mock enque, mock deque
+  OFFLINE_SCHEDULE_RETRY,
+  PERSIST_REHYDRATE,
+  OFFLINE_BUSY
+} from "../constants";
 
 const initialState = {
   busy: false,
@@ -50,10 +41,34 @@ let enReducer;
 beforeEach(() => {
   enReducer = enhanceReducer(reducer, config);
 });
-
 const reducer = jest.fn(state => state);
 
 describe("buildOfflineUpdater updates for all action", () => {
+  test("test for action type: OFFLINE_COMPLETE_RETRY", () => {
+    const busyAction = () => ({
+      type: OFFLINE_BUSY,
+      payload: {
+        busy: true
+      }
+    });
+    const reducerVal = enReducer(initialState, busyAction());
+    const offlineCompleteRetry = () => ({
+      type: OFFLINE_COMPLETE_RETRY
+    });
+    expect(reducerVal.offline.retryScheduled).toBe(false);
+  });
+
+  test("test for action type: OFFLINE_BUSY", () => {
+    const busyAction = () => ({
+      type: OFFLINE_BUSY,
+      payload: {
+        busy: true
+      }
+    });
+    const reducerVal = enReducer(initialState, busyAction());
+    expect(reducerVal.offline.busy).toBe(true);
+  });
+
   test("test for action type: PERSIST_REHYDRATE", () => {
     const persistRehydrate = () => ({
       type: PERSIST_REHYDRATE,
@@ -81,7 +96,7 @@ describe("buildOfflineUpdater updates for all action", () => {
     expect(reducerVal.offline.retryCount).toBe(initialState.retryCount + 1);
   });
 
-  test("test offlineStatusChanagedAction", () => {
+  test("test for action type: OFFLINE_STATUS_CHANGED", () => {
     const offlineStatusChanagedAction = () => ({
       type: OFFLINE_STATUS_CHANGED,
       payload: {
