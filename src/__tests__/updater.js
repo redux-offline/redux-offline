@@ -3,10 +3,9 @@ import {
   OFFLINE_COMPLETE_RETRY,
   OFFLINE_STATUS_CHANGED,
   OFFLINE_BUSY,
-  RESET_STATE,
-  PERSIST_REHYDRATE
+  RESET_STATE
 } from "../types";
-import { OFFLINE_SCHEDULE_RETRY } from "../constants";
+import { OFFLINE_SCHEDULE_RETRY, PERSIST_REHYDRATE } from "../constants";
 
 //actions to test  OFFLINE_STATUS_CHANGED,
 //   OFFLINE_SCHEDULE_RETRY,
@@ -55,6 +54,21 @@ beforeEach(() => {
 const reducer = jest.fn(state => state);
 
 describe("buildOfflineUpdater updates for all action", () => {
+  test("test for action type: PERSIST_REHYDRATE", () => {
+    const persistRehydrate = () => ({
+      type: PERSIST_REHYDRATE,
+      payload: {
+        offline: {
+          lastTransaction: 27
+        }
+      }
+    });
+    const reducerVal = enReducer(
+      { ...initialState, offline: { ...initialState } },
+      persistRehydrate()
+    );
+    expect(reducerVal.offline.lastTransaction).toBe(27);
+  });
   test("test for action type: OFFLINE_SCHEDULE_RETRY", () => {
     const sheduleRetry = () => ({
       type: OFFLINE_SCHEDULE_RETRY
@@ -80,22 +94,6 @@ describe("buildOfflineUpdater updates for all action", () => {
       offlineStatusChanagedAction
     );
     expect(reducerVal.offline.online).toBe(false);
-  });
-
-  test("test for action type: PERSIST_REHYDRATE", () => {
-    const persistRehydrate = () => ({
-      type: PERSIST_REHYDRATE,
-      payload: {
-        offline: {
-          lastTransaction: 27
-        }
-      }
-    });
-    const reducerVal = enReducer(
-      { ...initialState, offline: { ...initialState } },
-      persistRehydrate()
-    );
-    expect(reducerVal.offline.lastTransaction).toBe(27);
   });
 
   test("test for action with meta property", () => {
