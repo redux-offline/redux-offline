@@ -1,12 +1,12 @@
 import { enhanceReducer } from  '../updater';
 import {
-  OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
   OFFLINE_STATUS_CHANGED,
   OFFLINE_BUSY,
   RESET_STATE,
   PERSIST_REHYDRATE
 } from '../types'
+import {OFFLINE_SCHEDULE_RETRY} from '../constants'
 
 //actions to test  OFFLINE_STATUS_CHANGED,
 //   OFFLINE_SCHEDULE_RETRY,
@@ -24,15 +24,13 @@ const initialState = {
   online: false,
   outbox: [],
   retryCount: 0,
-  retryScheduled: false,
+  retryScheduled: true,
   netInfo: {
     isConnectionExpensive: null,
     reach: 'NONE'
   }
 };
 
-
-    
     const config = {
         queue:{
         enqueue:jest.fn(),
@@ -52,7 +50,6 @@ const initialState = {
 }
     }
 let enReducer;
-
     beforeEach(() => {
         enReducer = enhanceReducer(reducer, config);
     })
@@ -61,6 +58,15 @@ const reducer = jest.fn((state)=>state)
 
 
 describe('buildOfflineUpdater updates for all action',()=>{
+    test('test for action type: OFFLINE_SCHEDULE_RETRY', ()=>{
+        const sheduleRetry = () =>({
+            type: OFFLINE_SCHEDULE_RETRY,
+            
+        })
+       const reducerVal = enReducer({...initialState, offline:{...initialState}}, sheduleRetry());
+        expect(reducerVal.offline.retryScheduled).toBe(true)
+        expect(reducerVal.offline.retryCount).toBe(initialState.retryCount + 1)
+    });
 
     test('test offlineStatusChanagedAction', ()=>{
         const offlineStatusChanagedAction=()=>({
@@ -78,22 +84,15 @@ describe('buildOfflineUpdater updates for all action',()=>{
     test('test for action type: PERSIST_REHYDRATE', ()=>{
         const persistRehydrate = () =>({
             type: PERSIST_REHYDRATE,
-            payload:{}
+            payload:{
+                offline:{
+
+                lastTransaction: 27
+                }
+            }
         })
-       const reducerVal = enReducer({...initialState, offline:{...initialState}}, persistRehydrate);
-        expect(reducerVal.retryScheduled).toBe(initialState.busy)
-        expect(reducerVal.retryScheduled).toBe(initialState.retryScheduled)
-        expect(reducerVal.retryCount).toBe(initialState.retryCount)
-    });
-    test('test for action type: OFFLINE_SCHEDULE_RETRY', ()=>{
-        const sheduleRetry = () =>({
-            type: OFFLINE_SCHEDULE_RETRY,
-            
-        })
-       const reducerVal = enReducer({...initialState, offline:{...initialState}}, sheduleRetry());
-       debugger
-        expect(reducerVal.retryScheduled).toBe(true)
-        // expect(reducerVal.retryCount).toBe(initialState.retryCount + 1)
+       const reducerVal = enReducer({...initialState, offline:{...initialState}}, persistRehydrate());
+        expect(reducerVal.offline.lastTransaction).toBe(27)
     });
 
     test('test for action with meta property', ()=>{
