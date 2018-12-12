@@ -26,7 +26,6 @@ const config = {
     dequeue: jest.fn()
   },
   offlineStateLens: (state: any) => {
-    debugger;
     const { offline, ...rest } = state;
     return {
       get: offline,
@@ -37,39 +36,39 @@ const config = {
     };
   }
 };
-let enReducer;
+let enhanceReducerRef;
+const reducer = state => state;
 beforeEach(() => {
-  enReducer = enhanceReducer(reducer, config);
+  enhanceReducerRef = enhanceReducer(reducer, config);
 });
-const reducer = jest.fn(state => state);
 
-describe("buildOfflineUpdater updates for all action", () => {
-  test("test for action type: OFFLINE_COMPLETE_RETRY", () => {
+describe("offucer", () => {
+  test("action type: OFFLINE_COMPLETE_RETRY sets retryScheduled to false", () => {
     const busyAction = () => ({
       type: OFFLINE_BUSY,
       payload: {
         busy: true
       }
     });
-    const reducerVal = enReducer(initialState, busyAction());
+    const reducerVal = enhanceReducerRef(initialState, busyAction());
     const offlineCompleteRetry = () => ({
       type: OFFLINE_COMPLETE_RETRY
     });
     expect(reducerVal.offline.retryScheduled).toBe(false);
   });
 
-  test("test for action type: OFFLINE_BUSY", () => {
+  test("action type: OFFLINE_BUSY sets busy to true", () => {
     const busyAction = () => ({
       type: OFFLINE_BUSY,
       payload: {
         busy: true
       }
     });
-    const reducerVal = enReducer(initialState, busyAction());
+    const reducerVal = enhanceReducerRef(initialState, busyAction());
     expect(reducerVal.offline.busy).toBe(true);
   });
 
-  test("test for action type: PERSIST_REHYDRATE", () => {
+  test("action type: PERSIST_REHYDRATE sets lastTransactions to 27", () => {
     const persistRehydrate = () => ({
       type: PERSIST_REHYDRATE,
       payload: {
@@ -78,17 +77,17 @@ describe("buildOfflineUpdater updates for all action", () => {
         }
       }
     });
-    const reducerVal = enReducer(
+    const reducerVal = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       persistRehydrate()
     );
     expect(reducerVal.offline.lastTransaction).toBe(27);
   });
-  test("test for action type: OFFLINE_SCHEDULE_RETRY", () => {
+  test("action type: OFFLINE_SCHEDULE_RETRY increaments retryCount", () => {
     const sheduleRetry = () => ({
       type: OFFLINE_SCHEDULE_RETRY
     });
-    const reducerVal = enReducer(
+    const reducerVal = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       sheduleRetry()
     );
@@ -96,7 +95,7 @@ describe("buildOfflineUpdater updates for all action", () => {
     expect(reducerVal.offline.retryCount).toBe(initialState.retryCount + 1);
   });
 
-  test("test for action type: OFFLINE_STATUS_CHANGED", () => {
+  test("action type: OFFLINE_STATUS_CHANGED sets onlie to false", () => {
     const offlineStatusChanagedAction = () => ({
       type: OFFLINE_STATUS_CHANGED,
       payload: {
@@ -104,30 +103,30 @@ describe("buildOfflineUpdater updates for all action", () => {
         netInfo: "netInfo"
       }
     });
-    const reducerVal = enReducer(
+    const reducerVal = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       offlineStatusChanagedAction
     );
     expect(reducerVal.offline.online).toBe(false);
   });
 
-  test("test for action with meta property", () => {
+  test("action with meta property", () => {
     const succeedSomeTime = () => ({
       type: "SUCCEED_SOMETIMES",
       meta: { offline: {} }
     });
-    const reducerVal = enReducer(initialState, succeedSomeTime());
+    const reducerVal = enhanceReducerRef(initialState, succeedSomeTime());
     expect(config.queue.enqueue).toHaveBeenCalled();
   });
 
-  test("test for action with meta property with complete to be true", () => {
+  test("action with meta property with complete to be true", () => {
     const succeedSomeTimeO = () => ({
       type: "SUCCEED_SOMETIMES",
       meta: {
         completed: true
       }
     });
-    const reducerVal = enReducer(initialState, succeedSomeTimeO());
+    const reducerVal = enhanceReducerRef(initialState, succeedSomeTimeO());
     expect(config.queue.dequeue).toHaveBeenCalled();
   });
 });
