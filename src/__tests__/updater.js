@@ -46,19 +46,19 @@ describe("offucer", () => {
         }
       }
     });
-    const reducerVal = enhanceReducerRef(
+    const state = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       persistRehydrate()
     );
-    expect(reducerVal.offline.lastTransaction).toBe(27);
+    expect(state.offline.lastTransaction).toBe(27);
   });
   test("action type: OFFLINE_SCHEDULE_RETRY increaments retryCount", () => {
-    const reducerVal = enhanceReducerRef(
+    const state = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       scheduleRetry()
     );
-    expect(reducerVal.offline.retryScheduled).toBe(true);
-    expect(reducerVal.offline.retryCount).toBe(initialState.retryCount + 1);
+    expect(state.offline.retryScheduled).toBe(true);
+    expect(state.offline.retryCount).toBe(initialState.retryCount + 1);
   });
 
   test("action type: OFFLINE_STATUS_CHANGED sets onlie to false", () => {
@@ -69,11 +69,11 @@ describe("offucer", () => {
         netInfo: "netInfo"
       }
     });
-    const reducerVal = enhanceReducerRef(
+    const state = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
       offlineStatusChanagedAction
     );
-    expect(reducerVal.offline.online).toBe(false);
+    expect(state.offline.online).toBe(false);
   });
 
   test("action with meta property", () => {
@@ -81,7 +81,7 @@ describe("offucer", () => {
       type: "SUCCEED_SOMETIMES",
       meta: { offline: {} }
     });
-    const reducerVal = enhanceReducerRef(initialState, succeedSomeTime());
+    const state = enhanceReducerRef(initialState, succeedSomeTime());
     expect(config.queue.enqueue).toHaveBeenCalled();
   });
 
@@ -92,7 +92,7 @@ describe("offucer", () => {
         completed: true
       }
     });
-    const reducerVal = enhanceReducerRef(initialState, succeedSomeTimeO());
+    const state = enhanceReducerRef(initialState, succeedSomeTimeO());
     expect(config.queue.dequeue).toHaveBeenCalled();
   });
 });
