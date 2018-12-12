@@ -31,10 +31,22 @@ const getResponseBody = (res: any): Promise<{} | string> => {
   return res.text();
 };
 
+export const getHeaders = (headers: {}): {} => {
+  const {
+    'Content-Type': contentTypeCapitalized,
+    'content-type': contentTypeLowerCase,
+    ...restOfHeaders
+  } = headers || {};
+  const contentType =
+    contentTypeCapitalized || contentTypeLowerCase || 'application/json';
+  return { ...restOfHeaders, 'content-type': contentType };
+};
+
 // eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
   const { url, json, ...options } = effect;
-  const headers = { 'content-type': 'application/json', ...options.headers };
+  const headers = getHeaders(options.headers);
+
   if (json !== null && json !== undefined) {
     try {
       options.body = JSON.stringify(json);
