@@ -1,24 +1,8 @@
 import { enhanceReducer } from "../updater";
-import { OFFLINE_STATUS_CHANGED, RESET_STATE } from "../types";
-import {
-  OFFLINE_COMPLETE_RETRY,
-  OFFLINE_SCHEDULE_RETRY,
-  PERSIST_REHYDRATE,
-  OFFLINE_BUSY
-} from "../constants";
-
-const initialState = {
-  busy: false,
-  lastTransaction: 0,
-  online: false,
-  outbox: [],
-  retryCount: 0,
-  retryScheduled: true,
-  netInfo: {
-    isConnectionExpensive: null,
-    reach: "NONE"
-  }
-};
+import { OFFLINE_STATUS_CHANGED } from "../types";
+import { PERSIST_REHYDRATE } from "../constants";
+import { busy, scheduleRetry, completeRetry } from "../actions";
+import { initialState } from "../updater";
 
 const config = {
   queue: {
@@ -44,27 +28,12 @@ beforeEach(() => {
 
 describe("offucer", () => {
   test("action type: OFFLINE_COMPLETE_RETRY sets retryScheduled to false", () => {
-    const busyAction = () => ({
-      type: OFFLINE_BUSY,
-      payload: {
-        busy: true
-      }
-    });
-    const reducerVal = enhanceReducerRef(initialState, busyAction());
-    const offlineCompleteRetry = () => ({
-      type: OFFLINE_COMPLETE_RETRY
-    });
+    const reducerVal = enhanceReducerRef(initialState, completeRetry(true));
     expect(reducerVal.offline.retryScheduled).toBe(false);
   });
 
   test("action type: OFFLINE_BUSY sets busy to true", () => {
-    const busyAction = () => ({
-      type: OFFLINE_BUSY,
-      payload: {
-        busy: true
-      }
-    });
-    const reducerVal = enhanceReducerRef(initialState, busyAction());
+    const reducerVal = enhanceReducerRef(initialState, busy(true));
     expect(reducerVal.offline.busy).toBe(true);
   });
 
@@ -84,12 +53,9 @@ describe("offucer", () => {
     expect(reducerVal.offline.lastTransaction).toBe(27);
   });
   test("action type: OFFLINE_SCHEDULE_RETRY increaments retryCount", () => {
-    const sheduleRetry = () => ({
-      type: OFFLINE_SCHEDULE_RETRY
-    });
     const reducerVal = enhanceReducerRef(
       { ...initialState, offline: { ...initialState } },
-      sheduleRetry()
+      scheduleRetry()
     );
     expect(reducerVal.offline.retryScheduled).toBe(true);
     expect(reducerVal.offline.retryCount).toBe(initialState.retryCount + 1);
