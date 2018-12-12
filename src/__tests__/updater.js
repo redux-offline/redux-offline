@@ -1,6 +1,6 @@
 import { enhanceReducer } from "../updater";
 import { OFFLINE_STATUS_CHANGED } from "../types";
-import { PERSIST_REHYDRATE } from "../constants";
+import { PERSIST_REHYDRATE, RESET_STATE } from "../constants";
 import { busy, scheduleRetry, completeRetry } from "../actions";
 import { initialState } from "../updater";
 
@@ -26,9 +26,12 @@ beforeEach(() => {
   enhanceReducerRef = enhanceReducer(reducer, config);
 });
 
-describe("offucer", () => {
+describe("offline reducer", () => {
   test("action type: OFFLINE_COMPLETE_RETRY sets retryScheduled to false", () => {
-    const reducerVal = enhanceReducerRef(initialState, completeRetry(true));
+    const reducerVal = enhanceReducerRef(
+      { offline: { ...initialState, retryScheduled: true } },
+      completeRetry()
+    );
     expect(reducerVal.offline.retryScheduled).toBe(false);
   });
 
@@ -76,6 +79,15 @@ describe("offucer", () => {
     expect(state.offline.online).toBe(false);
   });
 
+  test("action type: RESET_STATE ", () => {
+    const resetState = () => ({
+      type: RESET_STATE
+    });
+    const state = enhanceReducerRef(initialState, resetState());
+    expect(state.offline.online).toBe(initialState.online);
+    expect(state.offline.netInfo).toBe(initialState.netInfo);
+  });
+
   test("action with meta property", () => {
     const succeedSomeTime = () => ({
       type: "SUCCEED_SOMETIMES",
@@ -86,13 +98,13 @@ describe("offucer", () => {
   });
 
   test("action with meta property with complete to be true", () => {
-    const succeedSomeTimeO = () => ({
+    const offlineActionComplete = () => ({
       type: "SUCCEED_SOMETIMES",
       meta: {
         completed: true
       }
     });
-    const state = enhanceReducerRef(initialState, succeedSomeTimeO());
+    const state = enhanceReducerRef(initialState, offlineActionComplete());
     expect(config.queue.dequeue).toHaveBeenCalled();
   });
 });
