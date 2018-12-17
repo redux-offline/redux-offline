@@ -8,13 +8,13 @@ import config from "../defaults";
 let enhanceReducerRef;
 const reducer = state => state;
 
-const succeedSomeTime = () => ({
-  type: "SUCCEED_SOMETIMES",
+const offlineAction = () => ({
+  type: "OFFLINE_ACTION",
   meta: { offline: {} }
 });
 
 const offlineActionComplete = () => ({
-  type: "SUCCEED_SOMETIMES",
+  type: "OFFLINE_ACTION_COMPLETED",
   meta: {
     completed: true
   }
@@ -28,7 +28,9 @@ describe("offline reducer", () => {
       { offline: { ...initialState, retryScheduled: true } },
       completeRetry()
     );
+    const defaultState = enhanceReducerRef(initialState, completeRetry());
     expect(state.offline.retryScheduled).toBe(false);
+    expect(defaultState.offline.retryScheduled).toBe(false);
   });
 
   test("action type: OFFLINE_BUSY sets busy to true", () => {
@@ -46,7 +48,16 @@ describe("offline reducer", () => {
       }
     });
     const state = enhanceReducerRef(
-      { ...initialState, offline: { ...initialState } },
+      {
+        busy: false,
+        lastTransaction: 0,
+        online: false,
+        offline: {
+          busy: false,
+          lastTransaction: 0,
+          online: false
+        }
+      },
       persistRehydrate()
     );
     expect(state.offline.lastTransaction).toBe(27);
@@ -85,10 +96,10 @@ describe("offline reducer", () => {
   });
 
   test("enqueu action when offline ", () => {
-    const state = enhanceReducerRef(initialState, succeedSomeTime());
+    const state = enhanceReducerRef(initialState, offlineAction());
     expect(state.offline.outbox).toEqual(
       expect.arrayContaining([
-        { meta: { offline: {}, transaction: 1 }, type: "SUCCEED_SOMETIMES" }
+        { meta: { offline: {}, transaction: 1 }, type: "OFFLINE_ACTION" }
       ])
     );
     expect(state.offline.retryCount).toBe(0);
@@ -115,10 +126,10 @@ describe("assert enqueue and dequeue", () => {
     enhanceReducerRef = enhanceReducer(reducer, mockConfig);
   });
   test("return enqued action", () => {
-    const state = enhanceReducerRef(initialState, succeedSomeTime());
+    const state = enhanceReducerRef(initialState, offlineAction());
     expect(state.offline.outbox).toEqual(
       expect.arrayContaining([
-        { meta: { offline: {}, transaction: 1 }, type: "SUCCEED_SOMETIMES" }
+        { meta: { offline: {}, transaction: 1 }, type: "OFFLINE_ACTION" }
       ])
     );
   });
