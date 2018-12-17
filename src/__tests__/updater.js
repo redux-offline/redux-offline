@@ -3,23 +3,8 @@ import { OFFLINE_STATUS_CHANGED } from "../types";
 import { PERSIST_REHYDRATE, RESET_STATE } from "../constants";
 import { busy, scheduleRetry, completeRetry } from "../actions";
 import { initialState } from "../updater";
+import config from "../defaults";
 
-const config = {
-  queue: {
-    enqueue: jest.fn(),
-    dequeue: jest.fn()
-  },
-  offlineStateLens: (state: any) => {
-    const { offline, ...rest } = state;
-    return {
-      get: offline,
-      set: (offlineState: any) =>
-        typeof offlineState === "undefined"
-          ? rest
-          : { offline: offlineState, ...rest }
-    };
-  }
-};
 let enhanceReducerRef;
 const reducer = state => state;
 beforeEach(() => {
@@ -94,10 +79,15 @@ describe("offline reducer", () => {
       meta: { offline: {} }
     });
     const state = enhanceReducerRef(initialState, succeedSomeTime());
-    expect(config.queue.enqueue).toHaveBeenCalled();
+    expect(state.offline.outbox).toEqual(
+      expect.arrayContaining([
+        { meta: { offline: {}, transaction: 1 }, type: "SUCCEED_SOMETIMES" }
+      ])
+    );
+    expect(state.offline.retryCount).toBe(0);
   });
 
-  test("action with meta property with complete to be true", () => {
+  test("action with meta property and complete set to true", () => {
     const offlineActionComplete = () => ({
       type: "SUCCEED_SOMETIMES",
       meta: {
@@ -105,6 +95,8 @@ describe("offline reducer", () => {
       }
     });
     const state = enhanceReducerRef(initialState, offlineActionComplete());
-    expect(config.queue.dequeue).toHaveBeenCalled();
+    // it dequeues action from the array
+    expect(state.offline.outbox).toEqual([]);
+    expect(state.offline.retryCount).toBe(0);
   });
 });
