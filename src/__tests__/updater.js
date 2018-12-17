@@ -7,22 +7,33 @@ import config from "../defaults";
 
 let enhanceReducerRef;
 const reducer = state => state;
-beforeEach(() => {
-  enhanceReducerRef = enhanceReducer(reducer, config);
+
+const succeedSomeTime = () => ({
+  type: "SUCCEED_SOMETIMES",
+  meta: { offline: {} }
 });
 
+const offlineActionComplete = () => ({
+  type: "SUCCEED_SOMETIMES",
+  meta: {
+    completed: true
+  }
+});
 describe("offline reducer", () => {
+  beforeEach(() => {
+    enhanceReducerRef = enhanceReducer(reducer, config);
+  });
   test("action type: OFFLINE_COMPLETE_RETRY sets retryScheduled to false", () => {
-    const reducerVal = enhanceReducerRef(
+    const state = enhanceReducerRef(
       { offline: { ...initialState, retryScheduled: true } },
       completeRetry()
     );
-    expect(reducerVal.offline.retryScheduled).toBe(false);
+    expect(state.offline.retryScheduled).toBe(false);
   });
 
   test("action type: OFFLINE_BUSY sets busy to true", () => {
-    const reducerVal = enhanceReducerRef(initialState, busy(true));
-    expect(reducerVal.offline.busy).toBe(true);
+    const state = enhanceReducerRef(initialState, busy(true));
+    expect(state.offline.busy).toBe(true);
   });
 
   test("action type: PERSIST_REHYDRATE sets lastTransactions to 27", () => {
@@ -73,11 +84,7 @@ describe("offline reducer", () => {
     expect(state.offline.netInfo).toBe(initialState.netInfo);
   });
 
-  test("action with meta property", () => {
-    const succeedSomeTime = () => ({
-      type: "SUCCEED_SOMETIMES",
-      meta: { offline: {} }
-    });
+  test("enqueu action when offline ", () => {
     const state = enhanceReducerRef(initialState, succeedSomeTime());
     expect(state.offline.outbox).toEqual(
       expect.arrayContaining([
@@ -87,16 +94,36 @@ describe("offline reducer", () => {
     expect(state.offline.retryCount).toBe(0);
   });
 
-  test("action with meta property and complete set to true", () => {
-    const offlineActionComplete = () => ({
-      type: "SUCCEED_SOMETIMES",
-      meta: {
-        completed: true
-      }
-    });
+  test("dequeue action when its completed", () => {
     const state = enhanceReducerRef(initialState, offlineActionComplete());
     // it dequeues action from the array
     expect(state.offline.outbox).toEqual([]);
     expect(state.offline.retryCount).toBe(0);
+  });
+});
+
+// assert enqueue and dequeue to return outbox
+describe("assert enqueue and dequeue", () => {
+  const mockConfig = {
+    queue: {
+      enqueue: jest.fn().mockImplementation((ar, item) => [...ar].concat(item)),
+      dequeue: jest.fn().mockImplementation(ar => ar.slice(1))
+    },
+    offlineStateLens: config.offlineStateLens
+  };
+  beforeEach(() => {
+    enhanceReducerRef = enhanceReducer(reducer, mockConfig);
+  });
+  test("return enqued action", () => {
+    const state = enhanceReducerRef(initialState, succeedSomeTime());
+    expect(state.offline.outbox).toEqual(
+      expect.arrayContaining([
+        { meta: { offline: {}, transaction: 1 }, type: "SUCCEED_SOMETIMES" }
+      ])
+    );
+  });
+  test("when action is completed remove from queue", () => {
+    const state = enhanceReducerRef(initialState, offlineActionComplete());
+    expect(state.offline.outbox).toEqual([]);
   });
 });
