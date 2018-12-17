@@ -1,4 +1,4 @@
-import effectReconciler from '../../defaults/effect';
+import effectReconciler, { getHeaders } from '../../defaults/effect';
 
 function fetch(body) {
   return Promise.resolve({
@@ -69,5 +69,27 @@ test('effector receive JSON and response objects', () => {
 
   return effectReconciler({}).then(body2 => {
     expect(body2).toEqual(body);
+  });
+});
+
+test('effector accepts content-type and Content-Type headers', () => {
+  const otherHeaders = { 'other-one': 'other-one', 'other-two': 'other-two' };
+  const formUrlEncoded = 'application/x-www-form-urlencoded';
+
+  const noHeaders = undefined;
+  const capitalizedHeaders = {
+    'Content-Type': formUrlEncoded,
+    ...otherHeaders
+  };
+  const lowerCasedHeaders = { 'content-type': formUrlEncoded, ...otherHeaders };
+
+  expect(getHeaders(noHeaders)).toEqual({ 'content-type': 'application/json' });
+  expect(getHeaders(capitalizedHeaders)).toEqual({
+    'content-type': formUrlEncoded,
+    ...otherHeaders
+  });
+  expect(getHeaders(lowerCasedHeaders)).toEqual({
+    'content-type': formUrlEncoded,
+    ...otherHeaders
   });
 });
