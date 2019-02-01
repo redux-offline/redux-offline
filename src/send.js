@@ -70,6 +70,9 @@ const send = (
           )
         );
       } catch (error) {
+        if (process.env.NODE_ENV === "development") {
+          console.error(error);
+        }
         return dispatch(handleJsError(error));
       }
     })
