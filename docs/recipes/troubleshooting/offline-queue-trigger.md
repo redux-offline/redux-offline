@@ -30,7 +30,7 @@ const store = createStore(
 ```
 
 ## Why
-The reason why the store configuration needs to be as described above is very well explained by github user @j8seangel in this issue: "[Fix offline not starting after rehydrate](https://github.com/forest-watcher/forest-watcher/pull/303)" (He's also the original author of above fix). I'll quote his answer here:
+The reason why the store configuration needs to be as described above is very well explained by github user @j8seangel in this issue: [Fix offline not starting after rehydrate](https://github.com/forest-watcher/forest-watcher/pull/303) (He's also the original author of above fix). I'll quote his answer here:
 
 >Order matters, swapping two words could fix a critical bug 🎉
 >
