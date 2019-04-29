@@ -111,6 +111,19 @@ declare module '@redux-offline/redux-offline/lib/types' {
   }
 }
 
+declare module '@redux-offline/redux-offline/lib/constants' {
+  export const DEFAULT_ROLLBACK: string;
+  export const DEFAULT_COMMIT: string;
+  export const JS_ERROR: string;
+  export const PERSIST_REHYDRATE: string;
+  export const RESET_STATE: string;
+  export const OFFLINE_BUSY: string;
+  export const OFFLINE_SEND: string;
+  export const OFFLINE_COMPLETE_RETRY: string;
+  export const OFFLINE_SCHEDULE_RETRY: string;
+  export const OFFLINE_STATUS_CHANGED: string;
+}
+
 declare module '@redux-offline/redux-offline' {
   import { createStore as createReduxStore, Store, StoreEnhancer, Dispatch, Middleware } from 'redux';
 
