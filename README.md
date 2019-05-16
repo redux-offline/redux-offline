@@ -1,4 +1,5 @@
 <p>
+  Redux-Offline-Cordova
   <img alt="redux-offline" src="docs/logo.png" width="300"></img>
 </p>
 <p>
