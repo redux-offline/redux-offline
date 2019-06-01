@@ -11,6 +11,7 @@
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint src/",
     "prepublishOnly": "npm run lint && npm run flow && npm run test && npm run build",
+    "prepare": "npm run build",
     "prettier": "eslint src --fix",
     "test": "jest",
     "test:watch": "jest --watch",
