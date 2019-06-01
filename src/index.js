@@ -59,7 +59,17 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
 export const createOffline = (userConfig: $Shape<Config> = {}) => {
   const config = mergeConfigs(userConfig);
 
-  const enhanceStore = (next: any) => (
+  return {
+    middleware: createOfflineMiddleware(config),
+    enhanceReducer(reducer: any) {
+      return enhanceReducer(reducer, config);
+    },
+    enhanceStore: createEnhanceStore(config)
+  };
+};
+
+export const createEnhanceStore = (config: $Shape<Config> = {}) => {
+  return (next: any) => (
     reducer: any,
     preloadedState: any,
     enhancer: any
@@ -72,14 +82,6 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
 
     // create store
     return configStore(createStore(reducer, preloadedState, enhancer), config);
-  };
-
-  return {
-    middleware: createOfflineMiddleware(config),
-    enhanceReducer(reducer: any) {
-      return enhanceReducer(reducer, config);
-    },
-    enhanceStore
   };
 };
 
