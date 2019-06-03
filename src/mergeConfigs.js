@@ -1,7 +1,8 @@
+// @flow
+/* global $Shape */
 import { applyDefaults } from './config';
 import offlineActionTracker from './offlineActionTracker';
 import type { Config } from './types';
-
 
 // @TODO: Take createStore as config?
 const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
@@ -22,21 +23,19 @@ const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
   }
 };
 
-
-export default function mergeConfigs(userConfig)
-{
+export default function mergeConfigs(userConfig) {
   const config = applyDefaults(userConfig);
 
   warnIfNotReduxAction(config, 'defaultCommit');
   warnIfNotReduxAction(config, 'defaultRollback');
 
   // toggle experimental returned promises
-  if(!config.offlineActionTracker) {
+  if (!config.offlineActionTracker) {
     config.offlineActionTracker = config.returnPromises
       ? offlineActionTracker.withPromises
       : offlineActionTracker.withoutPromises;
     delete config.returnPromises;
   }
 
-  return config
+  return config;
 }

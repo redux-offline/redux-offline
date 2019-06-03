@@ -13,47 +13,48 @@ export const createOfflineMiddleware = (userConfig: Config) => {
   const config = mergeConfigs(userConfig);
 
   return (store: any) => (next: any) => (action: any) => {
-  // allow other middleware to do their things
-  const result = next(action);
+    // allow other middleware to do their things
+    const result = next(action);
 
-  if (action.namespace !== config.namespace) {
-    return result;
-  }
+    if (action.namespace !== config.namespace) {
+      return result;
+    }
 
-  let promise;
+    let promise;
 
-  // find any actions to send, if any
-  const state: AppState = store.getState();
-  const offline = config.offlineStateLens(state).get;
-  const context = { offline };
-  const offlineAction = config.queue.peek(offline.outbox, action, context);
+    // find any actions to send, if any
+    const state: AppState = store.getState();
+    const offline = config.offlineStateLens(state).get;
+    const context = { offline };
+    const offlineAction = config.queue.peek(offline.outbox, action, context);
 
-  // create promise to return on enqueue offline action
-  if (action.meta && action.meta.offline) {
-    const { registerAction } = config.offlineActionTracker;
-    promise = registerAction(offline.lastTransaction);
-  }
+    // create promise to return on enqueue offline action
+    if (action.meta && action.meta.offline) {
+      const { registerAction } = config.offlineActionTracker;
+      promise = registerAction(offline.lastTransaction);
+    }
 
-  // if there are any actions in the queue that we are not
-  // yet processing, send those actions
-  if (
-    offlineAction &&
-    !offline.busy &&
-    !offline.retryScheduled &&
-    offline.online
-  ) {
-    send(offlineAction, store.dispatch, config, offline.retryCount);
-  }
+    // if there are any actions in the queue that we are not
+    // yet processing, send those actions
+    if (
+      offlineAction &&
+      !offline.busy &&
+      !offline.retryScheduled &&
+      offline.online
+    ) {
+      send(offlineAction, store.dispatch, config, offline.retryCount);
+    }
 
-  if (action.type === OFFLINE_SCHEDULE_RETRY) {
-    after(action.payload.delay).then(() => {
-      store.dispatch(completeRetry(offlineAction, config.namespace));
-    });
-  }
+    if (action.type === OFFLINE_SCHEDULE_RETRY) {
+      after(action.payload.delay).then(() => {
+        store.dispatch(completeRetry(offlineAction, config.namespace));
+      });
+    }
 
-  if (action.type === OFFLINE_SEND && offlineAction && !offline.busy) {
-    send(offlineAction, store.dispatch, config, offline.retryCount);
-  }
+    if (action.type === OFFLINE_SEND && offlineAction && !offline.busy) {
+      send(offlineAction, store.dispatch, config, offline.retryCount);
+    }
 
-  return promise || result;
-}};
+    return promise || result;
+  };
+};

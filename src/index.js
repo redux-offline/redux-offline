@@ -8,6 +8,27 @@ import { createOfflineMiddleware } from './middleware';
 import type { Config } from './types';
 import { enhanceReducer } from './updater';
 
+function configStore(store, config) {
+  const baseReplaceReducer = store.replaceReducer.bind(store);
+  // $FlowFixMe
+  store.replaceReducer = function replaceReducer(nextReducer) {
+    return baseReplaceReducer(enhanceReducer(nextReducer, config));
+  };
+
+  // launch store persistor
+  if (config.persist) {
+    config.persist(store, config.persistOptions, config.persistCallback);
+  }
+
+  // launch network detector
+  if (config.detectNetwork) {
+    config.detectNetwork(online => {
+      store.dispatch(networkStatusChanged(online, config.namespace));
+    });
+  }
+
+  return store;
+}
 
 export const offline = (userConfig: $Shape<Config> = {}) => (
   createStore: any
@@ -31,11 +52,25 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
       : offlineMiddleware;
 
   // create store
-  return configStore(offlineEnhancer(createStore)(
-    offlineReducer,
-    preloadedState,
-    enhancer
-  ), config);
+  return configStore(
+    offlineEnhancer(createStore)(offlineReducer, preloadedState, enhancer),
+    config
+  );
+};
+
+export const createEnhanceStore = (userConfig: $Shape<Config> = {}) => {
+  const config = mergeConfigs(userConfig);
+
+  return (next: any) => (reducer: any, preloadedState: any, enhancer: any) => {
+    // create autoRehydrate enhancer if required
+    const createStore =
+      config.persist && config.rehydrate && config.persistAutoRehydrate
+        ? config.persistAutoRehydrate()(next)
+        : next;
+
+    // create store
+    return configStore(createStore(reducer, preloadedState, enhancer), config);
+  };
 };
 
 export const createOffline = (userConfig: $Shape<Config> = {}) => {
@@ -49,45 +84,3 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
     enhanceStore: createEnhanceStore(config)
   };
 };
-
-export const createEnhanceStore = (userConfig: $Shape<Config> = {}) => {
-  const config = mergeConfigs(userConfig);
-
-  return (next: any) => (
-    reducer: any,
-    preloadedState: any,
-    enhancer: any
-  ) => {
-    // create autoRehydrate enhancer if required
-    const createStore =
-      config.persist && config.rehydrate && config.persistAutoRehydrate
-        ? config.persistAutoRehydrate()(next)
-        : next;
-
-    // create store
-    return configStore(createStore(reducer, preloadedState, enhancer), config);
-  };
-};
-
-function configStore(store, config)
-{
-  const baseReplaceReducer = store.replaceReducer.bind(store);
-  // $FlowFixMe
-  store.replaceReducer = function replaceReducer(nextReducer) {
-    return baseReplaceReducer(enhanceReducer(nextReducer, config));
-  };
-
-  // launch store persistor
-  if (config.persist) {
-    config.persist(store, config.persistOptions, config.persistCallback);
-  }
-
-  // launch network detector
-  if (config.detectNetwork) {
-    config.detectNetwork(online => {
-      store.dispatch(networkStatusChanged(online, config.namespace));
-    });
-  }
-
-  return store;
-}
