@@ -18,6 +18,7 @@ import {
   RESET_STATE,
   PERSIST_REHYDRATE
 } from './constants';
+import mergeConfigs from './mergeConfigs';
 
 export const initialState: OfflineState = {
   busy: false,
@@ -126,7 +127,9 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue, namespac
     return state;
   };
 
-export const enhanceReducer = (reducer: any, config: $Shape<Config>) => {
+export const enhanceReducer = (reducer: any, userConfig: $Shape<Config>) => {
+  const config = mergeConfigs(userConfig);
+
   const { dequeue, enqueue } = config.queue;
   const offlineUpdater = buildOfflineUpdater(dequeue, enqueue, config.namespace);
 

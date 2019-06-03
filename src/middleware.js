@@ -1,16 +1,18 @@
 // @flow
 
-import type { AppState, Config } from './types';
-import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
 import { completeRetry } from './actions';
+import { OFFLINE_SEND, OFFLINE_SCHEDULE_RETRY } from './constants';
+import mergeConfigs from './mergeConfigs';
 import send from './send';
+import type { AppState, Config } from './types';
 
 const after = (timeout = 0) =>
   new Promise(resolve => setTimeout(resolve, timeout));
 
-export const createOfflineMiddleware = (config: Config) => (store: any) => (
-  next: any
-) => (action: any) => {
+export const createOfflineMiddleware = (userConfig: Config) => {
+  const config = mergeConfigs(userConfig);
+
+  return (store: any) => (next: any) => (action: any) => {
   // allow other middleware to do their things
   const result = next(action);
 
@@ -54,4 +56,4 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
   }
 
   return promise || result;
-};
+}};
