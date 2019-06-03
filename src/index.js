@@ -68,7 +68,9 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
   };
 };
 
-export const createEnhanceStore = (config: $Shape<Config> = {}) => {
+export const createEnhanceStore = (userConfig: $Shape<Config> = {}) => {
+  const config = mergeConfigs(userConfig);
+
   return (next: any) => (
     reducer: any,
     preloadedState: any,
@@ -93,10 +95,12 @@ function mergeConfigs(userConfig)
   warnIfNotReduxAction(config, 'defaultRollback');
 
   // toggle experimental returned promises
-  config.offlineActionTracker = config.returnPromises
-    ? offlineActionTracker.withPromises
-    : offlineActionTracker.withoutPromises;
-  delete config.returnPromises;
+  if(!config.offlineActionTracker) {
+    config.offlineActionTracker = config.returnPromises
+      ? offlineActionTracker.withPromises
+      : offlineActionTracker.withoutPromises;
+    delete config.returnPromises;
+  }
 
   return config
 }
