@@ -50,7 +50,7 @@ const send = (
   retries: number = 0
 ) => {
   const metadata = action.meta.offline;
-  dispatch(busy(true));
+  dispatch(busy(true, config.namespace));
   return config
     .effect(metadata.effect, action)
     .then(result => {
@@ -92,7 +92,7 @@ const send = (
       if (!mustDiscard) {
         const delay = config.retry(action, retries);
         if (delay != null) {
-          return dispatch(scheduleRetry(delay));
+          return dispatch(scheduleRetry(delay, config.namespace));
         }
       }
 
@@ -105,7 +105,7 @@ const send = (
         )
       );
     })
-    .finally(() => dispatch(busy(false)));
+    .finally(() => dispatch(busy(false, config.namespace)));
 };
 
 export default send;
