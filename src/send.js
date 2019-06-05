@@ -33,14 +33,15 @@ const complete = (
   return (({
     ...action,
     payload: result.payload,
-    meta: { ...action.meta, success: result.success, completed: true }
+    meta: { ...action.meta, success: result.success, completed: true },
+    namespace: config.namespace
   }: any): ResultAction);
 };
 
-const handleJsError = (error: Error): ResultAction =>
+const handleJsError = (error: Error, namespace): ResultAction =>
   (({
     type: JS_ERROR,
-    meta: { error, success: false, completed: true }
+    meta: { error, success: false, completed: true, namespace }
   }: any): ResultAction);
 
 const send = (
@@ -70,7 +71,7 @@ const send = (
           )
         );
       } catch (error) {
-        return dispatch(handleJsError(error));
+        return dispatch(handleJsError(error, config.namespace));
       }
     })
     .catch(async error => {
