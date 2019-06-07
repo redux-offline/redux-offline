@@ -16,7 +16,7 @@ export const createOfflineMiddleware = (userConfig: Config) => {
     // allow other middleware to do their things
     const result = next(action);
 
-    if (action.namespace !== config.namespace) {
+    if (action.key != null && action.key !== config.key) {
       return result;
     }
 
@@ -47,7 +47,7 @@ export const createOfflineMiddleware = (userConfig: Config) => {
 
     if (action.type === OFFLINE_SCHEDULE_RETRY) {
       after(action.payload.delay).then(() => {
-        store.dispatch(completeRetry(offlineAction, config.namespace));
+        store.dispatch(completeRetry(offlineAction, config.key));
       });
     }
 

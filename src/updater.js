@@ -39,7 +39,7 @@ type Enqueue = $PropertyType<$PropertyType<Config, 'queue'>, 'enqueue'>;
 export const buildOfflineUpdater = (
   dequeue: Dequeue,
   enqueue: Enqueue,
-  namespace
+  key
 ) =>
   function offlineUpdater(
     state: OfflineState = initialState,
@@ -49,7 +49,7 @@ export const buildOfflineUpdater = (
       | ResultAction
       | PersistRehydrateAction
   ): OfflineState {
-    if (action.namespace !== namespace) {
+    if (action.key != null && action.key !== key) {
       return state;
     }
 
@@ -138,7 +138,7 @@ export const enhanceReducer = (reducer: any, userConfig: $Shape<Config>) => {
   const offlineUpdater = buildOfflineUpdater(
     dequeue,
     enqueue,
-    config.namespace
+    config.key
   );
 
   return (state: any, action: any): any => {

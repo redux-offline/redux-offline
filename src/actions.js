@@ -5,7 +5,7 @@ import {
   OFFLINE_BUSY
 } from './constants';
 
-export const networkStatusChanged = (params, namespace) => {
+export const networkStatusChanged = (params, key) => {
   let payload;
   if (typeof params === 'object') {
     payload = params;
@@ -15,26 +15,26 @@ export const networkStatusChanged = (params, namespace) => {
   return {
     type: OFFLINE_STATUS_CHANGED,
     payload,
-    namespace
+    key
   };
 };
 
-export const scheduleRetry = (delay = 0, namespace) => ({
+export const scheduleRetry = (delay = 0, key) => ({
   type: OFFLINE_SCHEDULE_RETRY,
   payload: {
     delay
   },
-  namespace
+  key
 });
 
-export const completeRetry = (action, namespace) => ({
+export const completeRetry = (action, key) => ({
   type: OFFLINE_COMPLETE_RETRY,
   payload: action,
-  namespace
+  key
 });
 
-export const busy = (isBusy, namespace) => ({
+export const busy = (isBusy, key) => ({
   type: OFFLINE_BUSY,
   payload: { busy: isBusy },
-  namespace
+  key
 });

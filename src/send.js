@@ -34,14 +34,14 @@ const complete = (
     ...action,
     payload: result.payload,
     meta: { ...action.meta, success: result.success, completed: true },
-    namespace: config.namespace
+    key: config.key
   }: any): ResultAction);
 };
 
-const handleJsError = (error: Error, namespace): ResultAction =>
+const handleJsError = (error: Error, key): ResultAction =>
   (({
     type: JS_ERROR,
-    meta: { error, success: false, completed: true, namespace }
+    meta: { error, success: false, completed: true, key }
   }: any): ResultAction);
 
 const send = (
@@ -51,7 +51,7 @@ const send = (
   retries: number = 0
 ) => {
   const metadata = action.meta.offline;
-  dispatch(busy(true, config.namespace));
+  dispatch(busy(true, config.key));
   return config
     .effect(metadata.effect, action)
     .then(result => {
@@ -71,7 +71,7 @@ const send = (
           )
         );
       } catch (error) {
-        return dispatch(handleJsError(error, config.namespace));
+        return dispatch(handleJsError(error, config.key));
       }
     })
     .catch(async error => {
@@ -93,7 +93,7 @@ const send = (
       if (!mustDiscard) {
         const delay = config.retry(action, retries);
         if (delay != null) {
-          return dispatch(scheduleRetry(delay, config.namespace));
+          return dispatch(scheduleRetry(delay, config.key));
         }
       }
 
@@ -106,7 +106,7 @@ const send = (
         )
       );
     })
-    .finally(() => dispatch(busy(false, config.namespace)));
+    .finally(() => dispatch(busy(false, config.key)));
 };
 
 export default send;

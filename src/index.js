@@ -23,7 +23,7 @@ function configStore(store, config) {
   // launch network detector
   if (config.detectNetwork) {
     config.detectNetwork(online => {
-      store.dispatch(networkStatusChanged(online, config.namespace));
+      store.dispatch(networkStatusChanged(online, config.key));
     });
   }
 
