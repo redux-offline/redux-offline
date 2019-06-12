@@ -162,6 +162,9 @@ Save an offline action when it is first dispatched.
 ```js
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
+const getMethod = action => action.meta.offline.effect.method || "GET";
+const getUrl = action => action.meta.offline.effect.url;
+
 // Last Value Queue
 // Only keep the last action for each URL-method pair.
 const config = {
@@ -169,7 +172,7 @@ const config = {
     ...defaultQueue,
     enqueue(array, action) {
       const newArray = array.filter(item =>
-        !(item.method === action.method && item.url === action.url)
+        !(getMethod(item) === getMethod(action) && getUrl(item) === getUrl(action))
       );
       newArray.push(action);
       return newArray;
