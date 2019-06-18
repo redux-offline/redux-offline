@@ -86,6 +86,7 @@ declare module '@redux-offline/redux-offline/lib/types' {
     persistCallback: (callback?: any) => any;
     persistOptions: { [key: string]: any };
     retry: (action: OfflineAction, retries: number) => number | void;
+    returnPromises: boolean;
     queue: {
       enqueue: (
         array: Array<OfflineAction>,
