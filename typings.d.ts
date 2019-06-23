@@ -107,7 +107,9 @@ declare module '@redux-offline/redux-offline/lib/types' {
       registerAction: (transaction: number) => Promise<any> | (() => void),
       resolveAction: (transaction: number, value: any) => void | (() => void),
       rejectAction: (transaction: number, error: Error) => void | (() => void)
-    }
+    };
+    returnPromises?: boolean;
+    rehydrate?: boolean;
   }
 }
 
@@ -129,14 +131,14 @@ declare module '@redux-offline/redux-offline' {
 
   import { Config } from '@redux-offline/redux-offline/lib/types';
 
-  export const offline: (userConfig: Config) => (createStore: typeof createReduxStore) =>
+  export const offline: (userConfig: Partial<Config>) => (createStore: typeof createReduxStore) =>
     <T extends { [key: string]: any }>(
       reducer: (state: T, action: any) => T,
       preloadedState: T,
       enhancer: StoreEnhancer<T>,
     ) => Store<T>;
 
-  export const createOffline: (userConfig: Config) => ({
+  export const createOffline: (userConfig: Partial<Config>) => ({
     enhanceReducer: (reducer: any) => (state: any, action: any) => any,
     enhanceStore: (next: any) => <T extends { [key: string]: any }>(
       reducer: (state: T, action: any) => T,
