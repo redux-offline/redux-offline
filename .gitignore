@@ -43,3 +43,5 @@ jspm_packages
 
 # yarn.lock exists so don't commit package-lock.json
 package-lock.json
+
+*.tgz
