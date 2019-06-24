@@ -36,11 +36,7 @@ export const initialState: OfflineState = {
 type Dequeue = $PropertyType<$PropertyType<Config, 'queue'>, 'dequeue'>;
 type Enqueue = $PropertyType<$PropertyType<Config, 'queue'>, 'enqueue'>;
 
-export const buildOfflineUpdater = (
-  dequeue: Dequeue,
-  enqueue: Enqueue,
-  key
-) =>
+export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue, key) =>
   function offlineUpdater(
     state: OfflineState = initialState,
     action:
@@ -135,11 +131,7 @@ export const enhanceReducer = (reducer: any, userConfig: $Shape<Config>) => {
   const config = mergeConfigs(userConfig);
 
   const { dequeue, enqueue } = config.queue;
-  const offlineUpdater = buildOfflineUpdater(
-    dequeue,
-    enqueue,
-    config.key
-  );
+  const offlineUpdater = buildOfflineUpdater(dequeue, enqueue, config.key);
 
   return (state: any, action: any): any => {
     let offlineState;

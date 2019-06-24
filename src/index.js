@@ -11,6 +11,7 @@ import { enhanceReducer } from './updater';
 function configStore(store, config) {
   const baseReplaceReducer = store.replaceReducer.bind(store);
   // $FlowFixMe
+  // eslint-disable-next-line no-param-reassign
   store.replaceReducer = function replaceReducer(nextReducer) {
     return baseReplaceReducer(enhanceReducer(nextReducer, config));
   };
