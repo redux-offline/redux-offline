@@ -1,4 +1,4 @@
-import effectReconciler, { getHeaders } from '../../defaults/effect';
+import effectReconciler, { getHeaders } from '../../src/defaults/effect';
 
 function fetch(body) {
   return Promise.resolve({

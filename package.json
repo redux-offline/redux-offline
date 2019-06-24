@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "./typings.d.ts",
   "scripts": {
-    "build": "babel src --out-dir lib --ignore '**/__tests__/**'",
+    "build": "babel src --out-dir lib",
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
@@ -16,9 +16,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
-  },
-  "jest": {
-    "rootDir": "src"
   },
   "repository": {
     "type": "git",
