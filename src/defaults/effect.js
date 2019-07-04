@@ -42,12 +42,29 @@ export const getHeaders = (headers: { [string]: [string] }): {} => {
   return { ...restOfHeaders, 'content-type': contentType };
 };
 
+export const getFormData = (object) => {
+
+  const formData = new FormData();
+
+  for (var key in object) {
+    for (var innerObj in object[key]) {
+      var newObj = object[key][innerObj]
+      formData.append(newObj[0], newObj[1]);
+    }
+  }
+
+  return formData;
+}
+
 // eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
   const { url, json, ...options } = effect;
   const headers = getHeaders(options.headers);
 
-  if (json !== null && json !== undefined) {
+  if (!(options.body instanceof FormData) && headers.hasOwnProperty('content-type') && headers['content-type'].includes('multipart/form-data'))
+    options.body = getFormData(options.body)
+
+    if (json !== null && json !== undefined) {
     try {
       options.body = JSON.stringify(json);
     } catch (e) {
