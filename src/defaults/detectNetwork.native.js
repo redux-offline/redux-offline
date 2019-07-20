@@ -1,7 +1,6 @@
 /* eslint no-underscore-dangle: 0 */
 import { AppState } from 'react-native'; // eslint-disable-line
 import NetInfo from '@react-native-community/netinfo'; // eslint-disable-line
-import LegacyDetectNetwork from './detectNetwork.native.legacy';
 
 class DetectNetwork {
   constructor(callback) {
@@ -145,6 +144,4 @@ class DetectNetwork {
   };
 }
 
-const isLegacy = typeof NetInfo.getConnectionInfo === 'undefined';
-export default callback =>
-  isLegacy ? new LegacyDetectNetwork(callback) : new DetectNetwork(callback);
+export default callback => new DetectNetwork(callback);
