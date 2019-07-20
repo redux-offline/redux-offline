@@ -31,7 +31,7 @@ const getResponseBody = (res: any): Promise<{} | string> => {
   return res.text();
 };
 
-export const getHeaders = (headers: {}): {} => {
+export const getHeaders = (headers: { [string]: [string] }): {} => {
   const {
     'Content-Type': contentTypeCapitalized,
     'content-type': contentTypeLowerCase,
