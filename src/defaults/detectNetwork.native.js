@@ -144,6 +144,6 @@ class DetectNetwork {
   };
 }
 
-const isLegacy = typeof NetInfo.getConnectionInfo === 'undefined';
+const isLegacy = NetInfo && typeof NetInfo.getConnectionInfo === 'undefined';
 export default callback =>
   isLegacy ? new LegacyDetectNetwork(callback) : new DetectNetwork(callback);
