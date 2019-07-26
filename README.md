@@ -20,6 +20,12 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
+
+##### For React Native 0.60+
+```shell
+npm install --save @redux-offline/redux-offline@native.0
+```
+#### For React Native <= 0.59
 ```shell
 npm install --save @redux-offline/redux-offline
 ```
