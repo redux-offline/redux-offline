@@ -5,19 +5,18 @@
   "main": "lib/index.js",
   "types": "./typings.d.ts",
   "scripts": {
-    "build": "babel src --out-dir lib --ignore '**/__tests__/**'",
+    "build": "babel src --out-dir lib",
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "lint": "eslint src/",
-    "prepublishOnly": "npm run lint && npm run flow && npm run test && npm run build",
-    "prettier": "eslint src --fix",
-    "test": "jest",
+    "lint": "eslint src",
+    "prepublishOnly": "npm run flow && npm run test && npm run build",
+    "prepare": "npm run build",
+    "pretest": "npm run lint",
+    "prettier": "npm run lint -- --fix",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "watch": "npm run build -- --watch"
-  },
-  "jest": {
-    "rootDir": "src"
   },
   "repository": {
     "type": "git",

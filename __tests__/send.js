@@ -1,8 +1,8 @@
-import send from '../send';
-import { busy, scheduleRetry } from '../actions';
-import defaultCommitAction from '../defaults/defaultCommit';
-import defaultRollbackAction from '../defaults/defaultRollback';
-import offlineActionTracker from '../offlineActionTracker';
+import { busy, scheduleRetry } from '../src/actions';
+import defaultCommitAction from '../src/defaults/defaultCommit';
+import defaultRollbackAction from '../src/defaults/defaultRollback';
+import offlineActionTracker from '../src/offlineActionTracker';
+import send from '../src/send';
 
 const DELAY = 1000;
 const completedMeta = {

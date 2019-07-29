@@ -2,10 +2,12 @@
 
 const handle = (callback, online) => {
   // NetInfo is not supported in browsers, hence we only pass online status
+  const callback2 = callback.bind(null, { online });
+
   if (window.requestAnimationFrame) {
-    window.requestAnimationFrame(() => callback({ online }));
+    window.requestAnimationFrame(callback2);
   } else {
-    setTimeout(() => callback({ online }), 0);
+    setTimeout(callback2, 0);
   }
 };
 

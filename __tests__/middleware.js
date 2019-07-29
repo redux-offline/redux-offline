@@ -1,9 +1,9 @@
-import { createOfflineMiddleware } from '../middleware';
-import { completeRetry, scheduleRetry } from '../actions';
-import defaultConfig from '../defaults';
-import { OFFLINE_SEND } from '../constants';
-import send from '../send';
-import offlineActionTracker from '../offlineActionTracker';
+import { completeRetry, scheduleRetry } from '../src/actions';
+import { OFFLINE_SEND } from '../src/constants';
+import defaultConfig from '../src/defaults';
+import { createOfflineMiddleware } from '../src/middleware';
+import offlineActionTracker from '../src/offlineActionTracker';
+import send from '../src/send';
 
 const offlineAction = {
   type: 'OFFLINE_ACTION_REQUEST',
@@ -62,7 +62,7 @@ function offlineSend() {
   return { type: OFFLINE_SEND };
 }
 
-jest.mock('../send', () => jest.fn(() => Promise.resolve()));
+jest.mock('../src/send', () => jest.fn(() => Promise.resolve()));
 beforeEach(send.mockClear);
 
 test('creates middleware', () => {
@@ -157,7 +157,7 @@ describe('offlineActionTracker integration', () => {
     ({ config, store, next } = setup())
     config = {
       ...config,
-      offlineActionTracker: offlineActionTracker.withPromises 
+      offlineActionTracker: offlineActionTracker.withPromises
     };
   });
 
