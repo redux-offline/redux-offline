@@ -5,8 +5,13 @@ function enqueue(array, item, context) {
 }
 
 function dequeue(array, item, context) {
-  const [, ...rest] = array;
-  return rest;
+  let index = array.indexOf(item.meta.offlineAction);
+  if (index >= 0)
+  {
+    let rest = array.slice();
+    rest.splice(index, 1);
+    return rest;
+  }
 }
 
 function peek(array, item, context) {
