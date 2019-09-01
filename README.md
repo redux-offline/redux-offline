@@ -23,7 +23,7 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 
 ##### For React Native 0.60+
 ```shell
-npm install --save @redux-offline/redux-offline@native.0
+npm install --save @redux-offline/redux-offline@native
 ```
 #### For React Native <= 0.59
 ```shell
