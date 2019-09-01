@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "@react-native-community/async-storage": "^1.6.1",
     "redux-persist": "^4.6.0"
   },
   "peerDependencies": {
