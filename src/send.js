@@ -1,12 +1,12 @@
 // @flow
-import { busy, scheduleRetry } from './actions';
-import { JS_ERROR } from './constants';
+import { busy, scheduleRetry } from "./actions";
+import { JS_ERROR } from "./constants";
 import type {
   Config,
   OfflineAction,
   ResultAction,
   DefaultAction
-} from './types';
+} from "./types";
 
 type CompleteSuccessResult = {
   success: true,
@@ -43,7 +43,7 @@ const handleJsError = (error: Error): ResultAction =>
     meta: { error, success: false, completed: true }
   }: any): ResultAction);
 
-const send = (
+const send = async (
   action: OfflineAction,
   dispatch: any => any,
   config: Config,
@@ -51,61 +51,60 @@ const send = (
 ) => {
   const metadata = action.meta.offline;
   dispatch(busy(true));
-  return config
-    .effect(metadata.effect, action)
-    .then(result => {
-      const commitAction =
-        metadata.commit ||
-        ({
-          ...config.defaultCommit,
-          meta: { ...config.defaultCommit.meta, offlineAction: action }
-        }: DefaultAction);
-      try {
-        return dispatch(
-          complete(
-            commitAction,
-            { success: true, payload: result },
-            action,
-            config
-          )
-        );
-      } catch (error) {
-        return dispatch(handleJsError(error));
-      }
-    })
-    .catch(async error => {
-      const rollbackAction =
-        metadata.rollback ||
-        ({
-          ...config.defaultRollback,
-          meta: { ...config.defaultRollback.meta, offlineAction: action }
-        }: DefaultAction);
-
-      // discard
-      let mustDiscard = true;
-      try {
-        mustDiscard = await config.discard(error, action, retries);
-      } catch (e) {
-        console.warn(e);
-      }
-
-      if (!mustDiscard) {
-        const delay = config.retry(action, retries);
-        if (delay != null) {
-          return dispatch(scheduleRetry(delay));
-        }
-      }
-
+  try {
+    const result = await config.effect(metadata.effect, action);
+    const commitAction =
+      metadata.commit ||
+      ({
+        ...config.defaultCommit,
+        meta: { ...config.defaultCommit.meta, offlineAction: action }
+      }: DefaultAction);
+    try {
       return dispatch(
         complete(
-          rollbackAction,
-          { success: false, payload: error },
+          commitAction,
+          { success: true, payload: result },
           action,
           config
         )
       );
-    })
-    .finally(() => dispatch(busy(false)));
+    } catch (error) {
+      return dispatch(handleJsError(error));
+    }
+  } catch (error) {
+    const rollbackAction =
+      metadata.rollback ||
+      ({
+        ...config.defaultRollback,
+        meta: { ...config.defaultRollback.meta, offlineAction: action }
+      }: DefaultAction);
+
+    // discard
+    let mustDiscard = true;
+    try {
+      mustDiscard = await config.discard(error, action, retries);
+    } catch (e) {
+      console.warn(e);
+    }
+
+    if (!mustDiscard) {
+      const delay = config.retry(action, retries);
+      if (delay != null) {
+        return dispatch(scheduleRetry(delay));
+      }
+    }
+
+    return dispatch(
+      complete(
+        rollbackAction,
+        { success: false, payload: error },
+        action,
+        config
+      )
+    );
+  } finally {
+    dispatch(busy(false));
+  }
 };
 
 export default send;
