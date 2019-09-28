@@ -166,13 +166,17 @@ const getMethod = action => action.meta.offline.effect.method || "GET";
 const getUrl = action => action.meta.offline.effect.url;
 
 // Last Value Queue
-// Only keep the last action for each URL-method pair.
+// Only keep the last action for each URL-method pair,
+// except for the first item in the queue which may have already triggered its initial effect
 const config = {
   queue: {
     ...defaultQueue,
     enqueue(array, action) {
-      const newArray = array.filter(item =>
-        !(getMethod(item) === getMethod(action) && getUrl(item) === getUrl(action))
+      const newArray = array.filter((item, index) =>
+        !(
+          getMethod(item) === getMethod(action) &&
+          getUrl(item) === getUrl(action)) &&
+          index !== 0 
       );
       newArray.push(action);
       return newArray;
