@@ -63,7 +63,8 @@ class DetectNetwork {
    */
   _setIsConnectionExpensive = async () => {
     try {
-      this._isConnectionExpensive = await NetInfo.isConnectionExpensive();
+      const { details } = await NetInfo.fetch();
+      this._isConnectionExpensive = details.isConnectionExpensive;
     } catch (err) {
       // err means that isConnectionExpensive is not supported in iOS
       this._isConnectionExpensive = null;
@@ -88,7 +89,7 @@ class DetectNetwork {
    * @private
    */
   _init = async () => {
-    const connectionInfo = await NetInfo.getConnectionInfo();
+    const connectionInfo = await NetInfo.fetch();
     if (this._shouldInitUpdateReach) {
       this._update(connectionInfo.type);
     }
@@ -115,13 +116,13 @@ class DetectNetwork {
    * @private
    */
   _addListeners() {
-    NetInfo.addEventListener('connectionChange', connectionInfo => {
+    NetInfo.addEventListener(connectionInfo => {
       this._setShouldInitUpdateReach(false);
       this._update(connectionInfo.type);
     });
     AppState.addEventListener('change', async () => {
       this._setShouldInitUpdateReach(false);
-      const connectionInfo = await NetInfo.getConnectionInfo();
+      const connectionInfo = await NetInfo.fetch();
       this._update(connectionInfo.type);
     });
   }
