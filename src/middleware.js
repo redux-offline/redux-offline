@@ -18,6 +18,12 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
   // find any actions to send, if any
   const state: AppState = store.getState();
   const offline = config.offlineStateLens(state).get;
+  if (offline == null) {
+    console.warn(
+      'No offline state was found. Offline actions are not being processed.'
+    );
+    return result;
+  }
   const context = { offline };
   const offlineAction = config.queue.peek(offline.outbox, action, context);
 

@@ -99,7 +99,7 @@ export type Config = {
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   offlineStateLens: (
     state: any
-  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  ) => { get: ?OfflineState, set: (offlineState: ?OfflineState) => any },
   queue: {
     enqueue: (
       array: Array<OfflineAction>,
