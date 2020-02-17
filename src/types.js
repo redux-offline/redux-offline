@@ -125,3 +125,7 @@ export type Config = {
   returnPromises?: boolean,
   rehydrate?: boolean
 };
+
+export type AdvancedConfig = Config & {
+  enhanceReplaceReducer?: boolean
+};

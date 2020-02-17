@@ -1,10 +1,10 @@
 // @flow
 /* global $Shape */
 import { applyMiddleware, compose } from 'redux';
-import type { Config } from './types';
+import type { AdvancedConfig, Config } from './types';
 import { createOfflineMiddleware } from './middleware';
 import { enhanceReducer } from './updater';
-import { applyDefaults } from './config';
+import { applyAdvancedDefaults, applyDefaults } from './config';
 import { networkStatusChanged } from './actions';
 import offlineActionTracker from './offlineActionTracker';
 
@@ -85,8 +85,8 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
   return store;
 };
 
-export const createOffline = (userConfig: $Shape<Config> = {}) => {
-  const config = applyDefaults(userConfig);
+export const createOffline = (userConfig: $Shape<AdvancedConfig> = {}) => {
+  const config = applyAdvancedDefaults(userConfig);
 
   // toggle experimental returned promises
   config.offlineActionTracker = config.returnPromises
@@ -111,10 +111,15 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
     // create store
     const store = createStore(reducer, preloadedState, enhancer);
 
-    const baseReplaceReducer = store.replaceReducer.bind(store);
-    store.replaceReducer = function replaceReducer(nextReducer) {
-      return baseReplaceReducer(enhanceReducer(nextReducer, config));
-    };
+    if (config.enhanceReplaceReducer !== false) {
+      const baseReplaceReducer = store.replaceReducer.bind(store);
+      store.replaceReducer = function replaceReducer(nextReducer) {
+        console.warn(
+          '`store.replaceReducer()` automatically calls `enhanceReducer()` to preserve offline functionality when HMR is used. To avoid this behavior, set the `ehanceReplaceReducer` config to `false`.'
+        );
+        return baseReplaceReducer(enhanceReducer(nextReducer, config));
+      };
+    }
 
     // launch store persistor
     if (config.persist) {

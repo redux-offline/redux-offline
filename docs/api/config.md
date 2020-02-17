@@ -34,7 +34,8 @@ type Config = {
     ) => OfflineAction
   },
   retry: (action: OfflineAction, retries: number) => ?number,
-  returnPromises: boolean
+  returnPromises: boolean,
+  enhanceReplaceReducer: boolean
 };
 ```
 
@@ -217,3 +218,9 @@ If a request fails after this point, it will be discarded.
 Toggle whether dispatch returns promises for offline actions. Defaults to false.
 
 `store.dispatch()` returns a promise that you can use to chain behavior off offline actions, but be careful! A chief benefit of this library is that requests are tried across sessions, but promises do not last that long. So if you use this feature, know that your promise might not get resolved, even if the associated request is eventually delivered.
+
+## enhanceReplaceReducer
+
+Only for `createOffline()`.
+
+Allows disabling monkey patching `store.replaceReducer()` to give more control over exactly when `enhanceReducer` is called. Must be explicitly set to `false` to take effect.
