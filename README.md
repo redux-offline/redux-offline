@@ -71,7 +71,7 @@ const followUser = userId => ({
 If the effect payload is something other than JSON you can pass the body and headers:
 
 ```js
-const followUser = userId => ({
+const followUser = (name, email) => ({
   type: 'REGISTER_USER',
   payload: { name, email },
   meta: {
