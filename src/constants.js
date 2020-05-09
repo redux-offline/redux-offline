@@ -7,6 +7,10 @@ export const OFFLINE_SCHEDULE_RETRY: 'Offline/SCHEDULE_RETRY' =
   'Offline/SCHEDULE_RETRY';
 export const OFFLINE_COMPLETE_RETRY: 'Offline/COMPLETE_RETRY' =
   'Offline/COMPLETE_RETRY';
+export const OFFLINE_RETRY_COUNT_EXCEEDED: 'Offline/RETRY_COUNT_EXCEEDED' = 
+  'Offline/RETRY_COUNT_EXCEEDED';
+export const OFFLINE_RESET_RETRY_COUNT: 'Offline/RESET_RETRY_COUNT' = 
+  'Offline/RESET_RETRY_COUNT';
 export const OFFLINE_SEND: 'Offline/SEND' = 'Offline/SEND';
 export const OFFLINE_BUSY: 'Offline/BUSY' = 'Offline/BUSY';
 export const RESET_STATE: 'Offline/RESET_STATE' = 'Offline/RESET_STATE';

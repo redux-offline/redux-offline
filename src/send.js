@@ -1,5 +1,5 @@
 // @flow
-import { busy, scheduleRetry } from './actions';
+import { busy, scheduleRetry, retryCountExceeded } from './actions';
 import { JS_ERROR } from './constants';
 import type {
   Config,
@@ -93,6 +93,8 @@ const send = (
         const delay = config.retry(action, retries);
         if (delay != null) {
           return dispatch(scheduleRetry(delay));
+        } else if (!config.discardOnRetryCountExceeded) {
+          return dispatch(retryCountExceeded());
         }
       }
 

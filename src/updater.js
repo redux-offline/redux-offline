@@ -14,6 +14,8 @@ import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_SCHEDULE_RETRY,
   OFFLINE_COMPLETE_RETRY,
+  OFFLINE_RETRY_COUNT_EXCEEDED,
+  OFFLINE_RESET_RETRY_COUNT,
   OFFLINE_BUSY,
   RESET_STATE,
   PERSIST_REHYDRATE
@@ -25,6 +27,7 @@ export const initialState: OfflineState = {
   online: false,
   outbox: [],
   retryCount: 0,
+  retryCountExceeded: false,
   retryScheduled: false,
   netInfo: {
     isConnectionExpensive: null,
@@ -61,6 +64,7 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
         netInfo: state.netInfo,
         retryScheduled: initialState.retryScheduled,
         retryCount: initialState.retryCount,
+        retryCountExceeded: initialState.retryCountExceeded,
         busy: initialState.busy
       };
     }
@@ -71,6 +75,18 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
         retryScheduled: true,
         retryCount: state.retryCount + 1
       };
+    }
+
+    if (action.type === OFFLINE_RESET_RETRY_COUNT) {
+      return { 
+        ...state, 
+        retryCount: 0,
+        retryCountExceeded: false,
+       };
+    }
+
+    if (action.type === OFFLINE_RETRY_COUNT_EXCEEDED) {
+      return { ...state, retryCountExceeded: true };
     }
 
     if (action.type === OFFLINE_COMPLETE_RETRY) {
@@ -107,7 +123,8 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
       return {
         ...state,
         outbox: dequeue(offline.outbox, action, { offline }),
-        retryCount: 0
+        retryCount: 0,
+        retryCountExceeded: false
       };
     }
 

@@ -61,7 +61,8 @@ export type OfflineState = {
   outbox: Outbox,
   netInfo?: NetInfo,
   retryCount: number,
-  retryScheduled: boolean
+  retryScheduled: boolean,
+  retryCountExceeded: boolean
 };
 
 export type PersistRehydrateAction = {
@@ -92,6 +93,7 @@ export type Config = {
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   retry: (action: OfflineAction, retries: number) => ?number,
   discard: (error: any, action: OfflineAction, retries: number) => boolean,
+  discardOnRetryCountExceeded: boolean,
   persistOptions: {},
   persistCallback: (callback: any) => any,
   defaultCommit: DefaultAction,

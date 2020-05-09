@@ -33,6 +33,7 @@ export const createOfflineMiddleware = (config: Config) => (store: any) => (
     offlineAction &&
     !offline.busy &&
     !offline.retryScheduled &&
+    !offline.retryCountExceeded &&
     offline.online
   ) {
     send(offlineAction, store.dispatch, config, offline.retryCount);

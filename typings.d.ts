@@ -56,6 +56,7 @@ declare module '@redux-offline/redux-offline/lib/types' {
     online: boolean;
     outbox: Outbox;
     retryCount: number;
+    retryCountExceeded: boolean;
     retryScheduled: boolean;
   }
 
@@ -77,6 +78,7 @@ declare module '@redux-offline/redux-offline/lib/types' {
     defaultRollback: { type: string };
     detectNetwork: (callback: NetworkCallback) => void;
     discard: (error: any, action: OfflineAction, retries: number) => boolean;
+    discardOnRetryCountExceeded: boolean;
     effect: (effect: any, action: OfflineAction) => Promise<any>;
     offlineStateLens: (
       state: any,
@@ -121,6 +123,8 @@ declare module '@redux-offline/redux-offline/lib/constants' {
   export const RESET_STATE: string;
   export const OFFLINE_BUSY: string;
   export const OFFLINE_SEND: string;
+  export const OFFLINE_RETRY_COUNT_EXCEEDED: string;
+  export const OFFLINE_RESET_RETRY_COUNT: string;
   export const OFFLINE_COMPLETE_RETRY: string;
   export const OFFLINE_SCHEDULE_RETRY: string;
   export const OFFLINE_STATUS_CHANGED: string;

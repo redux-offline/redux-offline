@@ -1,5 +1,5 @@
 import send from '../send';
-import { busy, scheduleRetry } from '../actions';
+import { busy, scheduleRetry, retryCountExceeded } from '../actions';
 import defaultCommitAction from '../defaults/defaultCommit';
 import defaultRollbackAction from '../defaults/defaultRollback';
 import offlineActionTracker from '../offlineActionTracker';
@@ -13,6 +13,7 @@ function setup(partialConfig) {
   const defaultConfig = {
     effect: jest.fn(() => Promise.resolve()),
     discard: () => false,
+    discardOnRetryCountExceeded: true,
     retry: () => DELAY,
     defaultCommit: defaultCommitAction,
     defaultRollback: defaultRollbackAction,
@@ -80,7 +81,35 @@ describe('when request fails', () => {
     });
   });
 
-  test('dispatches complete action on discard', () => {
+  test('dispatches complete: failed action on max retries', () => {
+    const effect = () => Promise.reject();
+    const retry = () => null;
+    const { action, config, dispatch } = setup({ effect, retry });
+    const promise = send(action, dispatch, config);
+
+    const { rollback } = action.meta.offline;
+    expect.assertions(2);
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(expect.objectContaining(rollback));
+      expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
+    });
+  });
+
+  test('dispatches retry count exceeded action on max retries when preventDiscardOnRetryCountExceeded is configured', () => {
+    const effect = () => Promise.reject();
+    const discard = () => false;
+    const retry = () => null;
+    const discardOnRetryCountExceeded = false;
+    const { action, config, dispatch } = setup({ effect, discard, retry, discardOnRetryCountExceeded });
+    const promise = send(action, dispatch, config);
+
+    expect.assertions(1);
+    return promise.then(() => {
+      expect(dispatch).toBeCalledWith(retryCountExceeded());
+    });
+  });
+
+  test('dispatches complete: failed action on discard', () => {
     const effect = () => Promise.reject();
     const discard = () => true;
     const { action, config, dispatch } = setup({ effect, discard });
@@ -94,7 +123,7 @@ describe('when request fails', () => {
     });
   });
 
-  test('dispatches complete action with promised discard', () => {
+  test('dispatches complete: failed action with promised discard', () => {
     const effect = () => Promise.reject();
     const discard = () => Promise.resolve(true);
     const { action, config, dispatch } = setup({ effect, discard });
@@ -108,7 +137,7 @@ describe('when request fails', () => {
     });
   });
 
-  test('dispatches complete action when discard throw an exception', () => {
+  test('dispatches complete: failed action when discard throw an exception', () => {
     const effect = () => Promise.reject();
     const discard = () => {throw new Error};
     const { action, config, dispatch } = setup({ effect, discard });

@@ -16,6 +16,7 @@ export default {
   effect,
   retry,
   discard,
+  discardOnRetryCountExceeded: true,
   defaultCommit,
   defaultRollback,
   persistAutoRehydrate,

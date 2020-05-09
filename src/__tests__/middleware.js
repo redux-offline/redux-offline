@@ -25,6 +25,7 @@ const defaultOfflineState = {
   receipts: [],
   retryToken: 0,
   retryCount: 0,
+  retryCountExceeded: false,
   retryScheduled: false,
   netInfo: {
     isConnectionExpensive: null,
@@ -89,6 +90,12 @@ describe('on any action', () => {
 
   it('does not process outbox when retry scheduled', () => {
     const { config, store, next, action } = setup({ retryScheduled: true });
+    createOfflineMiddleware(config)(store)(next)(action);
+    expect(send).not.toBeCalled();
+  });
+
+  it('does not process outbox when retry count exceeded', () => {
+    const { config, store, next, action } = setup({ retryCountExceeded: true });
     createOfflineMiddleware(config)(store)(next)(action);
     expect(send).not.toBeCalled();
   });

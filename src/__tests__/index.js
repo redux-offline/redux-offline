@@ -4,7 +4,7 @@ import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
 import { createOffline, offline } from "../index";
 import { applyDefaults } from "../config";
-import { networkStatusChanged } from "../actions";
+import { networkStatusChanged, retryCountExceeded, resetRetryCount } from "../actions";
 
 const storageKey = `${KEY_PREFIX}offline`;
 const defaultReducer = (state = {}) => state;
@@ -113,4 +113,29 @@ test("coming online processes outbox", () => {
   store.dispatch(networkStatusChanged(true));
   expect(store.getState().offline.online).toBe(true);
   expect(defaultConfig.effect).toBeCalled();
+});
+
+test("reset retry count processes outbox", () => {
+  const config = {
+    ...defaultConfig,
+    discardOnRetryCountExceeded: false,
+    discard: () => false,
+    retry: () => null,
+    effect: () => Promise.resolve()
+  }
+
+  const { middleware, enhanceReducer } = createOffline(defaultConfig);
+  const reducer = enhanceReducer(defaultReducer);
+  const store = createStore(reducer, applyMiddleware(middleware));
+
+  store.dispatch(networkStatusChanged(true));
+  store.dispatch(retryCountExceeded());
+
+  const action = { type: "REQUEST", meta: { offline: { effect: {} } } };
+  store.dispatch(action);
+
+  expect(config.effect).not.toBeCalled();
+
+  store.dispatch(resetRetryCount());
+  expect(config.effect).toBeCalled();
 });
