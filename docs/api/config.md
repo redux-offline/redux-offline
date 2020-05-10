@@ -8,6 +8,7 @@ type Config = {
   defaultRollback: { type: string },
   detectNetwork: (callback: NetworkCallback) => void,
   discard: (error: any, action: OfflineAction, retries: number) => boolean|Promise<boolean>,
+  discardOnRetryCountExceeded: boolean,
   effect: (effect: any, action: OfflineAction) => Promise<*>,
   offlineStateLens: (
     state: any
@@ -84,6 +85,10 @@ Receives the rejection error from `config.effect`, the related offline action, a
 The default implementation discards only on client errors.
 
 See [Customize Requests](../recipes/customize-requests.md) for more details.
+
+## discardOnRetryCountExceeded
+
+Determines what happens to a request after it has been automatically retried the number of times indicated in `config.retry`.  When true (default), the request will simply be discarded. When false, the request will remain in the outbox, but will no longer be automatically retried. 
 
 ## effect
 
@@ -193,7 +198,7 @@ Retrieve the next offline action to be resolved.
 
 Determine the delay for retrying requests.
 
-Accepts the offline action representing the request and the number of times already attempted. Returns either the number of milliseconds to wait before retrying, or `null` if the action should be discarded.
+Accepts the offline action representing the request and the number of times already attempted. Returns either the number of milliseconds to wait before retrying, or `null` if the retry count has been exceeded.
 
 The default implementation uses the following schedule to retry requets:
 
@@ -208,7 +213,11 @@ The default implementation uses the following schedule to retry requets:
 * After 30 minutes
 * After 1 hour
 
-If a request fails after this point, it will be discarded.
+If a request fails after this point, what happens next is determined by the `config.discardOnRetryCountExceeded` flag. 
+
+If the flag is true (default), the request will be discarded, and the next item in the outbox will be processed. 
+
+If the flag is false, the request will remain in the outbox, blocking processing of subsequent requests. Additionally, the `retryCountExceeded` flag will be set to true in the reducer. Dispatching `OFFLINE_RESET_RETRY_COUNT` will reset the retry count of the request, causing the automatic retry behavior to start over.
 
 ## returnPromises
 
