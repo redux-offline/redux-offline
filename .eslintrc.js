@@ -3,10 +3,12 @@ module.exports = {
   extends: ['airbnb-base', 'plugin:flowtype/recommended', 'prettier'],
   plugins: ['flowtype', 'prettier'],
   globals: {
-    Promise: true
+    Promise: true,
+    document: false // https://stackoverflow.com/a/41922950/3481005
   },
   env: {
-    jest: true, // https://stackoverflow.com/a/40265356/586382
+    jest: true,  // https://stackoverflow.com/a/40265356/586382
+    browser: true, // https://stackoverflow.com/a/41922950/3481005
     node: true
   },
   rules: {
