@@ -1,5 +1,4 @@
 // @flow
-/* global fetch */
 
 import type { OfflineAction } from '../types';
 
@@ -31,7 +30,9 @@ const getResponseBody = (res: any): Promise<{} | string> => {
   return res.text();
 };
 
-export const getHeaders = (headers: { [string]: [string] }): {} => {
+export const getHeaders = (headers: {
+  [string]: string
+}): { [string]: string } => {
   const {
     'Content-Type': contentTypeCapitalized,
     'content-type': contentTypeLowerCase,
@@ -42,7 +43,7 @@ export const getHeaders = (headers: { [string]: [string] }): {} => {
   return { ...restOfHeaders, 'content-type': contentType };
 };
 
-export const getFormData = object => {
+export const getFormData = (object: {}) => {
   const formData = new FormData();
   Object.keys(object).forEach(key => {
     Object.keys(object[key]).forEach(innerObj => {

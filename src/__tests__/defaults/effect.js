@@ -95,18 +95,17 @@ test('effector accepts content-type and Content-Type headers', () => {
 });
 
 test('effector receives object as multipart/form-data', () => {
-  const originalBody = new FormData();
-  originalBody.append('id', 1234);
-  originalBody.append('name', 'john');
-  const body = {};
-  originalBody.forEach((value, key) => {
-    originalBody[key] = value;
+  const body = new FormData();
+  body.append('id', 1234);
+  body.append('name', 'john');
+  body.forEach((value, key) => {
+    body[key] = value;
   });
 
   global.fetch = jest.fn((url, options) => {
     expect(options.headers['content-type']).toEqual('multipart/form-data');
     expect(options.body).toBeInstanceOf(FormData);
-    expect(options.body.get('id')).toBe(1234);
+    expect(options.body.get('id')).toBe('1234');
     return fetch('');
   });
 
