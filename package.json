@@ -25,7 +25,8 @@
   "lint-staged": {
     "*.{js,jsx}": [
       "prettier --config .prettierrc --write",
-      "eslint -c .eslintrc.json --ext .jsx,.js --fix"
+      "eslint src --fix",
+      "flow"
     ]
   },
   "jest": {
