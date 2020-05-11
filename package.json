@@ -19,14 +19,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && flow"
     }
   },
   "lint-staged": {
     "*.{js,jsx}": [
       "prettier --config .prettierrc --write",
-      "eslint src --fix",
-      "flow"
+      "eslint src --fix"
     ]
   },
   "jest": {
