@@ -6,7 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.1"
+    "express": "^4.17.1"
   },
   "main": "index.js",
   "license": "MIT"
