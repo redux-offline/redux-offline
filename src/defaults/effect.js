@@ -1,5 +1,4 @@
 // @flow
-/* global fetch */
 
 import type { OfflineAction } from '../types';
 
@@ -31,7 +30,9 @@ const getResponseBody = (res: any): Promise<{} | string> => {
   return res.text();
 };
 
-export const getHeaders = (headers: { [string]: [string] }): {} => {
+export const getHeaders = (headers: {
+  [string]: string
+}): { [string]: string } => {
   const {
     'Content-Type': contentTypeCapitalized,
     'content-type': contentTypeLowerCase,
@@ -42,10 +43,30 @@ export const getHeaders = (headers: { [string]: [string] }): {} => {
   return { ...restOfHeaders, 'content-type': contentType };
 };
 
+export const getFormData = (object: {}) => {
+  const formData = new FormData();
+  Object.keys(object).forEach(key => {
+    Object.keys(object[key]).forEach(innerObj => {
+      const newObj = object[key][innerObj];
+      formData.append(newObj[0], newObj[1]);
+    });
+  });
+
+  return formData;
+};
+
 // eslint-disable-next-line no-unused-vars
 export default (effect: any, _action: OfflineAction): Promise<any> => {
   const { url, json, ...options } = effect;
   const headers = getHeaders(options.headers);
+
+  if (
+    !(options.body instanceof FormData) &&
+    Object.prototype.hasOwnProperty.call(headers, 'content-type') &&
+    headers['content-type'].toLowerCase().includes('multipart/form-data')
+  ) {
+    options.body = getFormData(options.body);
+  }
 
   if (json !== null && json !== undefined) {
     try {
