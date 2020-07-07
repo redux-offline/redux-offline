@@ -112,7 +112,7 @@ If you are reporting a bug, please include code that reproduces the error. Here 
 
 In lieu of a formal style guide, follow the included eslint rules, and use Prettier to format your code.
 
-## Miscellanea
+## Miscellaneous
 
 ### Usage with Redux Persist v5
 
