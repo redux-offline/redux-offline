@@ -1,5 +1,3 @@
-/* global window */
-
 const handle = (callback, online) => {
   // NetInfo is not supported in browsers, hence we only pass online status
   const callback2 = callback.bind(null, { online });

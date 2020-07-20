@@ -20,6 +20,18 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ## Quick start
 
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
+
+##### For React Native 0.60+
+```shell
+npm install --save @redux-offline/redux-offline@native
+```
+
+#### For React Native Expo SDK 36
+```shell
+npm install --save @redux-offline/redux-offline@expo
+```
+
+#### For React Native <= 0.59
 ```shell
 npm install --save @redux-offline/redux-offline
 ```
@@ -65,7 +77,7 @@ const followUser = userId => ({
 If the effect payload is something other than JSON you can pass the body and headers:
 
 ```js
-const followUser = userId => ({
+const registerUser = (name, email) => ({
   type: 'REGISTER_USER',
   payload: { name, email },
   meta: {
