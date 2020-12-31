@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "./typings.d.ts",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib --ignore '**/__tests__/**'",
+    "build": "rm -rf lib && babel v3 --out-dir lib --ignore '**/__tests__/**'",
     "flow:start": "flow server",
     "flow:stop": "flow stop",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
@@ -72,7 +72,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.6",
-    "redux-persist": "^4.6.0"
+    "redux-persist": "^4.6.0",
+    "@redux-offline/offline-side-effects": "0.1.0"
   },
   "peerDependencies": {
     "redux": ">=3"

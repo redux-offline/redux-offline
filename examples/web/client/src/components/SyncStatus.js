@@ -16,7 +16,7 @@ function SyncStatus({ timer, busy, retryScheduled, attempt }) {
 
 function mapStateToProps(state) {
   return {
-    timer: state.timer,
+    timer: state.tick.timer,
     busy: state.offline.busy,
     retryScheduled: state.offline.retryScheduled,
     attempt: state.offline.retryCount + 1

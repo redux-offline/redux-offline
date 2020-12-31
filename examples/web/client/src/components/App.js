@@ -1,9 +1,10 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react'
 import MakeRequests from './MakeRequests';
 import RequestsQueue from './RequestsQueue';
 import SyncStatus from './SyncStatus';
-import store from '../store';
+import store, { persistor } from '../store';
 
 class App extends React.Component {
 
@@ -49,26 +50,28 @@ class App extends React.Component {
 
     return (
       <Provider store={store}>
-        <div className="container">
-          <div>
-            <SyncStatus />
-            <RequestsQueue />
-            <MakeRequests
-              successCallback={page === 'promise' && this.onSuccess}
-              errorCallback={page === 'promise' && this.onError}
-            />
-            <button
-              onClick={() => this.setState(this.pages.home)}>
-              home
-            </button>
-          </div>
-          {page === 'promise' &&
+        <PersistGate persistor={persistor}>
+          <div className="container">
+            <div>
+              <SyncStatus/>
+              <RequestsQueue/>
+              <MakeRequests
+                successCallback={page === 'promise' && this.onSuccess}
+                errorCallback={page === 'promise' && this.onError}
+              />
+              <button
+                onClick={() => this.setState(this.pages.home)}>
+                home
+              </button>
+            </div>
+            {page === 'promise' &&
             <pre className={`promise-box ${status}`}>
               <p>{status} {time}</p>
               <code>{payload}</code>
             </pre>
-          }
-        </div>
+            }
+          </div>
+        </PersistGate>
       </Provider>
     );
   }

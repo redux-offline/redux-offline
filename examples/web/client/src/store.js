@@ -1,12 +1,14 @@
-import { applyMiddleware, compose, createStore } from 'redux';
-import { offline, createOffline } from '@redux-offline/redux-offline';
-import defaultConfig from '@redux-offline/redux-offline/lib/defaults';
+import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
+import { createOffline } from '@redux-offline/redux-offline';
+import defaults from '@redux-offline/offline-side-effects/dist/defaults';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const initialState = {
   timer: 0
 };
 
-function reducer(state = initialState, action) {
+function tickReducer(state = initialState, action) {
   if (action.type === 'Offline/SCHEDULE_RETRY') {
     return {
       ...state,
@@ -22,40 +24,47 @@ function reducer(state = initialState, action) {
   return state;
 }
 
-const config = {
-  ...defaultConfig,
+const persistConfig = {
+  key: 'offline-client-example-app',
+  storage,
+}
+
+const options = {
+  ...defaults,
   retry(_action, retries) {
     return (retries + 1) * 1000;
   },
-  returnPromises: true
+  detectNetwork: callback => {
+    const onOnline = () => callback(true);
+    const onOffline = () => callback(false);
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('online', onOnline);
+      window.addEventListener('offline', onOffline);
+      callback(window.navigator.onLine);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined' && window.removeEventListener) {
+        window.removeEventListener('online', onOnline);
+        window.removeEventListener('offline', onOffline);
+      }
+    };
+  }
 };
 
-function tickMiddleware(store) {
-  return next => action => {
-    if (action.type === 'Offline/SCHEDULE_RETRY') {
-      const intervalId = setInterval(() => {
-        store.dispatch({ type: 'TICK' });
-      }, 1000);
-      setTimeout(() => clearInterval(intervalId), action.payload.delay);
-    }
-    return next(action);
-  };
-}
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-let store;
-if (process.env.REACT_APP_OFFLINE_API === 'alternative') {
-  const { middleware, enhanceReducer, enhanceStore } = createOffline(config);
-  store = createStore(
-    enhanceReducer(reducer),
-    undefined,
-    composeEnhancers(applyMiddleware(middleware, tickMiddleware), enhanceStore)
-  );
-} else {
-  store = createStore(
-    reducer,
-    composeEnhancers(offline(config), applyMiddleware(tickMiddleware))
-  );
-}
+const { middleware, enhanceStore, reducer } = createOffline(options);
+const rootReducer = combineReducers({
+  tick: tickReducer,
+  offline: reducer
+});
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+const store = createStore(
+  persistedReducer,
+  undefined,
+  composeEnhancers(applyMiddleware(middleware), enhanceStore)
+);
+export const persistor = persistStore(store)
 
 export default store;

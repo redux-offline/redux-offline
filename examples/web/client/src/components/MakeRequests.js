@@ -6,13 +6,7 @@ import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 class MakeRequests extends React.Component {
 
   buildHandler = (handler) => {
-    const { successCallback, errorCallback } = this.props;
-    const result = handler();
-    if (!result.then) {
-      if (successCallback || errorCallback) alert('Offline config returnPromises is false!');
-      return result;
-    }
-    return result.then(successCallback).catch(errorCallback);
+    return handler();
   }
 
   onSucceedAlways = () => this.buildHandler(this.props.onSucceedAlways)
