@@ -64,6 +64,28 @@ test("createOffline() supports HMR", () => {
   expect(store.getState()).toHaveProperty("offline");
 });
 
+test("createOffline() does not enhance the reducer if enhanceReplaceReducer is false", () => {
+  const {middleware, enhanceReducer, enhanceStore} = createOffline({
+    ...defaultConfig,
+    enhanceReplaceReducer: false
+  });
+  const reducer = enhanceReducer(defaultReducer);
+  const store = createStore(
+    reducer,
+    compose(
+      applyMiddleware(middleware),
+      enhanceStore
+    )
+  );
+  store.replaceReducer(
+    combineReducers({
+      data: defaultReducer
+    })
+  );
+  store.dispatch({type: "SOME_ACTION"});
+  expect(store.getState()).not.toHaveProperty("offline");
+})
+
 // see https://github.com/redux-offline/redux-offline/issues/4
 test("restores offline outbox when rehydrates", done => {
   const actions = [{

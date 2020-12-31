@@ -99,7 +99,7 @@ export type Config = {
   persistAutoRehydrate: (config: ?{}) => (next: any) => any,
   offlineStateLens: (
     state: any
-  ) => { get: OfflineState, set: (offlineState: ?OfflineState) => any },
+  ) => { get: ?OfflineState, set: (offlineState: ?OfflineState) => any },
   queue: {
     enqueue: (
       array: Array<OfflineAction>,
@@ -124,4 +124,8 @@ export type Config = {
   },
   returnPromises?: boolean,
   rehydrate?: boolean
+};
+
+export type AdvancedConfig = Config & {
+  enhanceReplaceReducer?: boolean
 };

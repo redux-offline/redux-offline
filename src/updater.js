@@ -136,6 +136,8 @@ export const enhanceReducer = (reducer: any, config: $Shape<Config>) => {
 
     return config
       .offlineStateLens(reducer(restState, action))
-      .set(offlineUpdater(offlineState, action));
+      .set(
+        offlineUpdater(offlineState == null ? undefined : offlineState, action)
+      );
   };
 };
