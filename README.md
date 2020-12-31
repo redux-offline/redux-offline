@@ -13,6 +13,10 @@
   </a>
 </p>
 
+🚨🚨🚨🚨 **v3** is coming soon! Check the progress updates [HERE](https://github.com/redux-offline/redux-offline/issues/392)
+
+<br>
+
 Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, with first-class support for optimistic UI. Use with React, React Native, or as standalone state container for any web app.
 
 > Redux Offline is now being maintained by a community driven team. The new versions of the library will now be available under the npm organization `@redux-offline`. Big thank you to [@jevakallio](https://github.com/jevakallio) for creating this amazing library in the first place.
