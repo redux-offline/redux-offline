@@ -36,6 +36,10 @@ npm install --save @redux-offline/redux-offline@expo
 npm install --save @redux-offline/redux-offline
 ```
 
+#### External dependencies for React Native
+* Async Storage [@react-native-async-storage/async-storage](https://github.com/react-native-async-storage/async-storage)
+* NetInfo [@react-native-community/netinfo](https://github.com/react-native-netinfo/react-native-netinfo)
+
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
 ```js
 
