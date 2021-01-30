@@ -55,7 +55,7 @@
     }
   ],
   "dependencies": {
-    "@redux-offline/offline-side-effects": "0.1.0"
+    "@redux-offline/offline-side-effects": "^0.1.1"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.9.2",

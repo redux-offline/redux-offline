@@ -1850,10 +1850,10 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.11.tgz#aeb16f50649a91af79dbe36574b66d0f9e4d9f71"
   integrity sha512-3NsZsJIA/22P3QUyrEDNA2D133H4j224twJrdipXN38dpnIOzAbUDtOwkcJ5pXmn75w7LSQDjA4tO9dm1XlqlA==
 
-"@redux-offline/offline-side-effects@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@redux-offline/offline-side-effects/-/offline-side-effects-0.1.0.tgz#31a1aef7ad7cebce1538e717e917479f35f399ec"
-  integrity sha512-gDC6dDx4wNOJ+SPjPYWVWYPHf/gC1KW13I4+OXZCewVUYoxU5eLSHxjvwdBFTd6XxH4Qu40e6aEkc2a+3onA8Q==
+"@redux-offline/offline-side-effects@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@redux-offline/offline-side-effects/-/offline-side-effects-0.1.1.tgz#a5e1f9cdf30437b741dd324da9b07b6443d8ccfd"
+  integrity sha512-mdBYcLesfQlvS3DgMZR0l8WUFX1XOXTYEvFraFEuL3UZ4lUV3PatKky+LfwH1mU7vtGgdajo4ILpPdq/U+MZxA==
   dependencies:
     "@testing-library/jest-dom" "^5.11.6"
     "@testing-library/react" "^11.2.2"
