@@ -9,9 +9,11 @@ import offlineReducer from './reducer';
 import createReduxOfflineMiddleware from './middleware';
 
 export const createOffline = (options, buildListeners = () => ({})) => {
-  let offlineSideEffects = null;
+  const instance = {
+    offlineSideEffects: null
+  };
 
-  const enhanceStore = createStore => (reducer, preloadedState, enhancer) => {
+  const enhanceStore = (createStore) => (reducer, preloadedState, enhancer) => {
     const store = createStore(reducer, preloadedState, enhancer);
     let prevStatus = null;
 
@@ -19,7 +21,7 @@ export const createOffline = (options, buildListeners = () => ({})) => {
       onCommit: (payload, commit) => store.dispatch({ ...commit, payload }),
       onRollback: (payload, rollback) =>
         store.dispatch({ ...rollback, payload }),
-      onStatusChange: status => {
+      onStatusChange: (status) => {
         if (status === 'paused') {
           store.dispatch({ type: OFFLINE_STATUS_CHANGED, payload: false });
         } else {
@@ -30,28 +32,28 @@ export const createOffline = (options, buildListeners = () => ({})) => {
         }
         prevStatus = status;
       },
-      onSerialize: state => {
+      onSerialize: (state) => {
         store.dispatch({ type: OFFLINE_SERIALIZE, payload: state });
       },
-      onRetry: delay =>
+      onRetry: (delay) =>
         store.dispatch({ type: OFFLINE_SCHEDULE_RETRY, payload: { delay } }),
       // @ts-ignore
       ...buildListeners(store)
     };
 
-    offlineSideEffects = createOfflineSideEffects(listeners, options);
+    instance.offlineSideEffects = createOfflineSideEffects(listeners, options);
 
     // launch network detector
     if (options.detectNetwork) {
-      options.detectNetwork(online => offlineSideEffects.setPaused(!online));
+      options.detectNetwork((online) =>
+        instance.offlineSideEffects.setPaused(!online)
+      );
     }
 
     return store;
   };
 
-  const reduxOfflineMiddleware = createReduxOfflineMiddleware(
-    offlineSideEffects
-  );
+  const reduxOfflineMiddleware = createReduxOfflineMiddleware(instance);
 
   return {
     enhanceStore,

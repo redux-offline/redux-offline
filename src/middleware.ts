@@ -1,7 +1,8 @@
 import { PERSIST_REHYDRATE, OFFLINE_RESET_STATE } from './actions';
 
-function createReduxOfflineMiddleware(offlineSideEffects) {
-  const reduxOfflineMiddleware = () => next => action => {
+const createReduxOfflineMiddleware = (instance) => {
+  const reduxOfflineMiddleware = () => (next) => (action) => {
+    const { offlineSideEffects } = instance;
     next(action);
 
     if (action.type === PERSIST_REHYDRATE) {
@@ -16,6 +17,6 @@ function createReduxOfflineMiddleware(offlineSideEffects) {
   };
 
   return reduxOfflineMiddleware;
-}
+};
 
 export default createReduxOfflineMiddleware;

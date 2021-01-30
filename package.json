@@ -41,7 +41,8 @@
   "prettier": {
     "semi": true,
     "singleQuote": true,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "arrowParens": "always"
   },
   "module": "dist/redux-offline.esm.js",
   "size-limit": [
