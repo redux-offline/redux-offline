@@ -52,8 +52,10 @@ const options = {
   }
 };
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// @ts-ignore
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ as unknown || compose;
 
+// @ts-ignore
 const { middleware, enhanceStore, reducer } = createOffline(options);
 const rootReducer = combineReducers({
   tick: tickReducer,
@@ -63,6 +65,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 const store = createStore(
   persistedReducer,
   undefined,
+  // @ts-ignore
   composeEnhancers(applyMiddleware(middleware), enhanceStore)
 );
 export const persistor = persistStore(store)

@@ -2,19 +2,21 @@ Visualization of Redux Offline's request resolution.
 
 ## Installation
 
-Install and start the server:
-
+Install
 ```bash
-yarn && yarn start
+yarn
 ```
 
-Then, start the client:
+Start the server:
 
 ```bash
-cd client
-yarn && yarn start
+yarn server
+```
+
+Then, in a new tab, start the client:
+
+```bash
+yarn start
 ```
 
 This launches a Webpack dev server, which hosts the static content. Other requests are proxied to the server launched previously.
-
-See [Create React App](https://github.com/facebookincubator/create-react-app) for more information.
