@@ -14,6 +14,7 @@ export const createOffline = (options, buildListeners = () => ({})) => {
   const enhanceStore = createStore => (reducer, preloadedState, enhancer) => {
     const store = createStore(reducer, preloadedState, enhancer);
     let prevStatus = null;
+
     const listeners = {
       onCommit: (payload, commit) => store.dispatch({ ...commit, payload }),
       onRollback: (payload, rollback) =>
@@ -34,6 +35,7 @@ export const createOffline = (options, buildListeners = () => ({})) => {
       },
       onRetry: delay =>
         store.dispatch({ type: OFFLINE_SCHEDULE_RETRY, payload: { delay } }),
+      // @ts-ignore
       ...buildListeners(store)
     };
 

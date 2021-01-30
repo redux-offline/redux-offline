@@ -1,7 +1,0 @@
-[ignore]
-.*/examples/.*
-[options]
-suppress_comment=.*\\$FlowIssue
-suppress_comment=.*\\$FlowFixMe
-suppress_comment=.*\\$FlowIgnore
-suppress_comment=.*\\$FlowInvalidInputTest

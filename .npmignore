@@ -1,6 +1,6 @@
-.babelrc
-.eslintrc.js
-.flowconfig
+v2/.babelrc
+v2/.eslintrc.js
+v2/.flowconfig
 .travis.yml
 .idea/**
 examples/**
