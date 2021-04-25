@@ -1,69 +1,7 @@
 {
-  "name": "@redux-offline/redux-offline",
-  "version": "3.0.0-alpha.0",
-  "description": "Redux Offline-First Architecture",
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/redux-offline/redux-offline"
-  },
-  "bugs": {
-    "url": "https://github.com/redux-offline/redux-offline/issues"
-  },
-  "homepage": "https://github.com/redux-offline/redux-offline#readme",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "engines": {
-    "node": ">=10"
-  },
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
-  },
-  "peerDependencies": {
-    "redux": ">=3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "none",
-    "arrowParens": "always"
-  },
-  "module": "dist/redux-offline.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/redux-offline.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/redux-offline.esm.js",
-      "limit": "10 KB"
-    }
-  ],
-  "dependencies": {
-    "@redux-offline/offline-side-effects": "^0.1.1"
-  },
+  "name": "root",
+  "private": true,
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^4.9.2",
-    "husky": "^4.3.8",
-    "size-limit": "^4.9.2",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
-    "typescript": "^4.1.3"
+    "lerna": "^4.0.0"
   }
 }

@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { succeedAlways, succeedSometimes, failSometimes } from '../actions';
 
 const MakeRequests: React.FC<{
   onSucceedAlways: () => void;
   onSucceedSometimes: () => void;
   onFailSometimes: () => void;
-}> = props => {
+}> = (props) => {
   const onSucceedAlways = () => props.onSucceedAlways();
   const onSucceedSometimes = () => props.onSucceedSometimes();
   const onFailSometimes = () => props.onFailSometimes();
@@ -21,16 +20,11 @@ const MakeRequests: React.FC<{
   );
 };
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      onSucceedAlways: succeedAlways,
-      onSucceedSometimes: succeedSometimes,
-      onFailSometimes: failSometimes
-    },
-    dispatch
-  );
-}
+const mapDispatchToProps = {
+  onSucceedAlways: succeedAlways,
+  onSucceedSometimes: succeedSometimes,
+  onFailSometimes: failSometimes
+};
 
 const ConnectedComponent = connect(null, mapDispatchToProps)(MakeRequests);
 

@@ -1,0 +1,52 @@
+{
+  "name": "@redux-offline/example-redux-offline",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@redux-offline/offline-side-effects": "^0.1.1",
+    "@redux-offline/redux-offline": "^2.6.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "express": "^4.17.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "react-scripts": "^4.0.3",
+    "redux": "^4.1.0",
+    "redux-persist": "^6.0.0",
+    "typescript": "^4.2.4",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "server": "node server.js",
+    "start": "react-scripts start",
+    "alternative": "REACT_APP_OFFLINE_API=alternative react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://localhost:4000",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
