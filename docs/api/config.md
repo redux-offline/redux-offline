@@ -195,7 +195,7 @@ Determine the delay for retrying requests.
 
 Accepts the offline action representing the request and the number of times already attempted. Returns either the number of milliseconds to wait before retrying, or `null` if the action should be discarded.
 
-The default implementation uses the following schedule to retry requets:
+The default implementation uses the following schedule to retry requests:
 
 * After 1 seconds
 * After 5 seconds
