@@ -1,6 +1,6 @@
 {
   "name": "@redux-offline/redux-offline",
-  "version": "2.6.0-native.0",
+  "version": "2.6.0-native.1",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
   "types": "./typings.d.ts",
