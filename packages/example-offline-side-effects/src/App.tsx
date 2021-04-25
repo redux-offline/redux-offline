@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import createPersistedReducer from 'use-persisted-reducer';
 import { offlineSideEffects } from '@redux-offline/offline-side-effects';
 import reducer, { initialState } from './reducer';
