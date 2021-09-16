@@ -1,3 +1,4 @@
+import defaultEffect from '@redux-offline/default-effect';
 import { Options } from './types';
 
 const defaults: Options = {
@@ -9,23 +10,7 @@ const defaults: Options = {
       return newOutbox;
     },
   },
-  effect: url =>
-    fetch(url).then(res => {
-      function NetworkError(response: {} | string, status: number) {
-        this.name = 'NetworkError';
-        this.status = status;
-        this.response = response;
-      }
-
-      NetworkError.prototype = Error.prototype;
-
-      if (res.ok) {
-        return res.json();
-      }
-      return res.json().then(body => {
-        throw new NetworkError(body || '', res.status);
-      });
-    }),
+  effect: defaultEffect,
   discard: (error, _action, retries) => {
     if ('status' in error) {
       // discard http 4xx errors
