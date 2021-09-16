@@ -1,29 +1,13 @@
 import { useEffect, useRef } from 'react';
 import createPersistedReducer from 'use-persisted-reducer';
 import { offlineSideEffects } from '@redux-offline/offline-side-effects';
+import detectNetwork from '@redux-offline/default-detect-network';
 import reducer, { initialState } from './reducer';
 
 const usePersistedOutbox = createPersistedReducer('offline-side-effects');
 const useAppStateReducer = createPersistedReducer('app-state');
 
 const toggleBusy = payload => ({ type: 'busy', payload });
-
-const detectNetwork = callback => {
-  const onOnline = () => callback(true);
-  const onOffline = () => callback(false);
-  if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('online', onOnline);
-    window.addEventListener('offline', onOffline);
-    callback(window.navigator.onLine);
-  }
-
-  return () => {
-    if (typeof window !== 'undefined' && window.removeEventListener) {
-      window.removeEventListener('online', onOnline);
-      window.removeEventListener('offline', onOffline);
-    }
-  };
-};
 
 const useOfflineSideEffects = listeners => {
   const offlineReducer = (_, newState) => ({ ...newState });
@@ -54,7 +38,7 @@ function App() {
 
   useEffect(() => {
     rehydrate();
-    detectNetwork(online => setPaused(!online));
+    detectNetwork(({ online }) => setPaused(!online));
   }, [rehydrate, setPaused]);
 
   useEffect(() => {
