@@ -1,4 +1,4 @@
-import { OFFLINE_SERIALIZE } from './actions';
+import { OFFLINE_SERIALIZE, OFFLINE_UPDATE_NETINFO } from './actions';
 
 const initialState = { outbox: [], busy: false, online: true };
 
@@ -14,6 +14,10 @@ function offlineReducer(state = initialState, action) {
       online,
       busy
     };
+  }
+  if (action.type === OFFLINE_UPDATE_NETINFO) {
+    const { netInfo } = action.payload;
+    return { ...state, netInfo };
   }
   return state;
 }

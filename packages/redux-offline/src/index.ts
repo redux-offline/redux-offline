@@ -3,7 +3,8 @@ import {
   OFFLINE_STATUS_CHANGED,
   OFFLINE_BUSY,
   OFFLINE_SCHEDULE_RETRY,
-  OFFLINE_SERIALIZE
+  OFFLINE_SERIALIZE,
+  OFFLINE_UPDATE_NETINFO
 } from './actions';
 import offlineReducer from './reducer';
 import createReduxOfflineMiddleware from './middleware';
@@ -45,9 +46,12 @@ export const createOffline = (options, buildListeners = () => ({})) => {
 
     // launch network detector
     if (options.detectNetwork) {
-      options.detectNetwork((online) =>
-        instance.offlineSideEffects.setPaused(!online)
-      );
+      options.detectNetwork(({ online, netInfo }) => {
+        instance.offlineSideEffects.setPaused(!online);
+        if (netInfo) {
+          store.dispatch({ type: OFFLINE_UPDATE_NETINFO, payload: { netInfo } });
+        }
+      });
     }
 
     return store;
