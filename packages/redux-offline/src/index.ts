@@ -61,6 +61,20 @@ export const createOffline = (options, buildListeners = () => ({})) => {
     return store;
   };
 
+  /**
+   * Enhances root reducer with offline slice (for backwards compatibility purposes)
+   * @param reducer
+   * @deprecated
+   */
+  const enhanceReducer = (reducer) => {
+    return (state: any, action: any): any => {
+      return {
+        ...reducer(state, action),
+        offline: offlineReducer(state, action)
+      }
+    };
+  }
+
   const reduxOfflineMiddleware = createReduxOfflineMiddleware(instance);
 
   const testingInstance = new Proxy(instance, {
@@ -75,6 +89,7 @@ export const createOffline = (options, buildListeners = () => ({})) => {
 
   return {
     enhanceStore,
+    enhanceReducer,
     reducer: offlineReducer,
     middleware: reduxOfflineMiddleware,
     _instance: testingInstance
