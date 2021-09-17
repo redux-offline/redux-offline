@@ -1,4 +1,4 @@
-import { Action } from '../../types';
+import { Action } from '../../../types';
 
 function enqueue(outbox: Action[], item: Action) {
   return [...outbox, item];

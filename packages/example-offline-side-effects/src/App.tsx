@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import createPersistedReducer from 'use-persisted-reducer';
 import { offlineSideEffects } from '@redux-offline/offline-side-effects';
-import detectNetwork from '@redux-offline/default-detect-network';
+import detectNetwork from '@redux-offline/detect-network';
 import reducer, { initialState } from './reducer';
 
 const usePersistedOutbox = createPersistedReducer('offline-side-effects');

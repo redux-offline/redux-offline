@@ -1,7 +1,7 @@
 import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
 import { createOffline } from '@redux-offline/redux-offline';
 import { defaults } from '@redux-offline/offline-side-effects';
-import detectNetwork from '@redux-offline/default-detect-network';
+import detectNetwork from '@redux-offline/detect-network';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 

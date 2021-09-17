@@ -99,7 +99,7 @@ const store = async (next, data, action) => {
 
 ### Listeners
 
-The listeners are callbacks that can be called from within the any Middleware, or Triggers. These are the appropriate mechanism for sharing the internal library state with the userland application code.
+The listeners are callbacks that can be called from within any Middleware, or Triggers. These are the appropriate mechanism for sharing the internal library state with the userland application code.
 The library provides some default listeners that are being used by the default middleware and triggers. But the user can extend these to include any other listener that they deem necessary. This is very useful because the user can define a custom middleware that in turn has access to custom listeners.
 
 ```ts

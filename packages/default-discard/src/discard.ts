@@ -1,4 +1,4 @@
-import type { Action } from '../../types';
+import type { Action } from '../../../types';
 
 function discard<E extends { status: number }>(
   error: E,

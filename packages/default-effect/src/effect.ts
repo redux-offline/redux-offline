@@ -1,4 +1,4 @@
-import type { Action } from '../../types';
+import type { Action } from '../../../types';
 
 export function NetworkError(response: {} | string, status: number) {
   this.name = 'NetworkError';

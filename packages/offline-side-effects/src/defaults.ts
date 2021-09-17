@@ -1,7 +1,7 @@
-import defaultQueue from '@redux-offline/default-queue';
-import defaultEffect from '@redux-offline/default-effect';
-import defaultDiscard from '@redux-offline/default-discard';
-import defaultRetry from '@redux-offline/default-retry';
+import defaultQueue from '@redux-offline/queue';
+import defaultEffect from '@redux-offline/effect';
+import defaultDiscard from '@redux-offline/discard';
+import defaultRetry from '@redux-offline/retry';
 import { Options } from './types';
 
 const defaults: Options = {

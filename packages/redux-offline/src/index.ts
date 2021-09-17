@@ -42,7 +42,11 @@ export const createOffline = (options, buildListeners = () => ({})) => {
       ...buildListeners(store)
     };
 
-    instance.offlineSideEffects = createOfflineSideEffects(listeners, options);
+    // the initial state of Redux-Offline reducer is "online: false",
+    // once the detect network kicks-in this gets updated to true.
+    const providedState = { status: 'paused' };
+
+    instance.offlineSideEffects = createOfflineSideEffects(listeners, options, providedState);
 
     // launch network detector
     if (options.detectNetwork) {
@@ -59,9 +63,20 @@ export const createOffline = (options, buildListeners = () => ({})) => {
 
   const reduxOfflineMiddleware = createReduxOfflineMiddleware(instance);
 
+  const testingInstance = new Proxy(instance, {
+    get(target, prop) {
+      if (process.env.NODE_ENV !== 'testing') {
+        console.error('Access to offlineSideEffects instance not allowed, only meant for testing purposes');
+        return null;
+      }
+      return Reflect.get(target, prop);
+    }
+  });
+
   return {
     enhanceStore,
     reducer: offlineReducer,
-    middleware: reduxOfflineMiddleware
+    middleware: reduxOfflineMiddleware,
+    _instance: testingInstance
   };
 };

@@ -1,4 +1,4 @@
-import type { Action } from '../../types';
+import type { Action } from '../../../types';
 
 const exponentialBackoff = [
   1000, // After 1 seconds
