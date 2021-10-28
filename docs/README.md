@@ -1,33 +1,33 @@
-# Table of Contents
+# Website
 
-* [Readme](../README.md)
-* Basics
-  * [Getting Started](basics/getting-started.md)
-  * [Read Resilience](basics/read-resilience.md)
-  * [Write Resilience](basics/write-resilience.md)
-  * [Rollback](basics/rollback.md)
-  * [Commit](basics/commit.md)
-* Recipes
-  * [Customize Requests](recipes/customize-requests.md)
-  * [Immutable.js](recipes/immutable.md)
-  * [Redux-Saga](recipes/redux-saga.md)
-  * [Empty outbox](recipes/empty-outbox.md)
-* Troubleshooting
-  * [Offline queue doesn't trigger on network status change](recipes/troubleshooting/offline-queue-trigger.md)
-* API Reference
-  * [offline()](api/offline.md)
-  * [createOffline()](api/createOffline.md)
-  * [config](api/config.md)
-    * [defaultCommit](api/config.md#defaultcommit)
-    * [defaultRollback](api/config.md#defaultrollback)
-    * [detectNetwork](api/config.md#detectnetwork)
-    * [discard](api/config.md#discard)
-    * [effect](api/config.md#effect)
-    * [offlineStateLens](api/config.md#offlinestatelens)
-    * [persist](api/config.md#persist)
-    * [persistAutoRehydrate](api/config.md#persistautorehydrate)
-    * [persistCallback](api/config.md#persistcallback)
-    * [persistOptions](api/config.md#persistoptions)
-    * [queue](api/config.md#queue)
-    * [retry](api/config.md#retry)
-    * [[EXPERIMENTAL] returnPromises](api/config.md#returnpromises)
+This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+
+### Installation
+
+```
+$ yarn
+```
+
+### Local Development
+
+```
+$ yarn start
+```
+
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+### Build
+
+```
+$ yarn build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+```
+$ GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.

@@ -1,4 +1,7 @@
-# Getting Started
+---
+sidebar_position: 1
+title: "Getting Started"
+---
 
 Making offline-friendly apps is not rocket science, but to make them work well involves dealing with finicky details around persisting state, resilience against flaky networks, optimistically updating user interface state, reliably reverting it back in case of failures, synchronising state in the background, and managing the evolution of the persistent state over long, long periods of time.
 

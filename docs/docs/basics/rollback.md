@@ -1,4 +1,9 @@
-# Optimism will get you places
+---
+sidebar_position: 4
+title: "Rollback"
+---
+
+## Optimism will get you places
 
 When the initial action has been dispatched, you can update your application state in your reducers as you normally would.
 

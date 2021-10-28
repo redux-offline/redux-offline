@@ -1,6 +1,11 @@
-# Configure how requests are made
+---
+sidebar_position: 1
+title: "Customize Requests"
+---
 
-## The effect reconciler
+## Configure how requests are made
+
+### The effect reconciler
 
 `config.effect` and `config.discard` together are responsible for executing a serialized request and resolving it to one of three outcomes. These outcomes and their resulting actions are success and commit, temporary failure and retry, and permanent failure and rollback.
 
