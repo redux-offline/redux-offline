@@ -9,7 +9,7 @@ const config = {
   title: 'Redux Offline',
   tagline: 'Build Offline-First Apps for Web and React Native',
   url: 'https://redux-offline.github.io',
-  baseUrl: '/',
+  baseUrl: '/redux-offline/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
