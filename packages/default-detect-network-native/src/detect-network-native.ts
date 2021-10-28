@@ -1,22 +1,27 @@
 /* eslint no-underscore-dangle: 0 */
 import { AppState } from 'react-native'; // eslint-disable-line
-import NetInfo, { NetInfoConnectedDetails, NetInfoState } from '@react-native-community/netinfo'; // eslint-disable-line
+import NetInfo, {
+  NetInfoConnectedDetails,
+  NetInfoState
+} from '@react-native-community/netinfo'; // eslint-disable-line
 
 type Reach = NetInfoState['type'] | null;
 type IsConnected = boolean | null;
-type IsConnectionExpensive = NetInfoConnectedDetails['isConnectionExpensive'] | null;
+type IsConnectionExpensive =
+  | NetInfoConnectedDetails['isConnectionExpensive']
+  | null;
 
 type DetectNetworkNativeCallback = (connectionInfo: {
-  online: boolean,
+  online: boolean;
   netInfo: {
     isConnectionExpensive: IsConnectionExpensive;
     reach: Reach;
-  }
+  };
 }) => void;
 
 class NativeNetworkDetector {
-  _reach: Reach
-  _isConnected: IsConnected
+  _reach: Reach;
+  _isConnected: IsConnected;
   _isConnectionExpensive: IsConnectionExpensive;
   _callback: DetectNetworkNativeCallback;
   _shouldInitUpdateReach: boolean;
@@ -78,7 +83,7 @@ class NativeNetworkDetector {
   };
 
   _addListeners() {
-    NetInfo.addEventListener(connectionInfo => {
+    NetInfo.addEventListener((connectionInfo) => {
       this._setShouldInitUpdateReach(false);
       this._update(connectionInfo.type);
     });
@@ -101,6 +106,7 @@ class NativeNetworkDetector {
   };
 }
 
-const detectNetworkNative = (callback: DetectNetworkNativeCallback) => new NativeNetworkDetector(callback);
+const detectNetworkNative = (callback: DetectNetworkNativeCallback) =>
+  new NativeNetworkDetector(callback);
 
 export default detectNetworkNative;
