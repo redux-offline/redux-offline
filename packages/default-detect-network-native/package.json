@@ -29,11 +29,11 @@
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "prepublishOnly": "npm run lint && npm run test && npm run build"
+    "prepublishOnly": "npm run lint && npm run test"
   },
   "peerDependencies": {
-    "react-native": ">=0.60.0",
-    "@react-native-community/netinfo": "^6.0.2"
+    "@react-native-community/netinfo": "^6.0.2",
+    "react-native": ">=0.60.0"
   },
   "husky": {
     "hooks": {
@@ -57,11 +57,10 @@
       "limit": "10 KB"
     }
   ],
-  "dependencies": {},
   "devDependencies": {
     "@react-native-community/netinfo": "^6.0.2",
-    "react-native": "^0.65.1",
     "husky": "^4.3.8",
+    "react-native": "^0.65.1",
     "tsdx": "^0.14.1"
   }
 }

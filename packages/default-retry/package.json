@@ -29,9 +29,8 @@
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "prepublishOnly": "npm run lint && npm run test && npm run build"
+    "prepublishOnly": "npm run lint && npm run test"
   },
-  "peerDependencies": {},
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
@@ -54,7 +53,6 @@
       "limit": "10 KB"
     }
   ],
-  "dependencies": {},
   "devDependencies": {
     "husky": "^4.3.8",
     "tsdx": "^0.14.1"
