@@ -1,6 +1,6 @@
 import type { Action } from '../../../types';
 
-function discard<E extends { status: number }>(
+function discard<E extends { status?: number, message?: string }>(
   error: E,
   _action: Action,
   retries = 0

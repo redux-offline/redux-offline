@@ -1,5 +1,6 @@
 import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
 import { createOffline } from '@redux-offline/redux-offline';
+import { OFFLINE_SERIALIZE } from '@redux-offline/redux-offline/src/actions';
 import { defaults } from '@redux-offline/offline-side-effects';
 import detectNetwork from '@redux-offline/detect-network';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -38,9 +39,11 @@ const options = {
   detectNetwork
 };
 
+// Optionally you can blacklist OFFLINE_SERIALIZE to avoid too much noise in the devtools
 const composeEnhancers =
   // @ts-ignore
-  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ as unknown) || compose;
+  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ actionsBlacklist: [OFFLINE_SERIALIZE] }) as unknown)
+  || compose;
 
 // @ts-ignore
 const { middleware, enhanceStore, enhanceReducer } = createOffline(options);
