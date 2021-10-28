@@ -28,7 +28,8 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
   },
   "peerDependencies": {},
   "husky": {
