@@ -12,7 +12,7 @@ export type UpdateState = (type: Updates, payload?: any) => void;
 
 export type Action<T = { [key: string]: any }, C = {}, R = {}> = T & {
   meta: {
-    effect: string;
+    effect: { url: string};
     commit: C;
     rollback: R;
     transaction?: number;
