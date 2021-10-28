@@ -1,11 +1,17 @@
-import defaultEffect, { getHeaders } from '../default-effect';
+import defaultEffect, { getHeaders } from '../effect';
 
 function fetch(body) {
   return Promise.resolve({
     ok: true,
     headers: { get: jest.fn(() => 'application/json') },
     text: jest.fn(() => Promise.resolve(body))
-  });
+  } as unknown as Response);
+}
+
+const meta = {
+  effect: { url: '/any_effect'},
+  commit: {},
+  rollback: {}
 }
 
 let globalFetch;
@@ -13,6 +19,7 @@ let globalFetch;
 beforeAll(() => {
   globalFetch = global.fetch;
 });
+
 afterAll(() => {
   global.fetch = globalFetch;
 });
@@ -23,14 +30,15 @@ test('effector accept JSON stringified object', () => {
     password: 'p4ssw0rd'
   };
 
+  // @ts-ignore
   global.fetch = jest.fn((url, options) => {
     expect(options.headers['content-type']).toEqual('application/json');
-    expect(JSON.parse(options.body)).toEqual(body);
+    expect(JSON.parse(options.body as string)).toEqual(body);
 
     return fetch('');
-  });
+  })
 
-  return defaultEffect({ body: JSON.stringify(body) }).then(body2 => {
+  return defaultEffect({ body: JSON.stringify(body) }, { meta }).then(body2 => {
     expect(body2).toEqual(null);
   });
 });
@@ -41,23 +49,25 @@ test('effector accept JSON object', () => {
     password: 'p4ssw0rd'
   };
 
+  // @ts-ignore
   global.fetch = jest.fn((url, options) => {
     expect(options.headers['content-type']).toEqual('application/json');
-    expect(JSON.parse(options.body)).toEqual(json);
+    expect(JSON.parse(options.body as string)).toEqual(json);
 
     return fetch('');
   });
 
-  return defaultEffect({ json }).then(body2 => {
+  return defaultEffect({ json }, { meta }).then(body2 => {
     expect(body2).toEqual(null);
   });
 });
 
 test('effector rejects invalid JSON object', () => {
   const circularObject = {};
+  // @ts-ignore
   circularObject.self = circularObject;
 
-  return defaultEffect({ json: circularObject }).catch(error => {
+  return defaultEffect({ json: circularObject }, { meta }).catch(error => {
     expect(error).toBeInstanceOf(TypeError);
   });
 });
@@ -67,7 +77,7 @@ test('effector receive JSON and response objects', () => {
 
   global.fetch = jest.fn(() => fetch(JSON.stringify(body)));
 
-  return defaultEffect({}).then(body2 => {
+  return defaultEffect({}, { meta }).then(body2 => {
     expect(body2).toEqual(body);
   });
 });
@@ -96,15 +106,17 @@ test('effector accepts content-type and Content-Type headers', () => {
 
 test('effector receives object as multipart/form-data', () => {
   const body = new FormData();
-  body.append('id', 1234);
+  body.append('id', '1234');
   body.append('name', 'john');
   body.forEach((value, key) => {
     body[key] = value;
   });
 
+  // @ts-ignore
   global.fetch = jest.fn((url, options) => {
     expect(options.headers['content-type']).toEqual('multipart/form-data');
     expect(options.body).toBeInstanceOf(FormData);
+    //@ts-ignore
     expect(options.body.get('id')).toBe('1234');
     return fetch('');
   });
@@ -112,7 +124,7 @@ test('effector receives object as multipart/form-data', () => {
   return defaultEffect({
     body,
     headers: { 'content-type': 'multipart/form-data' }
-  }).then(body2 => {
+  }, { meta }).then(body2 => {
     expect(body2).toEqual(null);
   });
 });
