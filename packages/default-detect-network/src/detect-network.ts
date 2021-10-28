@@ -9,7 +9,7 @@ const handle = (callback: DetectNetworkCallback, online: boolean) => {
   }
 };
 
-function detectNetwork (callback: DetectNetworkCallback) {
+function detectNetwork(callback: DetectNetworkCallback) {
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('online', () => handle(callback, true));
     window.addEventListener('offline', () => handle(callback, false));

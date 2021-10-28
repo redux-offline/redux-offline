@@ -5,6 +5,8 @@
     "husky": "^4.3.8",
     "lerna": "^4.0.0",
     "tsdx": "^0.14.1",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "react-native": "^0.66.1",
+    "@react-native-community/netinfo": "^6.0.2"
   }
 }
