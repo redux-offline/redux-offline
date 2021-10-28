@@ -1,7 +1,7 @@
 {
   "name": "@redux-offline/example-redux-offline",
-  "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "dependencies": {
     "@redux-offline/detect-network": "^0.1.0",
     "@redux-offline/offline-side-effects": "^0.1.1",

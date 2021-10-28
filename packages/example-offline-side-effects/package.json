@@ -1,8 +1,7 @@
 {
   "name": "@redux-offline/example-offline-side-effects",
-  "version": "0.1.1",
+  "private": true,
   "license": "MIT",
-  "main": "dist/index.js",
   "dependencies": {
     "@redux-offline/detect-network": "^0.1.0",
     "@redux-offline/offline-side-effects": "^0.1.1",
