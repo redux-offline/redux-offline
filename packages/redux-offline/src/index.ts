@@ -68,9 +68,16 @@ export const createOffline = (options, buildListeners = () => ({})) => {
    */
   const enhanceReducer = (reducer) => {
     return (state: any, action: any): any => {
+      let offlineState;
+      let otherState;
+      if (state) {
+        const { offline, ...other } = state;
+        offlineState = offline;
+        otherState = other;
+      }
       return {
-        ...reducer(state, action),
-        offline: offlineReducer(state, action)
+        ...reducer(otherState, action),
+        offline: offlineReducer(offlineState, action)
       }
     };
   }
