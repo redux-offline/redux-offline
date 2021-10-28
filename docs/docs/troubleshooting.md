@@ -1,9 +1,14 @@
-# Offline queue doesn't trigger on network status change
-If you have actions in your redux-offline queue, all of them should be dispatched as soon as your app goes online again. 
+---
+sidebar_position: 4
+title: Troubleshooting
+---
+
+## Offline queue doesn't trigger on network status change
+If you have actions in your redux-offline queue, all of them should be dispatched as soon as your app goes online again.
 
 If you experience the queue *doesn't* execute, then this guide will explain how to fix it, and why it works.
 
-## TL;DR - The fix
+### TL;DR - The fix
 For you in a hurry; The error is caused by your redux store getting configured incorrectly, when you you use the `createOffline` function instead of using the default setup.
 
 When composing your store's enhances, the offlineEnhancer ***MUST*** come first.
@@ -29,7 +34,7 @@ const store = createStore(
 );
 ```
 
-## Why
+### Why
 The reason why the store configuration needs to be as described above is very well explained by github user @j8seangel in this issue: [Fix offline not starting after rehydrate](https://github.com/forest-watcher/forest-watcher/pull/303) (He's also the original author of above fix). I'll quote his answer here:
 
 >Order matters, swapping two words could fix a critical bug 🎉

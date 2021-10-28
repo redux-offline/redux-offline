@@ -1,3 +1,8 @@
+---
+sidebar_position: 3
+title: Redux-Saga
+---
+
 # Use with Redux-Saga
 
 Redux-Offline has partial support for Sagas.

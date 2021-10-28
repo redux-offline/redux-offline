@@ -1,4 +1,9 @@
-# That's all she wrote
+---
+sidebar_position: 3
+title: "Write Resilience"
+---
+
+## That's all she wrote
 
 Persisting and rehydrating state (which is a term we use for reading the state back from the disk and into our store) will get us **Read**-resilience. Our app will work offline as long as the user only wants to read from the state. We also want to support **Write**-resilience: the user should be able to do (some) actions while offline, and be able to safely assume that they will eventually be reconciled and sent to our backend.
 

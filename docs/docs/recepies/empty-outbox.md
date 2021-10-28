@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # Empty Outbox
 
 If you want to drop any unresolved offline actions (for instance when a user logs out, switches to a different organisation)
