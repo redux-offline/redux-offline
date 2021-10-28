@@ -3,7 +3,7 @@ import discard from '../discard';
 const meta = {
   commit: {},
   rollback: {},
-  effect: 'any_effect'
+  effect: { url: '/any_effect' }
 }
 
 test('retries non-http error once', () => {
