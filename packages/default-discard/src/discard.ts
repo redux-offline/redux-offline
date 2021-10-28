@@ -9,6 +9,7 @@ function discard<E extends { status: number }>(
     // discard http 4xx errors
     return error.status >= 400 && error.status < 500;
   }
+  // BREAKING CHANGE!
   // not a network error -> we retry once
   return retries >= 1;
 }

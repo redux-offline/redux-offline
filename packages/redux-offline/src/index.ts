@@ -86,7 +86,7 @@ export const createOffline = (options, buildListeners = () => ({})) => {
 
   const testingInstance = new Proxy(instance, {
     get(target, prop) {
-      if (process.env.NODE_ENV !== 'testing') {
+      if (process.env.NODE_ENV !== 'test') {
         console.error('Access to offlineSideEffects instance not allowed, only meant for testing purposes');
         return null;
       }
