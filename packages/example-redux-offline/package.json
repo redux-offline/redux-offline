@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@redux-offline/detect-network": "^0.1.0",
     "@redux-offline/offline-side-effects": "^0.1.1",
-    "@redux-offline/redux-offline": "^2.6.0",
+    "@redux-offline/redux-offline": "3.0.0-alpha.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

@@ -1,10 +1,14 @@
-import { Options, Listeners, Context } from './types';
+import { Options, Listeners, Context, State } from './types';
 import { defaults } from './defaults';
 import { createUpdater } from './updater';
 import { createTriggers } from './triggers';
 import { createStream } from './stream';
 
-export const offlineSideEffects = (providedListeners: Partial<Listeners>, providedOptions?: Options) => {
+export const offlineSideEffects = (
+  providedListeners: Partial<Listeners>,
+  providedOptions?: Options,
+  providedState?: Partial<State>
+) => {
   const listeners = {
     onRequest: () => {},
     onCommit: () => {},
@@ -18,7 +22,7 @@ export const offlineSideEffects = (providedListeners: Partial<Listeners>, provid
     ...defaults,
     ...providedOptions
   };
-  const updater = createUpdater(options, listeners);
+  const updater = createUpdater(options, listeners, providedState);
   const context: Context = {
     options,
     listeners,

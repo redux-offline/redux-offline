@@ -1,6 +1,7 @@
 import { applyMiddleware, compose, createStore, combineReducers } from 'redux';
 import { createOffline } from '@redux-offline/redux-offline';
 import { defaults } from '@redux-offline/offline-side-effects';
+import detectNetwork from '@redux-offline/detect-network';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -34,22 +35,7 @@ const options = {
   retry(_action, retries) {
     return (retries + 1) * 1000;
   },
-  detectNetwork: (callback) => {
-    const onOnline = () => callback(true);
-    const onOffline = () => callback(false);
-    if (typeof window !== 'undefined' && window.addEventListener) {
-      window.addEventListener('online', onOnline);
-      window.addEventListener('offline', onOffline);
-      callback(window.navigator.onLine);
-    }
-
-    return () => {
-      if (typeof window !== 'undefined' && window.removeEventListener) {
-        window.removeEventListener('online', onOnline);
-        window.removeEventListener('offline', onOffline);
-      }
-    };
-  }
+  detectNetwork
 };
 
 const composeEnhancers =
@@ -57,12 +43,9 @@ const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ as unknown) || compose;
 
 // @ts-ignore
-const { middleware, enhanceStore, reducer } = createOffline(options);
-const rootReducer = combineReducers({
-  tick: tickReducer,
-  offline: reducer
-});
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const { middleware, enhanceStore, enhanceReducer } = createOffline(options);
+const rootReducer = combineReducers({ tick: tickReducer });
+const persistedReducer = persistReducer(persistConfig, enhanceReducer(rootReducer));
 const store = createStore(
   persistedReducer,
   undefined,

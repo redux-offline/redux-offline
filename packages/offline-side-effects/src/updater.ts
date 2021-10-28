@@ -8,8 +8,12 @@ const initialState: State = {
   lastTransaction: 0
 };
 
-export const createUpdater = (options: Options, listeners: Listeners): Updater => {
-  const state = { ...initialState };
+export const createUpdater = (
+  options: Options,
+  listeners: Listeners,
+  providedState: Partial<State> = {}
+): Updater => {
+  const state = { ...initialState, ...providedState };
   const updateState: UpdateState = (type: Updates, payload = null) => {
     if (type === Updates.rehydrate) {
       if (payload.outbox) {
