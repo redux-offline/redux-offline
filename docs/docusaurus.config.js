@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Redux Offline',
   tagline: 'Build Offline-First Apps for Web and React Native',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://redux-offline.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

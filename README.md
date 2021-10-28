@@ -1,5 +1,5 @@
 <p>
-  <img alt="redux-offline" src="docs/logo.png" width="300"></img>
+  <img alt="redux-offline" src="docs/static/img/redux-offline.png" width="300"></img>
 </p>
 <p>
   <a title='License' href="https://raw.githubusercontent.com/redux-offline/redux-offline/master/LICENSE" height="18">
