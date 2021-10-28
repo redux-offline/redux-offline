@@ -1,6 +1,9 @@
 import { Action, Context, Stream, Updates, State } from './types';
 
-export function createTriggers(stream: Stream, { updater, listeners }: Context) {
+export function createTriggers(
+  stream: Stream,
+  { updater, listeners }: Context
+) {
   const [state, updateState] = updater;
 
   const actionWasRequested = (action: Action) => {

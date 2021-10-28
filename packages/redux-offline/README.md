@@ -26,23 +26,26 @@ Persistent Redux store for _Reasonaboutable_:tm: Offline-First applications, wit
 ##### 1. Install with npm (or [Yarn](https://yarnpkg.com))
 
 ##### For React Native 0.60+
+
 ```shell
 npm install --save @redux-offline/redux-offline@native
 ```
 
 #### For React Native Expo SDK 36
+
 ```shell
 npm install --save @redux-offline/redux-offline@expo
 ```
 
 #### For React Native <= 0.59
+
 ```shell
 npm install --save @redux-offline/redux-offline
 ```
 
 ##### 2. Add the `offline` [store enhancer](http://redux.js.org/docs/Glossary.html#store-enhancer) with `compose`
-```js
 
+```js
 import { applyMiddleware, createStore, compose } from 'redux';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
@@ -52,17 +55,14 @@ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 const store = createStore(
   reducer,
   preloadedState,
-  compose(
-    applyMiddleware(middleware),
-    offline(offlineConfig)
-  )
+  compose(applyMiddleware(middleware), offline(offlineConfig))
 );
 ```
 
 ##### 3. Decorate actions with offline metadata
 
 ```js
-const followUser = userId => ({
+const followUser = (userId) => ({
   type: 'FOLLOW_USER_REQUEST',
   payload: { userId },
   meta: {
@@ -87,7 +87,12 @@ const registerUser = (name, email) => ({
   meta: {
     offline: {
       // the network action to execute:
-      effect: { url: '/api/register', method: 'POST', body: `name=${name}&email=${email}`, headers: { 'content-type': 'application/x-www-form-urlencoded' } },
+      effect: {
+        url: '/api/register',
+        method: 'POST',
+        body: `name=${name}&email=${email}`,
+        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+      },
       // action to dispatch when effect succeeds:
       commit: { type: 'REGISTER_USER_COMMIT', meta: { name, email } },
       // action to dispatch if network action fails permanently:
@@ -104,7 +109,8 @@ If writing a native app for Android, you'll need to make sure to request the per
 ```xml
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
-* * *
+
+---
 
 See [Documentation](docs/README.md) for configuration options, the full API, and common recipes.
 
@@ -127,8 +133,8 @@ In case you want to use a custom [redux-persist](https://github.com/rt2zz/redux-
 
 Redux Offline is a distillation of patterns discovered while building apps using previously existing libraries:
 
-* Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
-* Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4)
+- Forbes Lindesay's [redux-optimist](https://github.com/ForbesLindesay/redux-optimist)
+- Zack Story's [redux-persist](https://github.com/rt2zz/redux-persist/tree/v4)
 
 Without their work, Redux Offline wouldn't exist. If you like the ideas behind Redux Offline, but want to build your own stack from lower-level components, these are good places to start.
 

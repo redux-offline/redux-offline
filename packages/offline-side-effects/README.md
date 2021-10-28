@@ -11,7 +11,9 @@ The main aspects that this library focuses on are:
 - Requests persistence across sessions
 
 ## Options
+
 The library accepts some config options for high level customisation:
+
 ```ts
 type Options = {
   queue: {
@@ -20,7 +22,11 @@ type Options = {
     dequeue: (outbox: Action[], completed: Action) => Action[];
   };
   effect: (requestInfo: RequestInfo) => Promise<unknown>;
-  discard: (error: UnknownError, action: Action, retries: number) => Promise<boolean> | boolean;
+  discard: (
+    error: UnknownError,
+    action: Action,
+    retries: number
+  ) => Promise<boolean> | boolean;
   retry: (action: Action, retries: number) => number | null;
   alterStream: (
     defaultMiddlewareChain: DefaultMiddlewareChain,
@@ -28,6 +34,7 @@ type Options = {
   ) => Middleware<any, any>[];
 };
 ```
+
 ## API
 
 The library contains 3 actors: Middleware, Listeners and Triggers. The different parts of the system are glued together by the Context object.
@@ -78,7 +85,7 @@ A middleware will receive as first argument the async function `next`, the remai
 ```js
 // Example
 
-const processOutbox = async next => {
+const processOutbox = async (next) => {
   const action = peek(outbox);
   if (action) {
     await next(action); // where next will be the "send" middleware

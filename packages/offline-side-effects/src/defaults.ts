@@ -9,7 +9,7 @@ const defaults: Options = {
   effect: defaultEffect,
   discard: defaultDiscard,
   retry: defaultRetry,
-  alterStream: (defaultMiddlewareChain, _context) => defaultMiddlewareChain,
+  alterStream: (defaultMiddlewareChain, _context) => defaultMiddlewareChain
 };
 
 export { defaults };

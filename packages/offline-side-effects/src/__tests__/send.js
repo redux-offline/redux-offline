@@ -6,7 +6,7 @@ import offlineActionTracker from '../offlineActionTracker';
 
 const DELAY = 1000;
 const completedMeta = {
-  meta: expect.objectContaining({ completed: expect.any(Boolean) })
+  meta: expect.objectContaining({ completed: expect.any(Boolean) }),
 };
 
 function setup(partialConfig) {
@@ -16,7 +16,7 @@ function setup(partialConfig) {
     retry: () => DELAY,
     defaultCommit: defaultCommitAction,
     defaultRollback: defaultRollbackAction,
-    offlineActionTracker: offlineActionTracker.withoutPromises
+    offlineActionTracker: offlineActionTracker.withoutPromises,
   };
 
   return {
@@ -26,13 +26,13 @@ function setup(partialConfig) {
         offline: {
           effect: { url: '/api/resource', method: 'get' },
           commit: { type: 'COMMIT' },
-          rollback: { type: 'ROLLBACK' }
+          rollback: { type: 'ROLLBACK' },
         },
-        transaction: 0
-      }
+        transaction: 0,
+      },
     },
     config: { ...defaultConfig, ...partialConfig },
-    dispatch: jest.fn()
+    dispatch: jest.fn(),
   };
 }
 
@@ -110,7 +110,9 @@ describe('when request fails', () => {
 
   test('dispatches complete action when discard throw an exception', () => {
     const effect = () => Promise.reject();
-    const discard = () => {throw new Error};
+    const discard = () => {
+      throw new Error();
+    };
     const { action, config, dispatch } = setup({ effect, discard });
     const promise = send(action, dispatch, config);
 
@@ -138,10 +140,12 @@ describe('when request succeeds and commit is undefined', () => {
 
     const { config, dispatch } = setup({ effect });
 
-    const promise = send(action, dispatch, config)
+    const promise = send(action, dispatch, config);
 
     return promise.then(() => {
-      expect(dispatch).toBeCalledWith(expect.objectContaining(defaultCommitAction));
+      expect(dispatch).toBeCalledWith(
+        expect.objectContaining(defaultCommitAction)
+      );
       expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
     });
   });
@@ -163,10 +167,12 @@ describe('when request is to be discarded and rollback is undefined', () => {
 
     const { config, dispatch } = setup({ effect, discard });
 
-    const promise = send(action, dispatch, config)
+    const promise = send(action, dispatch, config);
 
     return promise.then(() => {
-      expect(dispatch).toBeCalledWith(expect.objectContaining(defaultRollbackAction));
+      expect(dispatch).toBeCalledWith(
+        expect.objectContaining(defaultRollbackAction)
+      );
       expect(dispatch).toBeCalledWith(expect.objectContaining(completedMeta));
     });
   });
@@ -178,15 +184,15 @@ describe('offlineActionTracker', () => {
     trackerMock = {
       registerAction: () => {},
       resolveAction: jest.fn(),
-      rejectAction: jest.fn()
-    }
-  })
+      rejectAction: jest.fn(),
+    };
+  });
   test('resolves action on successful complete', () => {
     const effect = () => Promise.resolve();
     const { action, config, dispatch } = setup({ effect });
     const promise = send(action, dispatch, {
       ...config,
-      offlineActionTracker: trackerMock
+      offlineActionTracker: trackerMock,
     });
 
     expect.assertions(1);
@@ -199,7 +205,7 @@ describe('offlineActionTracker', () => {
     const { action, config, dispatch } = setup({ effect, discard });
     const promise = send(action, dispatch, {
       ...config,
-      offlineActionTracker: trackerMock
+      offlineActionTracker: trackerMock,
     });
 
     expect.assertions(1);

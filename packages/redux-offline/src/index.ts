@@ -46,14 +46,21 @@ export const createOffline = (options, buildListeners = () => ({})) => {
     // once the detect network kicks-in this gets updated to true.
     const providedState = { status: 'paused' };
 
-    instance.offlineSideEffects = createOfflineSideEffects(listeners, options, providedState);
+    instance.offlineSideEffects = createOfflineSideEffects(
+      listeners,
+      options,
+      providedState
+    );
 
     // launch network detector
     if (options.detectNetwork) {
       options.detectNetwork(({ online, netInfo }) => {
         instance.offlineSideEffects.setPaused(!online);
         if (netInfo) {
-          store.dispatch({ type: OFFLINE_UPDATE_NETINFO, payload: { netInfo } });
+          store.dispatch({
+            type: OFFLINE_UPDATE_NETINFO,
+            payload: { netInfo }
+          });
         }
       });
     }
@@ -78,16 +85,18 @@ export const createOffline = (options, buildListeners = () => ({})) => {
       return {
         ...reducer(otherState, action),
         offline: offlineReducer(offlineState, action)
-      }
+      };
     };
-  }
+  };
 
   const reduxOfflineMiddleware = createReduxOfflineMiddleware(instance);
 
   const testingInstance = new Proxy(instance, {
     get(target, prop) {
       if (process.env.NODE_ENV !== 'test') {
-        console.error('Access to offlineSideEffects instance not allowed, only meant for testing purposes');
+        console.error(
+          'Access to offlineSideEffects instance not allowed, only meant for testing purposes'
+        );
         return null;
       }
       return Reflect.get(target, prop);

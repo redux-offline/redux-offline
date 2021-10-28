@@ -36,7 +36,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint --fix"
     }
   },
   "prettier": {
@@ -58,9 +58,5 @@
   ],
   "dependencies": {
     "@redux-offline/offline-side-effects": "^0.1.1"
-  },
-  "devDependencies": {
-    "husky": "^4.3.8",
-    "tsdx": "^0.14.1"
   }
 }

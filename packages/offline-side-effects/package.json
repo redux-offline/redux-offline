@@ -34,14 +34,14 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint --fix"
     }
   },
   "prettier": {
-    "printWidth": 80,
     "semi": true,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "trailingComma": "none",
+    "arrowParens": "always"
   },
   "module": "dist/offline-side-effects.esm.js",
   "size-limit": [
@@ -54,14 +54,10 @@
       "limit": "10 KB"
     }
   ],
-  "devDependencies": {
-    "husky": "^4.3.8",
-    "tsdx": "^0.14.1"
-  },
   "dependencies": {
+    "@redux-offline/discard": "^0.1.0",
     "@redux-offline/effect": "^0.1.0",
     "@redux-offline/queue": "^0.1.0",
-    "@redux-offline/retry": "^0.1.0",
-    "@redux-offline/discard": "^0.1.0"
+    "@redux-offline/retry": "^0.1.0"
   }
 }

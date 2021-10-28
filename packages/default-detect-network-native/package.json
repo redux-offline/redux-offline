@@ -37,7 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint --fix"
     }
   },
   "prettier": {
@@ -56,11 +56,5 @@
       "path": "dist/detect-network-native.esm.js",
       "limit": "10 KB"
     }
-  ],
-  "devDependencies": {
-    "@react-native-community/netinfo": "^6.0.2",
-    "husky": "^4.3.8",
-    "react-native": "^0.65.1",
-    "tsdx": "^0.14.1"
-  }
+  ]
 }

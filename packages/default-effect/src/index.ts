@@ -1,1 +1,1 @@
-export { NetworkError, default } from './effect'
+export { NetworkError, default } from './effect';

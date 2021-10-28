@@ -7,7 +7,7 @@ function RequestsQueue({ actions }) {
 
   return (
     <ul>
-      {actions.map(action => (
+      {actions.map((action) => (
         <li key={action.meta.transaction}>
           <span>{action.type}</span>
           <span>#{action.meta.transaction}</span>

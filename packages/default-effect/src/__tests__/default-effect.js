@@ -30,7 +30,7 @@ test('effector accept JSON stringified object', () => {
     return fetch('');
   });
 
-  return defaultEffect({ body: JSON.stringify(body) }).then(body2 => {
+  return defaultEffect({ body: JSON.stringify(body) }).then((body2) => {
     expect(body2).toEqual(null);
   });
 });
@@ -48,7 +48,7 @@ test('effector accept JSON object', () => {
     return fetch('');
   });
 
-  return defaultEffect({ json }).then(body2 => {
+  return defaultEffect({ json }).then((body2) => {
     expect(body2).toEqual(null);
   });
 });
@@ -57,7 +57,7 @@ test('effector rejects invalid JSON object', () => {
   const circularObject = {};
   circularObject.self = circularObject;
 
-  return defaultEffect({ json: circularObject }).catch(error => {
+  return defaultEffect({ json: circularObject }).catch((error) => {
     expect(error).toBeInstanceOf(TypeError);
   });
 });
@@ -67,7 +67,7 @@ test('effector receive JSON and response objects', () => {
 
   global.fetch = jest.fn(() => fetch(JSON.stringify(body)));
 
-  return defaultEffect({}).then(body2 => {
+  return defaultEffect({}).then((body2) => {
     expect(body2).toEqual(body);
   });
 });
@@ -112,7 +112,7 @@ test('effector receives object as multipart/form-data', () => {
   return defaultEffect({
     body,
     headers: { 'content-type': 'multipart/form-data' }
-  }).then(body2 => {
+  }).then((body2) => {
     expect(body2).toEqual(null);
   });
 });

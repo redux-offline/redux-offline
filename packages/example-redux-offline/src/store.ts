@@ -42,13 +42,17 @@ const options = {
 // Optionally you can blacklist OFFLINE_SERIALIZE to avoid too much noise in the devtools
 const composeEnhancers =
   // @ts-ignore
-  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ actionsBlacklist: [OFFLINE_SERIALIZE] }) as unknown)
-  || compose;
+  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+    actionsBlacklist: [OFFLINE_SERIALIZE]
+  }) as unknown) || compose;
 
 // @ts-ignore
 const { middleware, enhanceStore, enhanceReducer } = createOffline(options);
 const rootReducer = combineReducers({ tick: tickReducer });
-const persistedReducer = persistReducer(persistConfig, enhanceReducer(rootReducer));
+const persistedReducer = persistReducer(
+  persistConfig,
+  enhanceReducer(rootReducer)
+);
 const store = createStore(
   persistedReducer,
   undefined,

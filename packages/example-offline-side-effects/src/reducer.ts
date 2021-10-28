@@ -9,8 +9,9 @@ export const initialState = {
 };
 
 function reducer(state = initialState, action: any) {
-  return produce(state, draft => {
-    const getIndexToUpdate = id => draft.users.findIndex(user => user.id === id);
+  return produce(state, (draft) => {
+    const getIndexToUpdate = (id) =>
+      draft.users.findIndex((user) => user.id === id);
     if (action.type === 'busy') {
       draft.status = action.payload;
     }

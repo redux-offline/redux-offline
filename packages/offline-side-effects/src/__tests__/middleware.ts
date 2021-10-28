@@ -27,7 +27,6 @@ describe('on scheduleRetry', () => {
     // const { config, store, next } = setup();
     // createOfflineMiddleware(config)(store)(next)(scheduleRetry(delay));
     // jest.runTimersToTime(delay);
-
     // expect.assertions(1);
     // const nextAction = store.getState().offline.outbox[0];
     // return Promise.resolve().then(() =>

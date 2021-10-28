@@ -33,7 +33,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint --fix"
     }
   },
   "prettier": {
@@ -52,9 +52,5 @@
       "path": "dist/queue.esm.js",
       "limit": "10 KB"
     }
-  ],
-  "devDependencies": {
-    "husky": "^4.3.8",
-    "tsdx": "^0.14.1"
-  }
+  ]
 }

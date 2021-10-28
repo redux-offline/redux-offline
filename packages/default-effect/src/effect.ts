@@ -27,7 +27,9 @@ const getResponseBody = (res: any): Promise<any> => {
   return res.text();
 };
 
-export const getHeaders = (headers: Record<string, string>): Record<string, string> => {
+export const getHeaders = (
+  headers: Record<string, string>
+): Record<string, string> => {
   const {
     'Content-Type': contentTypeCapitalized,
     'content-type': contentTypeLowerCase,
@@ -40,8 +42,8 @@ export const getHeaders = (headers: Record<string, string>): Record<string, stri
 
 export const getFormData = (object: {}) => {
   const formData = new FormData();
-  Object.keys(object).forEach(key => {
-    Object.keys(object[key]).forEach(innerObj => {
+  Object.keys(object).forEach((key) => {
+    Object.keys(object[key]).forEach((innerObj) => {
       const newObj = object[key][innerObj];
       formData.append(newObj[0], newObj[1]);
     });
@@ -70,11 +72,11 @@ export default (effect: any, _action: Action): Promise<any> => {
       return Promise.reject(e);
     }
   }
-  return fetch(url, { ...options, headers }).then(res => {
+  return fetch(url, { ...options, headers }).then((res) => {
     if (res.ok) {
       return getResponseBody(res);
     }
-    return getResponseBody(res).then(body => {
+    return getResponseBody(res).then((body) => {
       throw new NetworkError(body || '', res.status);
     });
   });

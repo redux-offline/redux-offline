@@ -2,6 +2,9 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "husky": "^4.3.8",
+    "lerna": "^4.0.0",
+    "tsdx": "^0.14.1",
+    "prettier": "^2.4.1"
   }
 }

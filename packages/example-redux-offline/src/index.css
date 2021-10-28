@@ -25,7 +25,7 @@ body {
 }
 
 .promise-box.success > code {
-     color: #1cbc51;
+  color: #1cbc51;
 }
 
 .promise-box.error > code {

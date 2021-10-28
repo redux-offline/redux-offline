@@ -1,4 +1,12 @@
-import { State, UpdateState, Updater, Updates, Options, Listeners, Action } from './types';
+import {
+  State,
+  UpdateState,
+  Updater,
+  Updates,
+  Options,
+  Listeners,
+  Action
+} from './types';
 
 const initialState: State = {
   outbox: [],

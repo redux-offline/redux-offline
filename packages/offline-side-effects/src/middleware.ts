@@ -6,12 +6,12 @@ import {
   RetryMiddleware
 } from './types';
 
-const sleep = ms => new Promise(res => setTimeout(res, ms));
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
 export function createMiddleware({ updater, options, listeners }: Context) {
   const [state, updateState] = updater;
 
-  const processOutbox: ProcessOutboxMiddleware = async next => {
+  const processOutbox: ProcessOutboxMiddleware = async (next) => {
     const peeked = options.queue.peek(state.outbox);
     if (peeked) {
       if (state.retryScheduled !== null) {

@@ -10,7 +10,7 @@ const exponentialBackoff = [
   1000 * 60 * 5, // After 5 minutes
   1000 * 60 * 10, // After 10 minutes
   1000 * 60 * 30, // After 30 minutes
-  1000 * 60 * 60, // After 1 hour
+  1000 * 60 * 60 // After 1 hour
 ];
 
 export default (_action: Action, retries: number): number | null =>

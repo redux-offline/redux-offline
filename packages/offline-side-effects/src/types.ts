@@ -42,7 +42,11 @@ export type ProcessOutboxMiddleware = Middleware<undefined[], [Action]>;
 export type SendMiddleware = Middleware<[Action], [UnknownError, Action]>;
 export type RetryMiddleware = Middleware<[UnknownError, Action], undefined[]>;
 
-export type DefaultMiddlewareChain = [ProcessOutboxMiddleware, SendMiddleware, RetryMiddleware];
+export type DefaultMiddlewareChain = [
+  ProcessOutboxMiddleware,
+  SendMiddleware,
+  RetryMiddleware
+];
 
 export type Listeners = {
   [customListenersName: string]: (...args: any[]) => void;
@@ -71,7 +75,11 @@ export type Options = {
     dequeue: (outbox: Action[], completed: Action) => Action[];
   };
   effect: (requestInfo: RequestInfo) => Promise<unknown>;
-  discard: (error: UnknownError, action: Action, retries: number) => Promise<boolean> | boolean;
+  discard: (
+    error: UnknownError,
+    action: Action,
+    retries: number
+  ) => Promise<boolean> | boolean;
   retry: (action: Action, retries: number) => number | null;
   alterStream: (
     defaultMiddlewareChain: DefaultMiddlewareChain,

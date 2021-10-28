@@ -3,6 +3,7 @@ Visualization of Redux Offline's request resolution.
 ## Installation
 
 Install
+
 ```bash
 yarn
 ```
