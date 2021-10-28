@@ -1,1 +1,1 @@
-export { default } from './detect-network-native'
+export { default } from './detect-network-native';
