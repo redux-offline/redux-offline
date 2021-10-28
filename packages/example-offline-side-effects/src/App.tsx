@@ -49,7 +49,7 @@ function App() {
         type: 'request',
         payload: { _id },
         meta: {
-          effect: `https://jsonplaceholder.typicode.com/todos/${_id}`,
+          effect: { url: `https://jsonplaceholder.typicode.com/todos/${_id}` },
           commit: { type: 'commit', meta: { _id } },
           rollback: { type: 'rollback', meta: { _id } }
         }
