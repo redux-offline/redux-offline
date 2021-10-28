@@ -1,0 +1,66 @@
+{
+  "name": "@redux-offline/offline-side-effects",
+  "version": "0.1.1",
+  "description": "The JS focused library for offline first async side effects.",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redux-offline/redux-offline.git"
+  },
+  "bugs": {
+    "url": "https://github.com/redux-offline/redux-offline/issues"
+  },
+  "homepage": "https://github.com/redux-offline/redux-offline/tree/main/packages/offline-side-effects#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "directories": {
+    "lib": "dist",
+    "test": "test"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "module": "dist/offline-side-effects.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/offline-side-effects.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/offline-side-effects.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "husky": "^4.3.8",
+    "tsdx": "^0.14.1"
+  },
+  "dependencies": {
+    "@redux-offline/effect": "^0.1.0",
+    "@redux-offline/queue": "^0.1.0",
+    "@redux-offline/retry": "^0.1.0",
+    "@redux-offline/discard": "^0.1.0"
+  }
+}

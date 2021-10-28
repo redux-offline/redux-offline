@@ -1,0 +1,47 @@
+{
+  "name": "@redux-offline/example-offline-side-effects",
+  "version": "0.1.1",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@redux-offline/detect-network": "^0.1.0",
+    "@redux-offline/offline-side-effects": "^0.1.1",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^17.0.3",
+    "express": "^4.17.1",
+    "immer": "^8.0.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.2.4",
+    "react-scripts": "^4.0.3",
+    "redux": "^4.1.0",
+    "redux-persist": "^6.0.0",
+    "typescript": "^4.2.4",
+    "use-persisted-reducer": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
