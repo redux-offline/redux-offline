@@ -87,7 +87,7 @@ Receives the rejection error from `config.effect`, the related offline action, a
 
 The default implementation discards only on client errors.
 
-See [Customize Requests](/docs/recepies/customize-requests) for more details.
+See [Customize Requests](/docs/recipes/customize-requests) for more details.
 
 ## effect
 
@@ -95,7 +95,7 @@ The effect reconciler resolves offline actions to network requests.
 
 Called with `action.meta.offline.effect` and the action itself, this method must return a Promise. Resolve the promise if the request is a success and reject otherwise. If rejected, the error will be used by `config.discard` to decide whether to attempt the request again.
 
-See [Customize Requests](/docs/recepies/customize-requests) for more details.
+See [Customize Requests](/docs/recipes/customize-requests) for more details.
 
 ## offlineStateLens
 
