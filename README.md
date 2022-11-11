@@ -13,7 +13,7 @@
   </a>
 </p>
 
-🚨🚨🚨🚨 **v3** is coming soon! Check the progress updates [HERE](https://github.com/redux-offline/redux-offline/issues/392)
+🚨🚨🚨🚨 **Maintainers wanted**
 
 <br>
 
