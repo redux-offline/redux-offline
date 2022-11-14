@@ -1,4 +1,4 @@
-import offlineActionTracker from '../offlineActionTracker.js';
+import offlineActionTracker from '../src/offlineActionTracker.js';
 const {
   registerAction,
   resolveAction,
