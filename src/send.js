@@ -33,7 +33,7 @@ const complete = (
   return (({
     ...action,
     payload: result.payload,
-    meta: { ...action.meta, success: result.success, completed: true }
+    meta: { ...action.meta, success: result.success, completed: true, transaction: offlineAction.meta.transaction }
   }: any): ResultAction);
 };
 
