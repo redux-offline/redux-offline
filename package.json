@@ -1,6 +1,6 @@
 {
   "name": "@redux-offline/redux-offline",
-  "version": "2.6.0",
+  "version": "2.6.0-netinfo.1",
   "description": "Redux Offline-First Architecture",
   "main": "lib/index.js",
   "types": "./typings.d.ts",
@@ -72,6 +72,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.6",
+    "@react-native-community/netinfo": "^11.3.2",
     "redux-persist": "^4.6.0"
   },
   "peerDependencies": {
