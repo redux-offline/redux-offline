@@ -2,9 +2,9 @@ import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { KEY_PREFIX } from "redux-persist/lib/constants"
 import { AsyncNodeStorage } from "redux-persist-node-storage";
 import instrument from "redux-devtools-instrument";
-import { createOffline, offline } from "../index";
-import { applyDefaults } from "../config";
-import { networkStatusChanged } from "../actions";
+import { createOffline, offline } from "../src";
+import { networkStatusChanged } from "../src/actions";
+import { applyDefaults } from "../src/config";
 
 const storageKey = `${KEY_PREFIX}offline`;
 const defaultReducer = (state = {}) => state;

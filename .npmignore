@@ -1,7 +1,12 @@
 .babelrc
 .eslintrc.js
 .flowconfig
+.github
 .travis.yml
 .idea/**
 examples/**
-docs/*
+__tests__/
+coverage/
+docs/
+flow-typed/
+src/

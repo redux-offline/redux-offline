@@ -1,4 +1,4 @@
-import discard from '../../defaults/discard';
+import discard from '../../src/defaults/discard';
 
 test('discards non-http error', () => {
   const error = { message: 'Non-http error' };

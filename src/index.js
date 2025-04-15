@@ -1,45 +1,40 @@
 // @flow
 /* global $Shape */
 import { applyMiddleware, compose } from 'redux';
-import type { Config } from './types';
-import { createOfflineMiddleware } from './middleware';
-import { enhanceReducer } from './updater';
-import { applyDefaults } from './config';
+
 import { networkStatusChanged } from './actions';
-import offlineActionTracker from './offlineActionTracker';
+import mergeConfigs from './mergeConfigs';
+import { createOfflineMiddleware } from './middleware';
+import type { Config } from './types';
+import { enhanceReducer } from './updater';
 
-// @TODO: Take createStore as config?
-const warnIfNotReduxAction = (config: $Shape<Config>, key: string) => {
-  const maybeAction = config[key];
+function configStore(store, config) {
+  const baseReplaceReducer = store.replaceReducer.bind(store);
+  // $FlowFixMe
+  // eslint-disable-next-line no-param-reassign
+  store.replaceReducer = function replaceReducer(nextReducer) {
+    return baseReplaceReducer(enhanceReducer(nextReducer, config));
+  };
 
-  const isNotReduxAction =
-    maybeAction === null ||
-    typeof maybeAction !== 'object' ||
-    typeof maybeAction.type !== 'string' ||
-    maybeAction.type === '';
-
-  if (isNotReduxAction && console.warn) {
-    const msg =
-      `${key} must be a proper redux action, ` +
-      `i.e. it must be an object and have a non-empty string type. ` +
-      `Instead you provided: ${JSON.stringify(maybeAction, null, 2)}`;
-    console.warn(msg);
+  // launch store persistor
+  if (config.persist) {
+    config.persist(store, config.persistOptions, config.persistCallback);
   }
-};
+
+  // launch network detector
+  if (config.detectNetwork) {
+    config.detectNetwork(online => {
+      store.dispatch(networkStatusChanged(online, config.key));
+    });
+  }
+
+  return store;
+}
 
 export const offline = (userConfig: $Shape<Config> = {}) => (
   createStore: any
 ) => (reducer: any, preloadedState: any, enhancer: any = x => x) => {
-  const config = applyDefaults(userConfig);
-
-  warnIfNotReduxAction(config, 'defaultCommit');
-  warnIfNotReduxAction(config, 'defaultRollback');
-
-  // toggle experimental returned promises
-  config.offlineActionTracker = config.returnPromises
-    ? offlineActionTracker.withPromises
-    : offlineActionTracker.withoutPromises;
-  delete config.returnPromises;
+  const config = mergeConfigs(userConfig);
 
   // wraps userland reducer with a top-level
   // reducer that handles offline state updating
@@ -55,50 +50,16 @@ export const offline = (userConfig: $Shape<Config> = {}) => (
       : offlineMiddleware;
 
   // create store
-  const store = offlineEnhancer(createStore)(
-    offlineReducer,
-    preloadedState,
-    enhancer
+  return configStore(
+    offlineEnhancer(createStore)(offlineReducer, preloadedState, enhancer),
+    config
   );
-
-  const baseReplaceReducer = store.replaceReducer.bind(store);
-  // $FlowFixMe
-  store.replaceReducer = function replaceReducer(nextReducer) {
-    return baseReplaceReducer(enhanceReducer(nextReducer, config));
-  };
-
-  // launch store persistor
-  if (config.persist) {
-    config.persist(store, config.persistOptions, config.persistCallback);
-  }
-
-  // launch network detector
-  if (config.detectNetwork) {
-    config.detectNetwork(online => {
-      store.dispatch(networkStatusChanged(online));
-    });
-  }
-
-  return store;
 };
 
-export const createOffline = (userConfig: $Shape<Config> = {}) => {
-  const config = applyDefaults(userConfig);
+export const createEnhanceStore = (userConfig: $Shape<Config> = {}) => {
+  const config = mergeConfigs(userConfig);
 
-  // toggle experimental returned promises
-  config.offlineActionTracker = config.returnPromises
-    ? offlineActionTracker.withPromises
-    : offlineActionTracker.withoutPromises;
-  delete config.returnPromises;
-
-  warnIfNotReduxAction(config, 'defaultCommit');
-  warnIfNotReduxAction(config, 'defaultRollback');
-
-  const enhanceStore = (next: any) => (
-    reducer: any,
-    preloadedState: any,
-    enhancer: any
-  ) => {
+  return (next: any) => (reducer: any, preloadedState: any, enhancer: any) => {
     // create autoRehydrate enhancer if required
     const createStore =
       config.persist && config.rehydrate && config.persistAutoRehydrate
@@ -106,33 +67,18 @@ export const createOffline = (userConfig: $Shape<Config> = {}) => {
         : next;
 
     // create store
-    const store = createStore(reducer, preloadedState, enhancer);
-
-    const baseReplaceReducer = store.replaceReducer.bind(store);
-    store.replaceReducer = function replaceReducer(nextReducer) {
-      return baseReplaceReducer(enhanceReducer(nextReducer, config));
-    };
-
-    // launch store persistor
-    if (config.persist) {
-      config.persist(store, config.persistOptions, config.persistCallback);
-    }
-
-    // launch network detector
-    if (config.detectNetwork) {
-      config.detectNetwork(online => {
-        store.dispatch(networkStatusChanged(online));
-      });
-    }
-
-    return store;
+    return configStore(createStore(reducer, preloadedState, enhancer), config);
   };
+};
+
+export const createOffline = (userConfig: $Shape<Config> = {}) => {
+  const config = mergeConfigs(userConfig);
 
   return {
     middleware: createOfflineMiddleware(config),
     enhanceReducer(reducer: any) {
       return enhanceReducer(reducer, config);
     },
-    enhanceStore
+    enhanceStore: createEnhanceStore(config)
   };
 };

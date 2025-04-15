@@ -18,6 +18,7 @@ import {
   RESET_STATE,
   PERSIST_REHYDRATE
 } from './constants';
+import mergeConfigs from './mergeConfigs';
 
 export const initialState: OfflineState = {
   busy: false,
@@ -35,7 +36,7 @@ export const initialState: OfflineState = {
 type Dequeue = $PropertyType<$PropertyType<Config, 'queue'>, 'dequeue'>;
 type Enqueue = $PropertyType<$PropertyType<Config, 'queue'>, 'enqueue'>;
 
-export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
+export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue, key) =>
   function offlineUpdater(
     state: OfflineState = initialState,
     action:
@@ -44,6 +45,10 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
       | ResultAction
       | PersistRehydrateAction
   ): OfflineState {
+    if (action.key != null && action.key !== key) {
+      return state;
+    }
+
     // Update online/offline status
     if (action.type === OFFLINE_STATUS_CHANGED && !action.meta) {
       return {
@@ -122,9 +127,11 @@ export const buildOfflineUpdater = (dequeue: Dequeue, enqueue: Enqueue) =>
     return state;
   };
 
-export const enhanceReducer = (reducer: any, config: $Shape<Config>) => {
+export const enhanceReducer = (reducer: any, userConfig: $Shape<Config>) => {
+  const config = mergeConfigs(userConfig);
+
   const { dequeue, enqueue } = config.queue;
-  const offlineUpdater = buildOfflineUpdater(dequeue, enqueue);
+  const offlineUpdater = buildOfflineUpdater(dequeue, enqueue, config.key);
 
   return (state: any, action: any): any => {
     let offlineState;
